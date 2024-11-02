@@ -64,7 +64,8 @@ local options = {
 	sidescrolloff = 8,
 	-- gui应用中的字体
 	guifont = 'monospace:h17',
-	
+	-- 确保缓冲区的modifiable打开
+	modifiable = true
 }
 -- 不显示命令结果
 vim.opt.shortmess:append('c')

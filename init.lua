@@ -6,5 +6,4 @@ require("core.options")
 require("core.keymaps")
 require("core.autocmds")
 -- 设置颜色
-vim.cmd "colorscheme habamax"
 -- evening zaibatsu wildcharm vim sorbet slate ron retrobox quiet murphy koehler industry habamax
