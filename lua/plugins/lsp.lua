@@ -1,43 +1,8 @@
 return {
-	-- 以下是替代了neodev.nvim的作用，并且更优秀
+	-- 以下是替代了neodev.nvim的作用，并且更优秀,但是blink.cmp在windows上下载会出问题，用回neodev
 	{
-    "folke/lazydev.nvim",
-    ft = "lua", -- only load on lua files
-    opts = {
-      library = {
-        -- See the configuration section for more details
-        -- Load luvit types when the `vim.uv` word is found
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
-      },
-    },
-  },
-  { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
-  { -- optional cmp completion source for require statements and module annotations
-    "hrsh7th/nvim-cmp",
-    opts = function(_, opts)
-      opts.sources = opts.sources or {}
-      table.insert(opts.sources, {
-        name = "lazydev",
-        group_index = 0, -- set group index to 0 to skip loading LuaLS completions
-      })
-    end,
-  },
-  { -- optional blink completion source for require statements and module annotations
-    "saghen/blink.cmp",
-    opts = {
-      sources = {
-        -- add lazydev to your completion providers
-        completion = {
-          enabled_providers = { "lsp", "path", "snippets", "buffer", "lazydev" },
-        },
-        providers = {
-          -- dont show LuaLS require statements when lazydev has items
-          lsp = { fallback_for = { "lazydev" } },
-          lazydev = { name = "LazyDev", module = "lazydev.integrations.blink" },
-        },
-      },
-    },
-  },
+		"folke/neodev.nvim",
+	},
   {
 		event = "VeryLazy",
 		"williamboman/mason.nvim",
@@ -51,7 +16,7 @@ return {
 		event = "VeryLazy",
 		"nvimtools/none-ls.nvim",
 		config = function()
-			local null_ls = require("none-ls")
+			local null_ls = require("null-ls")
 			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 			null_ls.setup({
 				sources = {
@@ -119,7 +84,7 @@ return {
 				end,
 			})
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			require("lazydev").setup({
+			require("neodev").setup({
 				-- 在此处添加任何选项，或留空以使用默认设置
 			})
 			-- 配置lua语言服务器

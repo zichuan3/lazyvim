@@ -9,5 +9,5 @@ require("config.keymaps")
 require("config.lazy")
 
 -- 设置主题
-vim.cmd.colorscheme("base16-tender")
--- evening zaibatsu wildcharm vim sorbet slate ron retrobox quiet murphy koehler industry habamax
+vim.cmd.colorscheme("base16-tokyodark")
+
