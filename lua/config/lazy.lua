@@ -17,32 +17,28 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    --{ "LazyVim/LazyVim", import = "lazyvim.plugins" },
     -- import/override with your plugins
-    { import = "plugins" },
+    {import = "plugins"}
   },
   defaults = {
-    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
-    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
-    lazy = false,
-    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
-    -- have outdated releases, which may break your Neovim install.
-    version = false, -- always use the latest git commit
-    -- version = "*", -- try installing the latest stable version for plugins that support semver
+    --建议暂时保留version=false，因为很多支持版本控制的插件，
+		--有过时的版本，这可能会破坏你的Neovim安装。
+    version = "*", --false：始终使用最新的git commit
+		--version=“*”，--尝试为支持semver的插件安装最新的稳定版本
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
   checker = {
-    enabled = true, -- check for plugin updates periodically
-    notify = false, -- notify on update
+    enabled = true, --定期检查插件更新
+    notify = false, --更新时通知
   }, -- automatically check for plugin updates
   performance = {
     rtp = {
-      -- disable some rtp plugins
+      -- 禁用一些默认加载的插件
       disabled_plugins = {
         "gzip",
-        -- "matchit",
-        -- "matchparen",
-        -- "netrwPlugin",
+        -- "matchit",用于扩展 % 键的功能，使其能够匹配更多的括号类型。
+        -- "matchparen",用于高亮当前光标所在行的匹配括号。
+        -- "netrwPlugin",用于文件浏览器功能，允许你在 Neovim 中浏览和操作文件系统。
         "tarPlugin",
         "tohtml",
         "tutor",

@@ -7,6 +7,7 @@ require("config.options")
 require("config.keymaps")
 -- 导入插件
 require("config.lazy")
-require("config.autocmds")
--- 设置颜色
+
+-- 设置主题
+vim.cmd.colorscheme("base16-tender")
 -- evening zaibatsu wildcharm vim sorbet slate ron retrobox quiet murphy koehler industry habamax
