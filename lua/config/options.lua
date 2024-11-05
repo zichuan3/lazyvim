@@ -53,8 +53,6 @@ local options = {
 	swapfile = false,
 	-- 总是显示标记栏
 	signcolumn = 'yes',
-	-- 不显示模式，因为我们有状态栏
-	showmode = false,
 	-- 滚动偏移量
 	scrolloff = 8,
 	-- 侧边滚动偏移量

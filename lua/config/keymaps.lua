@@ -24,8 +24,7 @@ keymaps("n","<leader>s","<C-w>s",opts)
 -- 返回之前的文件和反返回
 keymaps("n","<leader>[","<C-o>",opts)
 keymaps("n","<leader>]","<C-i>",opts)
--- 打开资源管理器 
-keymaps("n", "<leader>e", ":Lex 30<cr>", opts)
+-- 打开资源管理器 <leader>e filetree.lua
 -- 缓冲区:大写L打开下一个、H打开上一个
 keymaps("n", "<S-l>", ":bnext<CR>", opts)
 keymaps("n", "<S-h>", ":bprevious<CR>", opts)
@@ -37,8 +36,8 @@ keymaps("n", "<C-Right>", ":vertical resize +2<CR>", opts)
 
 
 -- V模式按住shift+<>可以左右拖动选中的模块
-keymaps("x", "<", "<gv", opts)
-keymaps("x", ">", ">gv", opts)
+keymaps("v", "<", "<gv", opts)
+keymaps("v", ">", ">gv", opts)
 -- 上下移动行
 keymaps("n", "<A-j>", ":execute 'move .+' . v:count1<cr>==", { desc = "Move Down" })
 keymaps("n", "<A-k>", ":execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })

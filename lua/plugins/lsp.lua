@@ -78,7 +78,7 @@ return {
 					-- 查找引用。
 					vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 					-- 格式化代码（异步）。
-					vim.keymap.set("n", "<leader>l", function()
+					vim.keymap.set("n", "<A-l>", function()
 						vim.lsp.buf.format({ async = true })
 					end, opts)
 				end,

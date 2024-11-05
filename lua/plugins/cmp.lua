@@ -86,6 +86,7 @@ return {
 					{ name = "luasnip" }, -- 使用 luasnip 提供的代码片段。
 					-- { name = 'ultisnips' }, -- For ultisnips users.
 					-- { name = 'snippy' }, -- For snippy users.
+					{ name = "path" }
 				}, {
 					{ name = "buffer" }, -- 使用当前缓冲区的单词作为补全源。
 				}),
@@ -93,7 +94,7 @@ return {
 			-- 在 Git 提交消息编辑器中时，Neovim 会自动识别并应用这个配置。
 			cmp.setup.filetype("gitcommit", {
 				sources = cmp.config.sources({
-					{ name = "cmp_git" },
+					{ name = "git" },
 				}, {
 					{ name = "buffer" },
 				}),
@@ -120,7 +121,23 @@ return {
 		"windwp/nvim-autopairs",
 		event = "VeryLazy",
 		config = function()
-			require("nvim-autopairs").setup({})
+			require("nvim-autopairs").setup({
+				heck_ts = true,
+			  ts_config = {
+			    lua = { "string", "source" },
+			    javascript = { "string", "template_string" },
+			  },
+			  fast_wrap = {
+			    map = '<M-e>',
+			    chars = { '{', '[', '(', '"', "'" },
+			    pattern = [=[[%'%"%)%>%]%)%}%,]]=],
+			    end_key = '$',
+			    keys = 'qwertyuiopzxcvbnmasdfghjkl',
+			    check_comma = true,
+			    highlight = 'Search',
+			    highlight_grey='Comment'
+			  },
+			})
 		end,
 	},
 }
