@@ -28,6 +28,9 @@ local options = {
 	jumpoptions = "view",
 	-- 全局状态栏
 	laststatus = 3,
+	-- 不可见字符的显示，把空格显示为一个点
+	--list = true,
+	listchars = "space:·",
 	-- 启用鼠标
 	mouse = "a",
 	-- 控制缓冲区是否可修改
@@ -39,7 +42,7 @@ local options = {
 	-- 弹出菜单高度
 	pumheight = 10,
 	-- 显示相对行号
-	relativenumber = false,
+	relativenumber = true,
 	-- 始终显示标签页
 	showtabline = 2,
 	-- 智能区分大小写
@@ -82,6 +85,8 @@ vim.opt.shortmess:append('c')
 for k,v in pairs(options) do
 	vim.opt[k] = v
 end
+-- 内置的netrw文件浏览树形展示
+vim.g.netrw_liststyle = 3
 -- 可以从哪些方向跳转
 vim.cmd "set whichwrap+=<,>,[,],h,l" 
 -- 把 `-` 加入关键字定义

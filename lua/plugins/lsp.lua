@@ -56,11 +56,6 @@ return {
 					-- Buffer
 					-- 定义一个选项表 opts，指定这些快捷键映射仅在当前缓冲区有效。
 					local opts = { buffer = ev.buf }
-					vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- 跳转到声明。
-					vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts) -- 跳转到定义。
-					vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)  --显示悬停提示。
-					vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts) -- 跳转到实现。
-					vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts) --  显示签名帮助。
 					-- 添加工作区文件夹。
 					vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts)
 					-- 移除工作区文件夹。
@@ -106,10 +101,6 @@ return {
 							-- 让服务器知道Neovim运行时文件 包含工作区库路径，使语言服务器能够识别这些路径中的文件。
 							library = {
 								vim.api.nvim_get_runtime_file("", true),
-								"/Applications/Hammerspoon.app/Contents/Resources/extensions/hs/",
-								vim.fn.expand("~/lualib/share/lua/5.4"),
-								vim.fn.expand("~/lualib/lib/luarocks/rocks-5.4"),
-								"/opt/homebrew/opt/openresty/lualib",
 							},
 						},
 						completion = {

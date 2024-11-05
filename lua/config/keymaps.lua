@@ -9,10 +9,10 @@ local keymaps = vim.api.nvim_set_keymap
 keymaps("", "<Space>", "<Nop>", opts)
 
 -- 用于快速切换窗口: ctrl+h 切换到左窗口
-keymaps("n", "<C-h>", "<C-w>h", opts)
-keymaps("n", "<C-j>", "<C-w>j", opts)
-keymaps("n", "<C-k>", "<C-w>k", opts)
-keymaps("n", "<C-l>", "<C-w>l", opts)
+vim.keymap.set({ "n", "t" }, "<C-h>", "<CMD>NavigatorLeft<CR>")
+vim.keymap.set({ "n", "t" }, "<C-l>", "<CMD>NavigatorRight<CR>")
+vim.keymap.set({ "n", "t" }, "<C-k>", "<CMD>NavigatorUp<CR>")
+vim.keymap.set({ "n", "t" }, "<C-j>", "<CMD>NavigatorDown<CR>")
 -- eg: 5j 会让光标向下移动5行,这个是可以直接进入折叠行内部的,而j就会把多行折叠看作一行向下移动
 keymaps("n", "j", [[v:count == 0 ? 'gj' : 'j']], { noremap = true, expr = true, silent = true })
 keymaps("n", "<Down>", [[v:count == 0 ? 'gj' : 'j']], { noremap = true, expr = true, silent = true })
@@ -24,7 +24,10 @@ keymaps("n","<leader>s","<C-w>s",opts)
 -- 返回之前的文件和反返回
 keymaps("n","<leader>[","<C-o>",opts)
 keymaps("n","<leader>]","<C-i>",opts)
--- 打开资源管理器 <leader>e filetree.lua
+-- 打开资源管理器 
+keymaps("n", "<leader>e", ":Lex 30<cr>", opts)
+-- 按下-可以返回上一级
+keymaps("n", "-", ":NetrwUpdir<CR>", { desc = "Go up one directory" })
 -- 缓冲区:大写L打开下一个、H打开上一个
 keymaps("n", "<S-l>", ":bnext<CR>", opts)
 keymaps("n", "<S-h>", ":bprevious<CR>", opts)
@@ -50,8 +53,10 @@ keymaps("v", "<A-k>", ":m .-2<CR>==", opts)
 keymaps("v", "p", '"_dP', opts)
 
 -- Terminal --
--- Better terminal navigation
-keymaps("t", "<esc><esc>", "<c-\\><c-n>", term_opts)
+-- 在右侧打开终端窗口
+vim.keymap.set("n", "<leader>t", ":vsplit | terminal<CR>", { desc = "Open terminal in vertical split" })
+-- 在终端里面退回普通模式
+keymaps("t", "<Esc>", "<C-\\><C-n>", term_opts)
 keymaps("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
 keymaps("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
 keymaps("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)

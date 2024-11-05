@@ -15,7 +15,7 @@ Refer to the [documentation](https://lazyvim.github.io/installation) to get star
 
 插件键盘映射
 
-><leader>e filetree
+><leader>p filetree
 >
 ><leader>l filetree
 >

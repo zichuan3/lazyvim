@@ -1,7 +1,7 @@
 return {
 	{
 		keys = {
-			{ "<leader>e", ":NERDTreeToggle<CR>", desc = "toggle nerdtree" },
+			{ "<leader>p", ":NERDTreeToggle<CR>", desc = "toggle nerdtree" },
 			{ "<leader>l", ":NERDTreeFind<CR>", desc = "nerdtree find" },
 		},
 		cmd = { "NERDTreeToggle", "NERDTree", "NERDTreeFind" },

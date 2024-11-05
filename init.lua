@@ -9,5 +9,5 @@ require("config.keymaps")
 require("config.lazy")
 
 -- 设置主题
-vim.cmd.colorscheme("base16-tokyodark")
-
+vim.cmd.colorscheme("base16-ocean")
+-- rebelot/kanagawa.nvim ,Tokyo Night ,ellisonleao/gruvbox.nvim
