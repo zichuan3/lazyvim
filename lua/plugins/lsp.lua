@@ -9,7 +9,10 @@ return {
 		build = ":MasonUpdate", -- :MasonUpdate updates registry contents
 		config = function()
 			require("mason").setup()
-			require("mason-lspconfig").setup()
+			require("mason-lspconfig").setup({
+				automatic_installation = true,
+				ensure_installed = {"lua_ls","pyright"}
+			})
 		end,
 	},
 	{
@@ -17,25 +20,14 @@ return {
 		"nvimtools/none-ls.nvim",
 		config = function()
 			local null_ls = require("null-ls")
-			local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 			null_ls.setup({
+				debug = false,
 				sources = {
+					-- lua格式
 					null_ls.builtins.formatting.stylua,
+					-- python格式
 					null_ls.builtins.formatting.black,
 				},
-				on_attach = function(client, bufnr)
-					if client.supports_method("textDocument/formatting") then
-						vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
-						vim.api.nvim_create_autocmd("BufWritePre", {
-							group = augroup,
-							buffer = bufnr,
-							callback = function()
-								-- on 0.8, you should use vim.lsp.buf.format({ bufnr = bufnr }) instead
-								vim.lsp.buf.format({ bufnr = bufnr })
-							end,
-						})
-					end
-				end,
 			})
 		end,
 	},
@@ -101,6 +93,7 @@ return {
 							-- 让服务器知道Neovim运行时文件 包含工作区库路径，使语言服务器能够识别这些路径中的文件。
 							library = {
 								vim.api.nvim_get_runtime_file("", true),
+								checkThirdParty = false,
 							},
 						},
 						completion = {

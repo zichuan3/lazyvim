@@ -3,6 +3,14 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		config = function()
 			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"json",
+					"vim",
+					"lua",
+					"html",
+					"java",
+					"markdown",
+				},
 				incremental_selection = {
 					enable = true,
 					keymaps = {
