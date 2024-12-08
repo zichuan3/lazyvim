@@ -22,9 +22,10 @@ require("lazy").setup({
     {import = "plugins"}
   },
   defaults = {
+  	lazy = false,
     --建议暂时保留version=false，因为很多支持版本控制的插件，
 		--有过时的版本，这可能会破坏你的Neovim安装。
-    version = "*", --false：始终使用最新的git commit
+    version = false, --false：始终使用最新的git commit
 		--version=“*”，--尝试为支持semver的插件安装最新的稳定版本
   },
   checker = {

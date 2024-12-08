@@ -43,6 +43,7 @@ local options = {
   pumheight = 10,
   -- 显示相对行号
   relativenumber = true,
+  ruler = true,
   -- 始终显示标签页
   showtabline = 2,
   -- 智能区分大小写

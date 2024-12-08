@@ -9,10 +9,10 @@ local keymaps = vim.api.nvim_set_keymap
 keymaps("", "<Space>", "<Nop>", opts)
 
 -- 用于快速切换窗口: ctrl+h 切换到左窗口
-vim.keymap.set({ "n", "t" }, "<C-h>", "<CMD>NavigatorLeft<CR>")
-vim.keymap.set({ "n", "t" }, "<C-l>", "<CMD>NavigatorRight<CR>")
-vim.keymap.set({ "n", "t" }, "<C-k>", "<CMD>NavigatorUp<CR>")
-vim.keymap.set({ "n", "t" }, "<C-j>", "<CMD>NavigatorDown<CR>")
+vim.keymap.set({ "n", "t" }, "<C-h>", "<C-w>h")
+vim.keymap.set({ "n", "t" }, "<C-l>", "<C-w>l")
+vim.keymap.set({ "n", "t" }, "<C-k>", "<C-w>k")
+vim.keymap.set({ "n", "t" }, "<C-j>", "<C-w>j")
 -- eg: 5j 会让光标向下移动5行,这个是可以直接进入折叠行内部的,而j就会把多行折叠看作一行向下移动
 keymaps("n", "j", [[v:count == 0 ? 'gj' : 'j']], { noremap = true, expr = true, silent = true })
 keymaps("n", "<Down>", [[v:count == 0 ? 'gj' : 'j']], { noremap = true, expr = true, silent = true })
@@ -26,8 +26,6 @@ keymaps("n","<leader>[","<C-o>",opts)
 keymaps("n","<leader>]","<C-i>",opts)
 -- 打开资源管理器 
 keymaps("n", "<leader>e", ":Lex 30<cr>", opts)
--- 按下-可以返回上一级
-keymaps("n", "-", ":NetrwUpdir<CR>", { desc = "Go up one directory" })
 -- 缓冲区:大写L打开下一个、H打开上一个
 keymaps("n", "<S-l>", ":bnext<CR>", opts)
 keymaps("n", "<S-h>", ":bprevious<CR>", opts)
