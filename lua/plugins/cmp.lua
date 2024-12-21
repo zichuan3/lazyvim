@@ -1,7 +1,7 @@
 return {
 	{
     "hrsh7th/nvim-cmp",
-    event = "VeryLazy",
+    event = "InsertEnter",
     dependencies = {
     	"neovim/nvim-lspconfig",
 			"hrsh7th/cmp-nvim-lsp",
@@ -118,26 +118,27 @@ return {
   },
   {
 		"windwp/nvim-autopairs",
-		event = "VeryLazy",
-		config = function()
-			require("nvim-autopairs").setup({
-				heck_ts = true,
-			  ts_config = {
-			    lua = { "string", "source" },
-			    javascript = { "string", "template_string" },
-			  },
-			  fast_wrap = {
-			    map = '<M-e>',
-			    chars = { '{', '[', '(', '"', "'" },
-			    pattern = [=[[%'%"%)%>%]%)%}%,]]=],
-			    end_key = '$',
-			    keys = 'qwertyuiopzxcvbnmasdfghjkl',
-			    check_comma = true,
-			    highlight = 'Search',
-			    highlight_grey='Comment'
-			  },
-			})
-		end,
+		event = "InsertEnter",
+		opts = {},
+		--config = function()
+		--	require("nvim-autopairs").setup({
+		--		heck_ts = true,
+		--	  ts_config = {
+		--	    lua = { "string", "source" },
+		--	    javascript = { "string", "template_string" },
+		--	  },
+		--	  fast_wrap = {
+		--	    map = '<M-e>',
+		--	    chars = { '{', '[', '(', '"', "'" },
+		--	    pattern = [=[[%'%"%)%>%]%)%}%,]]=],
+		--	    end_key = '$',
+		--	    keys = 'qwertyuiopzxcvbnmasdfghjkl',
+		--	    check_comma = true,
+		--	    highlight = 'Search',
+		--	    highlight_grey='Comment'
+		--	  },
+		--	})
+		--end,
 	},
 }
 
