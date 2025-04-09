@@ -7,9 +7,9 @@ local options = {
   -- 允许neovim访问系统剪贴板
   clipboard = "unnamedplus",
   -- neovim 命令行中有更多空间用于显示消息
-  cmdheight = 2,
+  cmdheight = 1,
   -- 显示补全菜单，不自动选中第一个补全项
-  completeopt = { "menu", "menuone", "noselect" },
+  completeopt = {"menuone", "noselect" },
   --隐藏粗体和斜体的*标记，但不隐藏替换标记
   conceallevel = 2,
   --退出修改后的缓冲区前确认保存更改
@@ -20,6 +20,8 @@ local options = {
   expandtab = true,
   -- 编码
   fileencoding = "UTF-8",
+  fillchars = vim.opt.fillchars + "eob: ",
+  guifont = "JetBrains Mono:h17",
   -- 高亮所有与上次搜索模式匹配的地方
   hlsearch = true,
   -- 搜索模式中忽略大小写
@@ -41,13 +43,15 @@ local options = {
   numberwidth = 4,
   -- 弹出菜单高度
   pumheight = 10,
+  pumblend = 10,
   -- 显示相对行号
   relativenumber = true,
-  ruler = true,
+  ruler = false,
   -- 始终显示标签页
-  showtabline = 2,
+  showtabline = 1,
   -- 智能区分大小写
   smartcase = true,
+  showcmd = false,
   -- 自动插入适当缩进
   smartindent = true,
   -- 强制水平分割、垂直分割位于当前窗口的下方和右侧
@@ -55,10 +59,10 @@ local options = {
   splitright = true,
   -- 不创建交换文件
   swapfile = false,
-  -- 总是显示标记栏
+  -- 左侧图标指示列
   signcolumn = "yes",
   -- 滚动偏移量
-  scrolloff = 8,
+  scrolloff = 0,
   -- 侧边滚动偏移量
   sidescrolloff = 8,
   -- 自动缩进时插入的空格数
@@ -71,14 +75,20 @@ local options = {
   timeoutlen = 1000,
   -- Tab宽度
   tabstop = 2,
+  title = false,
   -- 启动持久撤销
   undofile = true,
   -- 更快的检测文件变化
-  updatetime = 1000,
+  updatetime = 500,
   -- 不创建写入备份文件
   writebackup = false,
   -- 不会自动换行
   wrap = false,
+  -- 补全增强
+  wildmenu = true
+}
+vim.opt.fillchars:append {
+  stl = " ",
 }
 -- 不显示命令结果
 vim.opt.shortmess:append("c")
@@ -92,5 +102,8 @@ vim.g.netrw_liststyle = 3
 vim.cmd("set whichwrap+=<,>,[,],h,l")
 -- 把 `-` 加入关键字定义
 vim.cmd([[set iskeyword+=-]])
+
+vim.g.netrw_banner = 0
+vim.g.netrw_mouse = 2
 -- 移除自动格式化选项中的 c 和 r 和 o
 vim.cmd([[set formatoptions-=cro]])
