@@ -1,32 +1,40 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
+Zichuan = {}
 
-LAZY_PLUGIN_SPEC = {}
-function spec(item)
-  table.insert(LAZY_PLUGIN_SPEC, { import = item })
+require "core.init"
+require "plugins0.init"
+
+-- Define keymap
+local keymap = Zichuan.keymap.general
+require("core.utils").group_map(keymap)
+
+for filetype, config in pairs(Zichuan.ft) do
+    require("core.utils").ft(filetype, config)
 end
--- 导入选项配置
-require("config.options")
--- 导入键盘映射
-require("config.keymaps")
-require("config.autocmds")
-spec("plugins.colorscheme")
-spec("plugins.devicons")
-spec("plugins.treessitter")
-spec("plugins.mason")
-spec("plugins.schemastore")
-spec("plugins.lspconfig")
-spec("plugins.cmp")
-spec("plugins.telescope")
-spec("plugins.none-ls")
-spec("plugins.illuminate")
-spec("plugins.whichkey")
-spec("plugins.lualine")
-spec("plugins.autopairs")
-spec("plugins.vsc")
-spec("plugins.yazi")
--- 导入插件
-require("config.lazy")
 
--- 设置主题
---vim.cmd.colorscheme("base16-ocean")
--- rebelot/kanagawa.nvim ,Tokyo Night ,ellisonleao/gruvbox.nvim
+-- Only load plugins and colorscheme when --noplugin arg is not present
+if not require("core.utils").noplugin then
+    -- Load plugins
+    local config = {}
+    for _, plugin in pairs(Zichuan.plugins) do
+        config[#config + 1] = plugin
+    end
+    require("lazy").setup(config, Zichuan.lazy)
+
+    require("core.utils").group_map(Zichuan.keymap.plugins)
+
+    -- Define colorscheme
+    if not Zichuan.colorscheme then
+        local colorscheme_cache = vim.fn.stdpath "data" .. "/colorscheme"
+        if require("core.utils").file_exists(colorscheme_cache) then
+            local colorscheme_cache_file = io.open(colorscheme_cache, "r")
+            ---@diagnostic disable: need-check-nil
+            local colorscheme = colorscheme_cache_file:read "*a"
+            colorscheme_cache_file:close()
+            Zichuan.colorscheme = colorscheme
+        else
+            Zichuan.colorscheme = "tokyonight"
+        end
+    end
+
+    require("plugins0.utils").colorscheme(Zichuan.colorscheme)
+end
