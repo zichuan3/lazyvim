@@ -54,8 +54,8 @@ map("v", "<A-j>", ":m .+1<CR>==", opts)
 map("v", "<A-k>", ":m .-2<CR>==", opts)
 
 -- insert 模式下，跳到行首行尾
-map("i", "<C-h>", "<ESC>I", opt)
-map("i", "<C-l>", "<ESC>A", opt)
+map("i", "<C-h>", "<ESC>I", opts)
+map("i", "<C-l>", "<ESC>A", opts)
 
 -- 在visual 模式里粘贴不要复制
 map("v", "p", '"_dP', opts)
