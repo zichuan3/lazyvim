@@ -127,10 +127,22 @@ config.fidget = {
 
 -- git状态
 config.gitsigns = {
-    "lewis6991/gitsigns.nvim",
-    event = "User ZichuanLoad",
-    main = "gitsigns",
-    opts = {}
+  "lewis6991/gitsigns.nvim",
+  event = "User ZichuanLoad",
+  main = "gitsigns",
+  opts = {},
+  config= function ()
+  	require("gitsigns").setup({
+		signs = {
+			add = { text = "+" },
+			change = { text = "│" },
+			delete = { text = "_" },
+			topdelete = { text = "‾" },
+			changedelete = { text = "~" },
+			untracked = { text = "┆" },
+		},
+	})
+  end
 }
 
 
@@ -359,41 +371,42 @@ config.undotree = {
 }
 
 config["which-key"] = {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {
-        icons = {
-            mappings = false,
-        },
-        plugins = {
-            marks = true,
-            registers = true,
-            spelling = {
-                enabled = false,
-            },
-            presets = {
-                operators = false,
-                motions = true,
-                text_objects = true,
-                windows = true,
-                nav = true,
-                z = true,
-                g = true,
-            },
-        },
-        spec = {
-            { "<leader>l", group = "+lsp" },
-            { "<leader>u", group = "+utils" },
-        },
-        win = {
-            border = "single",
-            padding = { 1, 0, 1, 0 },
-            wo = {
-                winblend = 0,
-            },
-            zindex = 1000,
-        },
+  "folke/which-key.nvim",
+  event = "VeryLazy",
+  opts = {
+    icons = {
+      mappings = false,
     },
+    plugins = {
+      marks = true,
+      registers = true,
+      spelling = {
+        enabled = false,
+      },
+      presets = {
+        operators = false,
+        motions = true,
+        text_objects = true,
+        windows = true,
+        nav = true,
+        z = true,
+        g = true,
+      },
+    },
+    spec = {
+      { "<leader>l", group = "+lsp" },
+      { "<leader>u", group = "+utils" },
+    },
+    win = {
+      border = "single",
+      padding = { 1, 0, 1, 0 },
+      wo = {
+          winblend = 0,
+      },
+      zindex = 1000,
+    },
+    debounce = 100,  -- 触发延迟 100ms
+  },
 }
 
 -- Colorschemes
