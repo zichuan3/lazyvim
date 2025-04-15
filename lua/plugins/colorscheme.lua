@@ -1,11 +1,15 @@
-local M = {
-  "LunarVim/darkplus.nvim",
-  lazy = false, -- make sure we load this during startup if it is your main colorscheme
-  priority = 1000, -- make sure to load this before all the other start plugins
+-- 这里改变还要去config.lua的最后去修改一下
+-- Predefined colorschemes
+Zichuan.colorschemes = {
+    tokyonight = {
+        name = "tokyonight",
+        setup = {
+            style = "moon",
+            styles = {
+                comments = { italic = true },
+                keywords = { italic = false },
+            },
+        },
+        background = "dark",
+    },
 }
-
-function M.config()
-  vim.cmd.colorscheme "darkplus"
-end
-
-return M

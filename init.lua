@@ -1,7 +1,7 @@
 Zichuan = {}
 
 require "core.init"
-require "plugins0.init"
+require "plugins.init"
 
 -- Define keymap
 local keymap = Zichuan.keymap.general
@@ -36,5 +36,5 @@ if not require("core.utils").noplugin then
         end
     end
 
-    require("plugins0.utils").colorscheme(Zichuan.colorscheme)
+    require("plugins.utils").colorscheme(Zichuan.colorscheme)
 end

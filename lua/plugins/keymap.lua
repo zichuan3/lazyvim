@@ -1,4 +1,4 @@
-local utils = require "plugins0.utils"
+local utils = require "plugins.utils"
 
 Zichuan.keymap.plugins = {
     lazy_profile = { "n", "<leader>ul", "<Cmd>Lazy profile<CR>" },
