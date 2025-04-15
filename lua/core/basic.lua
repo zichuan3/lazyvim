@@ -80,7 +80,9 @@ local options = {
 	-- 启用二进制，十六进制，字母序的支持
 	nrformats = "bin,hex,alpha",
 	-- 禁用默认的 ShaDa 文件
-	shadafile = "NONE"
+	shadafile = "NONE",
+	-- 撤销持久化
+	undofile = true
 }
 
 
@@ -91,7 +93,6 @@ end
 
 g.netrw_banner = 0
 g.netrw_mouse = 2
-
 -- 内置的netrw文件浏览树形展示
 g.netrw_liststyle = 3
 

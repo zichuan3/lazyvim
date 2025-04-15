@@ -75,25 +75,30 @@ lsp = {
         },
         enabled = true,
     },
-    omnisharp = {
-        formatter = "csharpier",
-        setup = {
-            cmd = {
-                "dotnet",
-                vim.fn.stdpath "data" .. "/mason/packages/omnisharp/libexec/Omnisharp.dll",
-            },
-            on_attach = function(client, _)
-                client.server_capabilities.semanticTokensProvider = nil
-            end,
-        },
-    },
     pyright = {
-        formatter = "black",
+      formatter = "black",
+      setup = {
+        -- 指定 Python 解释器路径（可选，根据你的环境修改）
+        cmd = { "pyright-langserver", "--stdio" },
+        settings = {
+          python = {
+              analysis = {
+                  typeCheckingMode = "basic",  -- 或 "strict"
+                  autoSearchPaths = true,
+                  useLibraryCodeForTypes = true,
+              },
+          },
+        },
+        -- 确保 LSP 能找到 Python 环境（如虚拟环境）
+        on_attach = function(client, bufnr)
+            -- 其他自定义逻辑（如自动补全映射）
+        end,
+    	},
+    	enabled = true,
     },
     rust = {
         managed_by_plugin = true,
     },
-    
     ["typescript-language-server"] = {
         formatter = "prettier",
         setup = {
