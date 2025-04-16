@@ -59,7 +59,7 @@ vim.api.nvim_create_user_command("ZichuanCheckIcons", function()
 end, { nargs = 0 })
 
 vim.api.nvim_create_user_command("ZichuanCheckPlugins", function()
-    local plugins_path = vim.fn.stdpath "data" .. "/lazy/"
+    local plugins_path = vim.fn.stdpath("data") .. "/lazy/"
     local dir = vim.uv.fs_scandir(plugins_path)
 
     local stale_plugins = {}
@@ -102,12 +102,12 @@ vim.api.nvim_create_user_command("ZichuanCheckPlugins", function()
                 -- If setting end to 0 instead of -1, there would be an empty line at the end
                 vim.api.nvim_buf_set_lines(report_buf, 0, -1, false, report)
 
-                local ns_id = vim.api.nvim_create_namespace "out-of-date-plugins"
+                local ns_id = vim.api.nvim_create_namespace("out-of-date-plugins")
                 for line = 0, really_stale_plugin_count - 1 do
-                    vim.hl.range(report_buf, ns_id, "ErrorMsg", {line, 0}, {line, -1}, {})
+                    vim.hl.range(report_buf, ns_id, "ErrorMsg", { line, 0 }, { line, -1 }, {})
                 end
                 for line = really_stale_plugin_count, #stale_plugins - 1 do
-                    vim.hl.range(report_buf, ns_id, "WarningMsg", {line, 0}, {line, -1}, {})
+                    vim.hl.range(report_buf, ns_id, "WarningMsg", { line, 0 }, { line, -1 }, {})
                 end
 
                 local win = vim.api.nvim_open_win(report_buf, true, {
@@ -144,7 +144,7 @@ vim.api.nvim_create_user_command("ZichuanCheckPlugins", function()
                         local year = string.sub(date, 1, 4)
                         local month = string.sub(date, 6, 7)
                         local day = string.sub(date, 9, 10)
-                        local last_update_timestamp = os.time { year = year, month = month, day = day }
+                        local last_update_timestamp = os.time({ year = year, month = month, day = day })
                         local current_timestamp = os.time()
                         local stale_days = math.floor((current_timestamp - last_update_timestamp) / 86400)
                         if stale_days > 30 then
@@ -171,7 +171,7 @@ end, { nargs = "+", complete = "command" })
 
 -- View the output of a command in an external buffer
 vim.api.nvim_create_user_command("ZichuanView", function(args)
-    local path = vim.fn.stdpath "data" .. "/Zichuan-view.txt"
+    local path = vim.fn.stdpath("data") .. "/Zichuan-view.txt"
     if args.args == "" then
         vim.cmd("edit " .. path)
     else

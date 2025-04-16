@@ -11,14 +11,14 @@ Zichuan.plugins["blink-cmp"] = {
             completion = {
                 menu = {
                     auto_show = true,
-                }
+                },
             },
             keymap = {
                 preset = "none",
-                ["<Tab>"] = {"accept"},
+                ["<Tab>"] = { "accept" },
                 ["<C-k>"] = { "select_prev", "fallback" },
                 ["<C-j>"] = { "select_next", "fallback" },
-            }
+            },
         },
         completion = {
             accept = {
@@ -67,14 +67,13 @@ Zichuan.plugins["blink-cmp"] = {
                         return
                     end
 
-                    local completion_list = require "blink.cmp.completion.list"
+                    local completion_list = require("blink.cmp.completion.list")
                     local selected_id = completion_list.selected_item_idx or 1
                     local item = completion_list.items[selected_id]
                     local source = item.source_name
-                    return cmp.select_and_accept {
-                        callback = function()
-                        end,
-                    }
+                    return cmp.select_and_accept({
+                        callback = function() end,
+                    })
                 end,
                 "snippet_forward",
                 "fallback",

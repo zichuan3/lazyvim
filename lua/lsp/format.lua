@@ -8,7 +8,7 @@ Zichuan.plugins["null-ls"] = {
         debug = false,
     },
     config = function(_, opts)
-        local null_ls = require "null-ls"
+        local null_ls = require("null-ls")
         local formatting = null_ls.builtins.formatting
 
         local sources = {}
@@ -25,7 +25,7 @@ Zichuan.plugins["null-ls"] = {
         {
             "<leader>lf",
             function()
-                local active_client = vim.lsp.get_clients { bufnr = 0, name = "null-ls" }
+                local active_client = vim.lsp.get_clients({ bufnr = 0, name = "null-ls" })
 
                 local format_option = { async = true }
                 if #active_client > 0 then

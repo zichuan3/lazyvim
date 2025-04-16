@@ -1,6 +1,5 @@
 local symbols = Zichuan.symbols
 
-
 Zichuan.plugins.mason = {
     "williamboman/mason.nvim",
     dependencies = {
@@ -21,7 +20,7 @@ Zichuan.plugins.mason = {
     config = function(_, opts)
         require("mason").setup(opts)
 
-        local registry = require "mason-registry"
+        local registry = require("mason-registry")
         local function install(package)
             local s, p = pcall(registry.get_package, package)
             if s and not p:is_installed() then
@@ -29,7 +28,7 @@ Zichuan.plugins.mason = {
             end
         end
 
-        local lspconfig = require "lspconfig"
+        local lspconfig = require("lspconfig")
         local mason_lspconfig_mapping = require("mason-lspconfig.mappings.server").package_to_lspconfig
 
         local installed_packages = registry.get_installed_package_names()
@@ -70,11 +69,11 @@ Zichuan.plugins.mason = {
             ::continue::
         end
 
-        vim.diagnostic.config {
+        vim.diagnostic.config({
             update_in_insert = true,
             severity_sort = true, -- necessary for lspsaga's show_line_diagnostics to work
             virtual_text = true,
-        }
+        })
         local signs = {
             Error = symbols.Error,
             Warn = symbols.Warn,
@@ -86,6 +85,6 @@ Zichuan.plugins.mason = {
             vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
         end
 
-        vim.cmd "LspStart"
+        vim.cmd("LspStart")
     end,
 }

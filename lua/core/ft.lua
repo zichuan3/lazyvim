@@ -1,5 +1,5 @@
 Zichuan.ft = {
-    c = function ()
+    c = function()
         vim.bo.tabstop = 2
     end,
     cs = function()

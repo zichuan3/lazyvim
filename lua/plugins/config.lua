@@ -2,7 +2,7 @@
 ---@diagnostic disable: need-check-nil
 local config = {}
 local symbols = Zichuan.symbols
-local config_root = string.gsub(vim.fn.stdpath "config" --[[@as string]], "\\", "/")
+local config_root = string.gsub(vim.fn.stdpath("config") --[[@as string]], "\\", "/")
 local priority = { LOW = 100, MEDIUM = 200, HIGH = 615 }
 
 -- Add ZichuanLoad event
@@ -43,7 +43,7 @@ config.colorizer = {
     },
     config = function(_, opts)
         require("colorizer").setup(opts)
-        vim.cmd "ColorizerToggle"
+        vim.cmd("ColorizerToggle")
     end,
 }
 -- 面板
@@ -55,13 +55,13 @@ config.dashboard = {
         config = {
             -- https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=Zichuannvim
             header = {
-		            "",
-		            "██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z",
-				        "██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ",
-				        "██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ",
-				        "██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ",
-				        "███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ",
-				        "╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝   ",
+                "",
+                "██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z",
+                "██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ",
+                "██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ",
+                "██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ",
+                "███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ",
+                "╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝   ",
                 " ",
                 string.format("                      %s                       ", require("core.utils").version),
                 " ",
@@ -103,7 +103,7 @@ config.dashboard = {
             callback = function()
                 -- Use the highlight command to replace instead of overriding the original highlight group
                 -- Much more convenient than using vim.api.nvim_set_hl()
-                vim.cmd "highlight DashboardFooter cterm=NONE gui=NONE"
+                vim.cmd("highlight DashboardFooter cterm=NONE gui=NONE")
             end,
         })
     end,
@@ -120,31 +120,29 @@ config.fidget = {
                 align = "top",
             },
         },
-        integration = {
-        },
+        integration = {},
     },
 }
 
 -- git状态
 config.gitsigns = {
-  "lewis6991/gitsigns.nvim",
-  event = "User ZichuanLoad",
-  main = "gitsigns",
-  opts = {},
-  config= function ()
-  	require("gitsigns").setup({
-		signs = {
-			add = { text = "+" },
-			change = { text = "│" },
-			delete = { text = "_" },
-			topdelete = { text = "‾" },
-			changedelete = { text = "~" },
-			untracked = { text = "┆" },
-		},
-	})
-  end
+    "lewis6991/gitsigns.nvim",
+    event = "User ZichuanLoad",
+    main = "gitsigns",
+    opts = {},
+    config = function()
+        require("gitsigns").setup({
+            signs = {
+                add = { text = "+" },
+                change = { text = "│" },
+                delete = { text = "_" },
+                topdelete = { text = "‾" },
+                changedelete = { text = "~" },
+                untracked = { text = "┆" },
+            },
+        })
+    end,
 }
-
 
 -- 一个用 Lua 编写的极快速且易于配置的 Neovim 状态行。
 config.lualine = {
@@ -177,8 +175,6 @@ config.lualine = {
     },
 }
 
-
-
 config.nui = {
     "MunifTanjim/nui.nvim",
     lazy = true,
@@ -204,75 +200,75 @@ config["nvim-treesitter"] = {
         "bash", "c", "cpp", "css", "html", "javascript", "json", "lua", "markdown",
         "markdown_inline", "python", "toml", "vim", "vimdoc",
       },
-      -- stylua: ignore end
-      highlight = {
-        enable = true,
-        additional_vim_regex_highlighting = false,
-        disable = function(_, buf)
-            local max_filesize = 100 * 1024
-            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-            if ok and stats and stats.size > max_filesize then
-                return true
-            end
-        end,
-      },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-            init_selection = "<CR>",
-            node_incremental = "<CR>",
-            node_decremental = "<BS>",
-            scope_incremental = "<TAB>",
+        -- stylua: ignore end
+        highlight = {
+            enable = true,
+            additional_vim_regex_highlighting = false,
+            disable = function(_, buf)
+                local max_filesize = 100 * 1024
+                local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+                if ok and stats and stats.size > max_filesize then
+                    return true
+                end
+            end,
         },
-      },
-      indent = {
-        enable = true,
-        -- conflicts with flutter-tools.nvim, causing performance issues
-        disable = { "dart" },
-      },
+        incremental_selection = {
+            enable = true,
+            keymaps = {
+                init_selection = "<CR>",
+                node_incremental = "<CR>",
+                node_decremental = "<BS>",
+                scope_incremental = "<TAB>",
+            },
+        },
+        indent = {
+            enable = true,
+            -- conflicts with flutter-tools.nvim, causing performance issues
+            disable = { "dart" },
+        },
     },
     config = function(_, opts)
-      require("nvim-treesitter.install").prefer_git = true
-      require("nvim-treesitter.configs").setup(opts)
+        require("nvim-treesitter.install").prefer_git = true
+        require("nvim-treesitter.configs").setup(opts)
 
-      local rainbow_delimiters = require "rainbow-delimiters"
+        local rainbow_delimiters = require("rainbow-delimiters")
 
-      vim.g.rainbow_delimiters = {
-          strategy = {
-            [""] = rainbow_delimiters.strategy["global"],
-            vim = rainbow_delimiters.strategy["local"],
-          },
-          query = {
-            [""] = "rainbow-delimiters",
-            lua = "rainbow-blocks",
-          },
-          highlight = {
-            "RainbowDelimiterRed",
-            "RainbowDelimiterYellow",
-            "RainbowDelimiterBlue",
-            "RainbowDelimiterOrange",
-            "RainbowDelimiterGreen",
-            "RainbowDelimiterViolet",
-            "RainbowDelimiterCyan",
-          },
-      }
-      rainbow_delimiters.enable()
+        vim.g.rainbow_delimiters = {
+            strategy = {
+                [""] = rainbow_delimiters.strategy["global"],
+                vim = rainbow_delimiters.strategy["local"],
+            },
+            query = {
+                [""] = "rainbow-delimiters",
+                lua = "rainbow-blocks",
+            },
+            highlight = {
+                "RainbowDelimiterRed",
+                "RainbowDelimiterYellow",
+                "RainbowDelimiterBlue",
+                "RainbowDelimiterOrange",
+                "RainbowDelimiterGreen",
+                "RainbowDelimiterViolet",
+                "RainbowDelimiterCyan",
+            },
+        }
+        rainbow_delimiters.enable()
 
-      -- In markdown files, the rendered output would only display the correct highlight if the code is set to scheme
-      -- However, this would result in incorrect highlight in neovim
-      -- Therefore, the scheme language should be linked to query
-      vim.treesitter.language.register("query", "scheme")
+        -- In markdown files, the rendered output would only display the correct highlight if the code is set to scheme
+        -- However, this would result in incorrect highlight in neovim
+        -- Therefore, the scheme language should be linked to query
+        vim.treesitter.language.register("query", "scheme")
 
-      vim.api.nvim_exec_autocmds("User", { pattern = "ZichuanAfter nvim-treesitter" })
+        vim.api.nvim_exec_autocmds("User", { pattern = "ZichuanAfter nvim-treesitter" })
     end,
 }
 
 -- 轻松添加/更改/删除周围的分隔符对。用 ❤️ Lua 编写。
 config.surround = {
-  "kylechui/nvim-surround",
-  version = "*",
-  opts = {},
-  event = "User ZichuanLoad",
+    "kylechui/nvim-surround",
+    version = "*",
+    opts = {},
+    event = "User ZichuanLoad",
 }
 -- 一个高度可扩展的列表模糊查找器
 config.telescope = {
@@ -290,124 +286,123 @@ config.telescope = {
     cmd = "Telescope",
     opts = {
         defaults = {
-          initial_mode = "insert",
-          mappings = {
-            i = {
-              ["<C-j>"] = "move_selection_next",
-              ["<C-k>"] = "move_selection_previous",
-              ["<C-n>"] = "cycle_history_next",
-              ["<C-p>"] = "cycle_history_prev",
-              ["<C-c>"] = "close",
-              ["<C-u>"] = "preview_scrolling_up",
-              ["<C-d>"] = "preview_scrolling_down",
-              ["<CR>"] = "select_default",
+            initial_mode = "insert",
+            mappings = {
+                i = {
+                    ["<C-j>"] = "move_selection_next",
+                    ["<C-k>"] = "move_selection_previous",
+                    ["<C-n>"] = "cycle_history_next",
+                    ["<C-p>"] = "cycle_history_prev",
+                    ["<C-c>"] = "close",
+                    ["<C-u>"] = "preview_scrolling_up",
+                    ["<C-d>"] = "preview_scrolling_down",
+                    ["<CR>"] = "select_default",
+                },
             },
-        	},
-          preview = {
-		        timeout = 500,
-		        msg_bg = "NONE",
-		      },
+            preview = {
+                timeout = 500,
+                msg_bg = "NONE",
+            },
         },
         pickers = {
-	        find_files = {
-		        find_command = { "rg", "--files", "--hidden", "--no-ignore", "--glob", "!.git/*" },
-		        file_ignore_patterns = { "node_modules", "%.cache" },
-		        winblend = 10,
-		        layout_config = { height = 0.8 },
-	      	},
-	      	live_grep = {
-		        winblend = 0,
-		        additional_args = function()
-		          return { "--hidden" }
-		        end,
-      		},
+            find_files = {
+                find_command = { "rg", "--files", "--hidden", "--no-ignore", "--glob", "!.git/*" },
+                file_ignore_patterns = { "node_modules", "%.cache" },
+                winblend = 10,
+                layout_config = { height = 0.8 },
+            },
+            live_grep = {
+                winblend = 0,
+                additional_args = function()
+                    return { "--hidden" }
+                end,
+            },
         },
         extensions = {
-          fzf = {
-            fuzzy = true,
-            override_generic_sorter = true,
-            override_file_sorter = true,
-            case_mode = "smart_case",
-            layout = { horizontal = { prompt_position = "top" } },
-          },
+            fzf = {
+                fuzzy = true,
+                override_generic_sorter = true,
+                override_file_sorter = true,
+                case_mode = "smart_case",
+                layout = { horizontal = { prompt_position = "top" } },
+            },
         },
     },
     config = function(_, opts)
-        local telescope = require "telescope"
+        local telescope = require("telescope")
         telescope.setup(opts)
-        telescope.load_extension "fzf"
+        telescope.load_extension("fzf")
     end,
     keys = {
-        { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true },-- 查找文件
-        { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true },-- 查找文本
+        { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true }, -- 查找文件
+        { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
     },
 }
 
-
 config.undotree = {
     "mbbill/undotree",
     config = function()
-  		-- 基础设置
-	    vim.g.undotree_WindowLayout = 3       -- 窗口布局：3 表示底部显示
-	    vim.g.undotree_TreeNodeShape = "-"    -- 树节点形状
-	    vim.g.undotree_SetFocusToActiveWindow = 1  -- 切换回编辑窗口时自动聚焦
-	    vim.g.undotree_SwitchBufferOnUndo = 1  -- 撤销时切换到正确缓冲区
+        -- 基础设置
+        vim.g.undotree_WindowLayout = 3 -- 窗口布局：3 表示底部显示
+        vim.g.undotree_TreeNodeShape = "-" -- 树节点形状
+        vim.g.undotree_SetFocusToActiveWindow = 1 -- 切换回编辑窗口时自动聚焦
+        vim.g.undotree_SwitchBufferOnUndo = 1 -- 撤销时切换到正确缓冲区
 
-			-- 持久化撤销配置undofile = true已在前面配置
-			vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
-			local undodir_path = vim.o.undodir
-  		vim.fn.mkdir(undodir_path, "p")
+        -- 持久化撤销配置undofile = true已在前面配置
+        vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
+        local undodir_path = vim.o.undodir
+        vim.fn.mkdir(undodir_path, "p")
     end,
     keys = {
-    	--切换撤销树窗口的显示与隐藏。
-      { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
-      -- 重置撤销树，将当前状态设为新的起始点。
-	    { "<leader>ur", "<Cmd>UndotreeReset<CR>", desc = "Reset Undo Tree", silent = true },
-	     --向前移动到下一个撤销点（重做操作）。
-	    { "<leader>un", "<Cmd>UndotreeNext<CR>", desc = "Next Undo Node", silent = true },
-	     --向后移动到上一个撤销点（撤销操作）。
-	    { "<leader>up", "<Cmd>UndotreePrevious<CR>", desc = "Previous Undo Node", silent = true },
+        --切换撤销树窗口的显示与隐藏。
+        { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
+        -- 重置撤销树，将当前状态设为新的起始点。
+        { "<leader>ur", "<Cmd>UndotreeReset<CR>", desc = "Reset Undo Tree", silent = true },
+        --向前移动到下一个撤销点（重做操作）。
+        { "<leader>un", "<Cmd>UndotreeNext<CR>", desc = "Next Undo Node", silent = true },
+        --向后移动到上一个撤销点（撤销操作）。
+        { "<leader>up", "<Cmd>UndotreePrevious<CR>", desc = "Previous Undo Node", silent = true },
     },
 }
 
 config["which-key"] = {
-  "folke/which-key.nvim",
-  event = "VeryLazy",
-  opts = {
-    icons = {
-      mappings = false,
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {
+        icons = {
+            mappings = false,
+        },
+        plugins = {
+            marks = true,
+            registers = true,
+            spelling = {
+                enabled = false,
+            },
+            presets = {
+                operators = false,
+                motions = true,
+                text_objects = true,
+                windows = true,
+                nav = true,
+                z = true,
+                g = true,
+            },
+        },
+        spec = {
+            { "<leader>l", group = "+lsp" },
+            { "<leader>u", group = "+utils" },
+        },
+        win = {
+            border = "single",
+            padding = { 1, 0, 1, 0 },
+            wo = {
+                winblend = 0,
+            },
+            zindex = 1000,
+        },
+        debounce = 100, -- 触发延迟 100ms
     },
-    plugins = {
-      marks = true,
-      registers = true,
-      spelling = {
-        enabled = false,
-      },
-      presets = {
-        operators = false,
-        motions = true,
-        text_objects = true,
-        windows = true,
-        nav = true,
-        z = true,
-        g = true,
-      },
-    },
-    spec = {
-      { "<leader>l", group = "+lsp" },
-      { "<leader>u", group = "+utils" },
-    },
-    win = {
-      border = "single",
-      padding = { 1, 0, 1, 0 },
-      wo = {
-          winblend = 0,
-      },
-      zindex = 1000,
-    },
-    debounce = 100,  -- 触发延迟 100ms
-  },
 }
 
 -- Colorschemes

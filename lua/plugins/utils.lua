@@ -37,18 +37,18 @@ utils.view_configuration = function()
         return
     end
 
-    local pickers = require "telescope.pickers"
-    local finders = require "telescope.finders"
+    local pickers = require("telescope.pickers")
+    local finders = require("telescope.finders")
     local conf = require("telescope.config").values
-    local actions = require "telescope.actions"
-    local action_state = require "telescope.actions.state"
-    local previewers = require "telescope.previewers.buffer_previewer"
-    local from_entry = require "telescope.from_entry"
+    local actions = require("telescope.actions")
+    local action_state = require("telescope.actions.state")
+    local previewers = require("telescope.previewers.buffer_previewer")
+    local from_entry = require("telescope.from_entry")
 
     local function picker(opts)
         opts = opts or {}
 
-        local config_root = vim.fn.stdpath "config"
+        local config_root = vim.fn.stdpath("config")
         local files = require("plenary.scandir").scan_dir(config_root, { hidden = true })
         local sep = require("plenary.path").path.sep
         local picker_sep = "/" -- sep that is displayed in the picker
@@ -68,13 +68,13 @@ utils.view_configuration = function()
         pickers
             .new(opts, {
                 prompt_title = "Configuration Files",
-                finder = finders.new_table {
+                finder = finders.new_table({
                     entry_maker = make_entry(opts),
                     results = results,
-                },
+                }),
                 previewer = (function(_opts)
                     _opts = _opts or {}
-                    return previewers.new_buffer_previewer {
+                    return previewers.new_buffer_previewer({
                         title = "Configuration",
                         get_buffer_by_name = function(_, entry)
                             return from_entry.path(entry, false)
@@ -91,7 +91,7 @@ utils.view_configuration = function()
                                 file_encoding = _opts.file_encoding,
                             })
                         end,
-                    }
+                    })
                 end)(opts),
                 sorter = conf.generic_sorter(opts),
                 attach_mappings = function(prompt_bufnr, _)

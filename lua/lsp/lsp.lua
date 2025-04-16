@@ -76,25 +76,25 @@ lsp = {
         enabled = true,
     },
     pyright = {
-      formatter = "black",
-      setup = {
-        -- 指定 Python 解释器路径（可选，根据你的环境修改）
-        cmd = { "pyright-langserver", "--stdio" },
-        settings = {
-          python = {
-              analysis = {
-                  typeCheckingMode = "basic",  -- 或 "strict"
-                  autoSearchPaths = true,
-                  useLibraryCodeForTypes = true,
-              },
-          },
+        formatter = "black",
+        setup = {
+            -- 指定 Python 解释器路径（可选，根据你的环境修改）
+            cmd = { "pyright-langserver", "--stdio" },
+            settings = {
+                python = {
+                    analysis = {
+                        typeCheckingMode = "basic", -- 或 "strict"
+                        autoSearchPaths = true,
+                        useLibraryCodeForTypes = true,
+                    },
+                },
+            },
+            -- 确保 LSP 能找到 Python 环境（如虚拟环境）
+            on_attach = function(client, bufnr)
+                -- 其他自定义逻辑（如自动补全映射）
+            end,
         },
-        -- 确保 LSP 能找到 Python 环境（如虚拟环境）
-        on_attach = function(client, bufnr)
-            -- 其他自定义逻辑（如自动补全映射）
-        end,
-    	},
-    	enabled = true,
+        enabled = true,
     },
     rust = {
         managed_by_plugin = true,
@@ -105,7 +105,7 @@ lsp = {
             single_file_support = true,
             flags = lsp.flags,
             on_attach = function(client)
-                if #vim.lsp.get_clients { name = "denols" } > 0 then
+                if #vim.lsp.get_clients({ name = "denols" }) > 0 then
                     client.stop()
                 end
             end,

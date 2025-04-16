@@ -1,4 +1,4 @@
-local utils = require "core.utils"
+local utils = require("core.utils")
 
 --local config_path = string.gsub(vim.fn.stdpath "config", "\\", "/")
 
@@ -20,7 +20,6 @@ local utils = require "core.utils"
 --    -- 其他系统（如 macOS/Linux）直接使用系统剪贴板
 --    vim.cmd("set clipboard+=unnamedplus")
 --end
-
 
 -- Automatic switch to root directory
 --vim.api.nvim_create_autocmd("BufEnter", {
@@ -57,7 +56,7 @@ if utils.is_windows then
     vim.api.nvim_create_autocmd("VimLeavePre", {
         group = remove_shada_tmp_group,
         callback = function()
-            local dir = vim.fn.stdpath "data" .. "/shada/"
+            local dir = vim.fn.stdpath("data") .. "/shada/"
             local shada_dir = vim.uv.fs_scandir(dir)
 
             local shada_temp = ""

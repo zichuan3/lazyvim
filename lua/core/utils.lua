@@ -1,7 +1,7 @@
 local v = vim.version()
 local version = string.format("%d.%d.%d", v.major, v.minor, v.patch)
 
-local argv = vim.api.nvim_get_vvar "argv"
+local argv = vim.api.nvim_get_vvar("argv")
 local noplugin = false
 for i = 3, #argv, 1 do
     if argv[i] == "--noplugin" then
@@ -170,9 +170,9 @@ end
 
 -- Updates ZichuanNvim
 utils.update = function()
-    vim.system({ "git", "pull" }, { cwd = vim.fn.stdpath "config", text = true }, function(out)
+    vim.system({ "git", "pull" }, { cwd = vim.fn.stdpath("config"), text = true }, function(out)
         if out.code == 0 then
-            vim.notify "ZichuanNvim up to date"
+            vim.notify("ZichuanNvim up to date")
         else
             vim.notify("ZichuanNvim update failed: " .. out.stderr, vim.log.levels.WARN)
         end
