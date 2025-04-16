@@ -16,6 +16,8 @@ opt.sidescrolloff = math.floor((win_height - 1) / 2)
 local options = {
 	-- 编码
 	fileencoding = "utf-8",
+	-- 允许neovim访问系统粘贴板
+	clipboard = "unnamedplus",
 	-- 字体
 	guifont = "JetBrains Mono:h17",
 	-- 显示绝对行号，相对行号，高亮当前行

@@ -356,7 +356,8 @@ config.undotree = {
 
 			-- 持久化撤销配置undofile = true已在前面配置
 			vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
-  		vim.fn.mkdir(vim.opt.undodir, "p")
+			local undodir_path = vim.o.undodir
+  		vim.fn.mkdir(undodir_path, "p")
     end,
     keys = {
     	--切换撤销树窗口的显示与隐藏。

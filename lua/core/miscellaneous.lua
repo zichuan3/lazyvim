@@ -1,25 +1,25 @@
 local utils = require "core.utils"
 
-local config_path = string.gsub(vim.fn.stdpath "config", "\\", "/")
+--local config_path = string.gsub(vim.fn.stdpath "config", "\\", "/")
 
-local win32yank_path = "D:\\APP\\Scoop\\apps\\win32yank\\current\\win32yank.exe"
-local clip_cmd = win32yank_path .. " -i --crlf"
--- 配置 TextYankPost 自动命令
-if vim.fn.has("win32") or vim.fn.has("wsl") then
-    vim.api.nvim_create_autocmd("TextYankPost", {
-        callback = function()
-            if vim.v.event.operator == "y" then
-                -- 获取复制内容并传递给 win32yank
-                local content = vim.fn.getreg('"')
-                -- 使用系统命令写入剪贴板
-                vim.fn.system(clip_cmd, content)
-            end
-        end,
-    })
-else
-    -- 其他系统（如 macOS/Linux）直接使用系统剪贴板
-    vim.cmd("set clipboard+=unnamedplus")
-end
+--local win32yank_path = "D:\\APP\\Scoop\\apps\\win32yank\\current\\win32yank.exe"
+--local clip_cmd = win32yank_path .. " -i --crlf"
+---- 配置 TextYankPost 自动命令
+--if vim.fn.has("win32") or vim.fn.has("wsl") then
+--    vim.api.nvim_create_autocmd("TextYankPost", {
+--        callback = function()
+--            if vim.v.event.operator == "y" then
+--                -- 获取复制内容并传递给 win32yank
+--                local content = vim.fn.getreg('"')
+--                -- 使用系统命令写入剪贴板
+--                vim.fn.system(clip_cmd, content)
+--            end
+--        end,
+--    })
+--else
+--    -- 其他系统（如 macOS/Linux）直接使用系统剪贴板
+--    vim.cmd("set clipboard+=unnamedplus")
+--end
 
 
 -- Automatic switch to root directory
