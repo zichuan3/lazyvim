@@ -78,17 +78,25 @@ lsp = {
     pyright = {
         formatter = "black",
         setup = {
-            -- 指定 Python 解释器路径（可选，根据你的环境修改）
-            cmd = { "pyright-langserver", "--stdio" },
+             --指定 Python 解释器路径（可选，根据你的环境修改）
+            --cmd = { "pyright-langserver", "--stdio" },
             settings = {
                 python = {
                     analysis = {
-                        typeCheckingMode = "basic", -- 或 "strict"
+                        typeCheckingMode = "basic", -- 基础检查或 "strict"
                         autoSearchPaths = true,
+                        diagnosticMode = "openFilesOnly", -- 仅检查打开的文件
                         useLibraryCodeForTypes = true,
                     },
+                    formatting = {
+		                    provider = "black", -- 使用 black 格式化
+		                },
                 },
             },
+            on_init = function(client)
+		            client.server_capabilities.documentFormattingProvider = false -- 交由 formatter 处理
+		            return true
+		        end,
             -- 确保 LSP 能找到 Python 环境（如虚拟环境）
             on_attach = function(client, bufnr)
                 -- 其他自定义逻辑（如自动补全映射）

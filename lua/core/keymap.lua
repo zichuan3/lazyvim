@@ -167,8 +167,8 @@ Zichuan.keymap.general = {
     -- 打开资源管理器
     open_file_manager = { "n", "<leader>e", ":Lex 30<cr>", opts },
     -- 缓存区的文件跳转
-    buffer_open_next = { "n", "H", ":bnext<CR>", opts },
-    buffer_open_pre = { "n", "L", ":bprevious<CR>", opts },
+    buffer_open_next = { "n", "<S-l>", ":bnext<CR>", opts },
+    buffer_open_pre = { "n", "<S-h>", ":bprevious<CR>", opts },
 
     -- 上下移动行
     move_line_down1 = { "n", "<A-j>", ":execute 'move .+' . v:count1<cr>==", { desc = "Move Down" } },
@@ -188,8 +188,8 @@ Zichuan.keymap.general = {
     cmd_end = { "c", "<C-e>", "<End>", opts },
 
     -- insert 模式下，跳到行首行尾
-    insert_home = { "i", "<C-h>", "<ESC>I", opts },
-    insert_end = { "i", "<C-l>", "<ESC>A", opts },
+    insert_home = { "i", "<C-a>", "<ESC>I", opts },
+    insert_end = { "i", "<C-e>", "<ESC>A", opts },
 
     -- 把下一行的移动到本行来
     join_lines = { { "n", "v" }, "J", join_lines },

@@ -109,20 +109,20 @@ config.dashboard = {
     end,
 }
 -- 通知集成
-config.fidget = {
-    "j-hui/fidget.nvim",
-    event = "VeryLazy",
-    opts = {
-        notification = {
-            override_vim_notify = true,
-            window = {
-                x_padding = 2,
-                align = "top",
-            },
-        },
-        integration = {},
-    },
-}
+--config.fidget = {
+--    "j-hui/fidget.nvim",
+--    event = "VeryLazy",
+--    opts = {
+--        notification = {
+--            override_vim_notify = true,
+--            window = {
+--                x_padding = 2,
+--                align = "top",
+--            },
+--        },
+--        integration = {},
+--    },
+--}
 
 -- git状态
 config.gitsigns = {
@@ -197,7 +197,7 @@ config["nvim-treesitter"] = {
     opts = {
       -- stylua: ignore start
       ensure_installed = {
-        "bash", "c", "cpp", "css", "html", "javascript", "json", "lua", "markdown",
+        "bash", "c", "cpp", "css", "html", "javascript","java", "json", "lua", "markdown",
         "markdown_inline", "python", "toml", "vim", "vimdoc",
       },
         -- stylua: ignore end
@@ -277,9 +277,8 @@ config.telescope = {
         "nvim-lua/plenary.nvim",
         {
             "nvim-telescope/telescope-fzf-native.nvim",
-            build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && "
-                .. "cmake --build build --config Release && "
-                .. "cmake --install build --prefix build",
+            build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
+						cond = vim.fn.executable('cmake') == 1,  -- 确保 cmake 存在
         },
     },
     -- ensure that other plugins that use telescope can function properly
@@ -357,13 +356,104 @@ config.undotree = {
     keys = {
         --切换撤销树窗口的显示与隐藏。
         { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
-        -- 重置撤销树，将当前状态设为新的起始点。
-        { "<leader>ur", "<Cmd>UndotreeReset<CR>", desc = "Reset Undo Tree", silent = true },
-        --向前移动到下一个撤销点（重做操作）。
-        { "<leader>un", "<Cmd>UndotreeNext<CR>", desc = "Next Undo Node", silent = true },
-        --向后移动到上一个撤销点（撤销操作）。
-        { "<leader>up", "<Cmd>UndotreePrevious<CR>", desc = "Previous Undo Node", silent = true },
     },
+}
+
+-- 在多个文件中搜索、替换
+config["grug-far"] = {
+		"MagicDuck/grug-far.nvim",
+		cmd = "GrugFar",
+		opts = {
+			headerMaxWidth = 80
+		},
+		keys = {
+    {
+      "<leader>sr",
+      function()
+        local grug = require("grug-far")
+        local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
+        grug.open({
+          transient = true,
+          prefills = {
+            filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+          },
+        })
+      end,
+      mode = { "n", "v" },
+      desc = "Search and Replace",
+    },
+  },
+}
+
+-- 快速查找
+config.flash = {
+	"folke/flash.nvim",
+  event = "VeryLazy",
+  vscode = true,
+  ---@type Flash.Config
+  opts = {},
+  -- stylua: ignore
+  keys = {
+    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+    { "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+  },
+}
+
+-- messages, cmdline and the popupmenu.
+config.noice = {
+	"folke/noice.nvim",
+  event = "VeryLazy",
+  opts = {
+    lsp = {
+      override = {
+        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        ["vim.lsp.util.stylize_markdown"] = true,
+        ["cmp.entry.get_documentation"] = true,
+      },
+    },
+    routes = {
+      {
+        filter = {
+          event = "msg_show",
+          any = {
+            { find = "%d+L, %d+B" },
+            { find = "; after #%d+" },
+            { find = "; before #%d+" },
+          },
+        },
+        view = "mini",
+      },
+    },
+    presets = {
+      bottom_search = true,
+      command_palette = true,
+      long_message_to_split = true,
+    },
+  },
+  -- stylua: ignore
+  keys = {
+    { "<leader>sn", "", desc = "+noice"},
+    { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
+    { "<leader>snl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
+    { "<leader>snh", function() require("noice").cmd("history") end, desc = "Noice History" },
+    { "<leader>sna", function() require("noice").cmd("all") end, desc = "Noice All" },
+    { "<leader>snd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
+    { "<leader>snt", function() require("noice").cmd("pick") end, desc = "Noice Picker (Telescope/FzfLua)" },
+    { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
+    { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
+  },
+  config = function(_, opts)
+    -- HACK: noice shows messages from before it was enabled,
+    -- but this is not ideal when Lazy is installing plugins,
+    -- so clear the messages in this case.
+    if vim.o.filetype == "lazy" then
+      vim.cmd([[messages clear]])
+    end
+    require("noice").setup(opts)
+  end,
 }
 
 config["which-key"] = {
@@ -392,6 +482,7 @@ config["which-key"] = {
         spec = {
             { "<leader>l", group = "+lsp" },
             { "<leader>u", group = "+utils" },
+            { "<leader>s", group = "search" },
         },
         win = {
             border = "single",
