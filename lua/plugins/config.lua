@@ -108,22 +108,6 @@ config.dashboard = {
         })
     end,
 }
--- 通知集成
---config.fidget = {
---    "j-hui/fidget.nvim",
---    event = "VeryLazy",
---    opts = {
---        notification = {
---            override_vim_notify = true,
---            window = {
---                x_padding = 2,
---                align = "top",
---            },
---        },
---        integration = {},
---    },
---}
-
 -- git状态
 config.gitsigns = {
     "lewis6991/gitsigns.nvim",
@@ -278,7 +262,7 @@ config.telescope = {
         {
             "nvim-telescope/telescope-fzf-native.nvim",
             build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-						cond = vim.fn.executable('cmake') == 1,  -- 确保 cmake 存在
+            cond = vim.fn.executable("cmake") == 1, -- 确保 cmake 存在
         },
     },
     -- ensure that other plugins that use telescope can function properly
@@ -361,37 +345,37 @@ config.undotree = {
 
 -- 在多个文件中搜索、替换
 config["grug-far"] = {
-		"MagicDuck/grug-far.nvim",
-		cmd = "GrugFar",
-		opts = {
-			headerMaxWidth = 80
-		},
-		keys = {
-    {
-      "<leader>sr",
-      function()
-        local grug = require("grug-far")
-        local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
-        grug.open({
-          transient = true,
-          prefills = {
-            filesFilter = ext and ext ~= "" and "*." .. ext or nil,
-          },
-        })
-      end,
-      mode = { "n", "v" },
-      desc = "Search and Replace",
+    "MagicDuck/grug-far.nvim",
+    cmd = "GrugFar",
+    opts = {
+        headerMaxWidth = 80,
     },
-  },
+    keys = {
+        {
+            "<leader>sr",
+            function()
+                local grug = require("grug-far")
+                local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
+                grug.open({
+                    transient = true,
+                    prefills = {
+                        filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+                    },
+                })
+            end,
+            mode = { "n", "v" },
+            desc = "Search and Replace",
+        },
+    },
 }
 
 -- 快速查找
 config.flash = {
-	"folke/flash.nvim",
-  event = "VeryLazy",
-  vscode = true,
-  ---@type Flash.Config
-  opts = {},
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    vscode = true,
+    ---@type Flash.Config
+    opts = {},
   -- stylua: ignore
   keys = {
     { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
@@ -404,35 +388,35 @@ config.flash = {
 
 -- messages, cmdline and the popupmenu.
 config.noice = {
-	"folke/noice.nvim",
-  event = "VeryLazy",
-  opts = {
-    lsp = {
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        ["vim.lsp.util.stylize_markdown"] = true,
-        ["cmp.entry.get_documentation"] = true,
-      },
-    },
-    routes = {
-      {
-        filter = {
-          event = "msg_show",
-          any = {
-            { find = "%d+L, %d+B" },
-            { find = "; after #%d+" },
-            { find = "; before #%d+" },
-          },
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+        lsp = {
+            override = {
+                ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                ["vim.lsp.util.stylize_markdown"] = true,
+                ["cmp.entry.get_documentation"] = true,
+            },
         },
-        view = "mini",
-      },
+        routes = {
+            {
+                filter = {
+                    event = "msg_show",
+                    any = {
+                        { find = "%d+L, %d+B" },
+                        { find = "; after #%d+" },
+                        { find = "; before #%d+" },
+                    },
+                },
+                view = "mini",
+            },
+        },
+        presets = {
+            bottom_search = true,
+            command_palette = true,
+            long_message_to_split = true,
+        },
     },
-    presets = {
-      bottom_search = true,
-      command_palette = true,
-      long_message_to_split = true,
-    },
-  },
   -- stylua: ignore
   keys = {
     { "<leader>sn", "", desc = "+noice"},
@@ -445,15 +429,15 @@ config.noice = {
     { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
     { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
   },
-  config = function(_, opts)
-    -- HACK: noice shows messages from before it was enabled,
-    -- but this is not ideal when Lazy is installing plugins,
-    -- so clear the messages in this case.
-    if vim.o.filetype == "lazy" then
-      vim.cmd([[messages clear]])
-    end
-    require("noice").setup(opts)
-  end,
+    config = function(_, opts)
+        -- HACK: noice shows messages from before it was enabled,
+        -- but this is not ideal when Lazy is installing plugins,
+        -- so clear the messages in this case.
+        if vim.o.filetype == "lazy" then
+            vim.cmd([[messages clear]])
+        end
+        require("noice").setup(opts)
+    end,
 }
 
 config["which-key"] = {
