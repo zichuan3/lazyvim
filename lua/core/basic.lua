@@ -95,6 +95,9 @@ g.netrw_mouse = 2
 -- 内置的netrw文件浏览树形展示
 g.netrw_liststyle = 3
 
+--- 高亮组
+vim.api.nvim_set_hl(0, "FlashLabel", { link = "Comment" })
+
 vim.api.nvim_create_autocmd("TermOpen", {
     callback = function()
         vim.wo.number = false

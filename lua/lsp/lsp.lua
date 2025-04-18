@@ -2,6 +2,19 @@ local lsp = {}
 
 -- For instructions on configuration, see official wiki:
 -- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+
+-- 提取公共配置
+local css_family = {
+  validate = true,
+  lint = css_lint -- 使用预先定义好的lint配置
+}
+
+local default_flags = {
+  allow_incremental_sync = true,
+  debounce_text_changes = 150
+}
+
+
 lsp = {
     ["bash-language-server"] = {
         formatter = "shfmt",
@@ -11,30 +24,10 @@ lsp = {
         formatter = "prettier",
         setup = {
             settings = {
-                css = {
-                    validate = true,
-                    lint = {
-                        unknownAtRules = "ignore",
-                    },
-                },
-                less = {
-                    validate = true,
-                    lint = {
-                        unknownAtRules = "ignore",
-                    },
-                },
-                scss = {
-                    validate = true,
-                    lint = {
-                        unknownAtRules = "ignore",
-                    },
-                },
+                css = css_family,
+                less = css_family,
+                scss = css_family,
             },
-        },
-    },
-    ["emmet-ls"] = {
-        setup = {
-            filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
         },
     },
     ["html-lsp"] = {
@@ -50,12 +43,13 @@ lsp = {
                 Lua = {
                     runtime = {
                         version = "LuaJIT",
-                        path = (function()
-                            local runtime_path = vim.split(package.path, ";")
-                            table.insert(runtime_path, "lua/?.lua")
-                            table.insert(runtime_path, "lua/?/init.lua")
-                            return runtime_path
-                        end)(),
+                        path = vim.list_extend(
+                        	vim.split(package.path, ";"),
+                        	{
+										        vim.fn.stdpath("config").."/lua/?.lua",
+										        vim.fn.stdpath("config").."/lua/?/init.lua"
+										      }
+										    )
                     },
                     diagnostics = {
                         globals = { "vim" },
@@ -94,7 +88,8 @@ lsp = {
                 },
             },
             on_init = function(client)
-		            client.server_capabilities.documentFormattingProvider = false -- 交由 formatter 处理
+		            client.server_capabilities.documentFormattingProvider = false
+      					client.server_capabilities.documentRangeFormattingProvider = false
 		            return true
 		        end,
             -- 确保 LSP 能找到 Python 环境（如虚拟环境）
@@ -111,7 +106,7 @@ lsp = {
         formatter = "prettier",
         setup = {
             single_file_support = true,
-            flags = lsp.flags,
+            flags = default_flags,
             on_attach = function(client)
                 if #vim.lsp.get_clients({ name = "denols" }) > 0 then
                     client.stop()

@@ -124,6 +124,17 @@ config.gitsigns = {
                 changedelete = { text = "~" },
                 untracked = { text = "┆" },
             },
+            signcolumn = true,  -- 自动显示 signcolumn
+						preview_config = {
+						  border = "rounded",
+						  style = "minimal",
+						  relative = "cursor",
+						},
+            performance = {
+						  count_timeout = 500,  -- 超时时间（ms）
+						  debounce_delay = 50,  -- 延迟（ms）
+						  mode = "diff",        -- 使用 diff 模式优化
+						},
         })
     end,
 }
@@ -134,7 +145,7 @@ config.lualine = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     event = "User ZichuanLoad",
     main = "lualine",
-    opts = {
+      opts = {
         options = {
             theme = "auto",
             component_separators = { left = "", right = "" },
@@ -142,6 +153,7 @@ config.lualine = {
             disabled_filetypes = { "diff" },
         },
         sections = {
+        		lualine_a = { "mode" },
             lualine_b = { "branch", "diff" },
             lualine_c = {
                 "filename",
@@ -254,6 +266,29 @@ config.surround = {
     opts = {},
     event = "User ZichuanLoad",
 }
+
+config.undotree = {
+    "mbbill/undotree",
+    config = function()
+        -- 基础设置
+        vim.g.undotree_WindowLayout = 3 -- 窗口布局：3 表示底部显示
+        vim.g.undotree_TreeNodeShape = "◈"  -- 树节点形状
+        vim.g.undotree_DiffpanelHeight = 10    -- 差异面板高度
+        vim.g.undotree_ShortIndicators = 1     -- 紧凑模式
+        vim.g.undotree_SetFocusToActiveWindow = 1 -- 切换回编辑窗口时自动聚焦
+        vim.g.undotree_SwitchBufferOnUndo = 1 -- 撤销时切换到正确缓冲区
+
+        -- 持久化撤销配置undofile = true已在前面配置
+        vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
+        local undodir_path = vim.o.undodir
+        vim.fn.mkdir(undodir_path, "p")
+    end,
+    keys = {
+        --切换撤销树窗口的显示与隐藏。
+        { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
+        { "<leader>uR", "<cmd>UndotreeRefresh<CR>", desc = "Refresh Undo Tree" },
+    },
+}
 -- 一个高度可扩展的列表模糊查找器
 config.telescope = {
     "nvim-telescope/telescope.nvim",
@@ -262,17 +297,27 @@ config.telescope = {
         {
             "nvim-telescope/telescope-fzf-native.nvim",
             build = "make",
-                cond = function()
-                    return vim.fn.executable("make") == 1
+            cond = function()
+                return vim.fn.executable("make") == 1
             end,
         },
-        "debugloop/telescope-undo.nvim", -- 新增撤销树扩展
     },
     -- ensure that other plugins that use telescope can function properly
     cmd = "Telescope",
     event = "VimEnter", -- 添加事件触发以提高加载效率
     opts = function ()
     	local actions = require("telescope.actions")
+    	local function find_command()
+	      if 1 == vim.fn.executable("rg") then
+	        return { "rg", "--files", "--color", "never", "-g", "!.git" }
+	      elseif 1 == vim.fn.executable("fd") then
+	        return { "fd", "--type", "f", "--color", "never", "-exclude", ".git" }
+	      elseif 1 == vim.fn.executable("where") then
+	        return { "where", "/r", ".", "*" }
+       	else
+          return { "find", ".", "-type", "f" }
+	      end
+	    end
     	return {
             defaults = {
                 initial_mode = "normal",
@@ -285,7 +330,11 @@ config.telescope = {
                         ["<C-c>"] = actions.close,
                         ["<C-u>"] = actions.preview_scrolling_up,
                         ["<C-d>"] = actions.preview_scrolling_down,
-                        ["<CR>"] = actions.select_default + actions.center, -- 添加居中动作
+                        ["<CR>"] = 
+                        function(prompt_bufnr)
+						              actions.select_default(prompt_bufnr)
+						              actions.center(prompt_bufnr)
+						            end, -- 添加居中动作
                     },
                 },
                 preview = {
@@ -296,44 +345,43 @@ config.telescope = {
                 dynamic_preview_title = true, -- 动态预览标题
                 path_display = { "smart" }, -- 更智能的路径显示
                 winblend = 15, -- 全局窗口透明度
-                layout_strategy = "horizontal", -- 默认布局策略
+                layout_strategy = "flex", -- 默认布局策略
                 layout_config = {
+                		flex = {
+                        flip_columns = 120,
+                    },
                     height = 0.95,
                     width = 0.95,
                     preview_cutoff = 120,
                 },
                 file_ignore_patterns = {
-                        "node_modules/", "%.cache", "%.log", "tmp/*",
-                        "%.idea", "%.vscode", "%.history", "%.class",
-                        "%.o", "%.so", "%.swp", "%.bak" -- 添加更多忽略模式
+                        "node_modules/.*", "venv/.*", "%.git/.*","%.cache/.*",
+                        "%.log", "*.tmp","%.swp", "%.bak" -- 添加更多忽略模式
                 },
+                color_devicons = true,-- 启用图标
+                file_sorter = require("telescope.sorters").get_fzy_sorter,-- 使用 fzy 排序算法
             },
             pickers = {
                 find_files = {
-                    find_command = {
-                        "rg",
-                        "--files",
-                        "--hidden",
-                        "--no-ignore-vcs",
-                        "--glob", "!.git/*",
-                        "--glob", "!build/*",
-                        "--glob", "!%.idea"
-                    },
-                    
+                    find_command = find_command,
                     follow = true, -- 跟踪符号链接
                     hidden = true, -- 明确显示隐藏文件
                 },
                 live_grep = {
                     additional_args = function(opts)
-                        return { "--hidden", "--smart-case", "--no-ignore-vcs" }
+                        return { "--hidden", "--smart-case", "--no-ignore" }
                     end,
-                    theme = "dropdown", -- 使用下拉主题
+                    theme = "ivy", -- 使用下拉主题
                     disable_coordinates = true, -- 提升性能
+                    layout_strategy = "vertical",
                 },
                 buffers = {
                     sort_lastused = true, -- 按最后使用时间排序
                     ignore_current_buffer = true, -- 忽略当前 buffer
                     previewer = false, -- 提升性能
+                    mappings = {
+                        i = { ["<C-d>"] = "delete_buffer" },
+                    },
                 },
             },
             extensions = {
@@ -342,10 +390,7 @@ config.telescope = {
                     override_generic_sorter = true,
                     override_file_sorter = true,
                     case_mode = "smart_case",
-                },
-                undo = { -- 撤销树配置
-                    use_delta = true,
-                    side_by_side = true,
+                    layout = { window = { width = 0.9, height = 0.8 } },
                 },
             },
         }
@@ -354,15 +399,17 @@ config.telescope = {
         local telescope = require("telescope")
         telescope.setup(opts)
         pcall(telescope.load_extension,"fzf")
-        pcall(telescope.load_extension,"undo")
     end,
     keys = {
         { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true }, -- 查找文件
         { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
+        { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- 最近的命令
         { "<leader>b", ":Telescope buffers<CR>", desc = "Toggle buffers" }, -- 切换缓冲区
   			{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
-  			{ "<leader>uu", "<cmd>Telescope undo<CR>", desc = "Undo Tree" },
+  			{ "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" },-- 查询帮助文档
+  			{ "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" },-- 查看寄存器
+  			{ "<leader>ld", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" },-- 查看诊断信息
     },
 }
 
@@ -396,10 +443,9 @@ config["grug-far"] = {
 config.flash = {
   "folke/flash.nvim",
   event = "VeryLazy",
-  ---@type Flash.Config
   opts = {
   	search = {
-      mode = "fuzzy",  -- 支持 fuzzy/regex/exact 模式
+      mode = "regex",  -- 支持 fuzzy/regex/exact 模式
       max_length = 10, -- 限制最大搜索长度
       exclude = {      -- 排除不需要搜索的区域
         "notify",
@@ -416,7 +462,7 @@ config.flash = {
       style = "inline",     -- 标签显示风格 (inline/overlay)
       rainbow = {
         enabled = true,     -- 彩虹色标签
-        shade = 5,          -- 颜色梯度
+        shade = 10,          -- 颜色梯度
       },
       uppercase = false,    -- 禁用大写标签
       format = function(opts)
@@ -439,11 +485,12 @@ config.flash = {
         multi_line = false, -- 单行模式更高效
       },
       treesitter = {
-        labels = "abcdefghijklmnopqrstuvwxyz", -- 自定义标签序列
-        search = { type = "comment" },         -- 限制为注释内容
+        labels ="asdfghjkl", -- 自定义标签序列
+        search = { type = {"comment","string"} },   -- 限制为注释内容和字符串
       },
       remote_op = {
         restore = true,     -- 保留远程操作状态
+        keep_cursor = true,
       },
     },
     -- 自定义提示
@@ -454,8 +501,10 @@ config.flash = {
         relative = "editor",
         width = 40,
         height = 1,
-        row = -1,    -- 底部显示
+        row = vim.o.lines - 1,
         col = 0,
+        anchor = "NW",
+        winblend = 10,
       },
     },
   },
@@ -465,8 +514,6 @@ config.flash = {
     { "gs", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
     { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
     { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-
-    { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
   },
 }
 
@@ -487,18 +534,39 @@ config.noice = {
                 filter = {
                     event = "msg_show",
                     any = {
-                        { find = "%d+L, %d+B" },
-                        { find = "; after #%d+" },
-                        { find = "; before #%d+" },
+                      { find = "%d+L, %d+B" },  -- 匹配行数和字节数
+							        { find = "; after #%d+" },  -- 匹配操作后的编号
+							        { find = "; before #%d+" }, -- 匹配操作前的编号
+							        { find = "E488: Trailing characters" },  -- 典型错误
                     },
                 },
                 view = "mini",
             },
+            -- 忽略特定错误
+			      {
+			        filter = {
+			          event = "msg_show",
+			          any = {
+			            { find = "E475: Invalid argument" },
+			          },
+			        },
+			        opts = { skip = true },  -- 直接忽略
+			      },
         },
         presets = {
             bottom_search = true,
             command_palette = true,
             long_message_to_split = true,
+            notify = {
+			        enabled = true,
+			        view = "notify",
+			        opts = {
+			          enter = true,
+			          timeout = 5000,
+			          max_width = 0.5,
+			          max_height = 0.5,
+			        },
+			      },  -- 启用通知优化
         },
     },
   -- stylua: ignore
@@ -514,9 +582,9 @@ config.noice = {
         -- HACK: noice shows messages from before it was enabled,
         -- but this is not ideal when Lazy is installing plugins,
         -- so clear the messages in this case.
-        if vim.o.filetype == "lazy" then
-            vim.cmd([[messages clear]])
-        end
+        if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
+				  vim.cmd([[messages clear]])
+				end
         require("noice").setup(opts)
     end,
 }
@@ -547,7 +615,7 @@ config["which-key"] = {
         spec = {
             { "<leader>l", group = "+lsp" },
             { "<leader>u", group = "+utils" },
-            { "<leader>n", group = "notice" },
+            { "<leader>n", group = "+notice" },
         },
         win = {
             border = "single",
