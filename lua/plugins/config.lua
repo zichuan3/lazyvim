@@ -182,7 +182,7 @@ config["nvim-treesitter"] = {
       -- stylua: ignore start
       ensure_installed = {
         "bash", "c", "cpp", "css", "html", "javascript","java", "json", "lua", "markdown",
-        "markdown_inline", "python", "toml", "vim", "vimdoc",
+        "markdown_inline", "python", "toml", "vim", "vimdoc","html","csv","ini","sql","xml"
       },
         -- stylua: ignore end
         highlight = {
@@ -261,85 +261,108 @@ config.telescope = {
         "nvim-lua/plenary.nvim",
         {
             "nvim-telescope/telescope-fzf-native.nvim",
-            build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-            cond = vim.fn.executable("cmake") == 1, -- 确保 cmake 存在
+            build = "make",
+                cond = function()
+                    return vim.fn.executable("make") == 1
+            end,
         },
+        "debugloop/telescope-undo.nvim", -- 新增撤销树扩展
     },
     -- ensure that other plugins that use telescope can function properly
     cmd = "Telescope",
-    opts = {
-        defaults = {
-            initial_mode = "insert",
-            mappings = {
-                i = {
-                    ["<C-j>"] = "move_selection_next",
-                    ["<C-k>"] = "move_selection_previous",
-                    ["<C-n>"] = "cycle_history_next",
-                    ["<C-p>"] = "cycle_history_prev",
-                    ["<C-c>"] = "close",
-                    ["<C-u>"] = "preview_scrolling_up",
-                    ["<C-d>"] = "preview_scrolling_down",
-                    ["<CR>"] = "select_default",
+    event = "VimEnter", -- 添加事件触发以提高加载效率
+    opts = function ()
+    	local actions = require("telescope.actions")
+    	return {
+            defaults = {
+                initial_mode = "normal",
+                mappings = {
+                    i = {
+                        ["<C-j>"] = actions.move_selection_next,
+                        ["<C-k>"] = actions.move_selection_previous,
+                        ["<C-n>"] = actions.cycle_history_next,
+                        ["<C-p>"] = actions.cycle_history_prev,
+                        ["<C-c>"] = actions.close,
+                        ["<C-u>"] = actions.preview_scrolling_up,
+                        ["<C-d>"] = actions.preview_scrolling_down,
+                        ["<CR>"] = actions.select_default + actions.center, -- 添加居中动作
+                    },
+                },
+                preview = {
+                    timeout = 300, -- 更快的预览响应
+                    msg_bg = "DiagnosticInfo",
+                    treesitter = true, -- 启用语法高亮
+                },
+                dynamic_preview_title = true, -- 动态预览标题
+                path_display = { "smart" }, -- 更智能的路径显示
+                winblend = 15, -- 全局窗口透明度
+                layout_strategy = "horizontal", -- 默认布局策略
+                layout_config = {
+                    height = 0.95,
+                    width = 0.95,
+                    preview_cutoff = 120,
+                },
+                file_ignore_patterns = {
+                        "node_modules/", "%.cache", "%.log", "tmp/*",
+                        "%.idea", "%.vscode", "%.history", "%.class",
+                        "%.o", "%.so", "%.swp", "%.bak" -- 添加更多忽略模式
                 },
             },
-            preview = {
-                timeout = 500,
-                msg_bg = "NONE",
+            pickers = {
+                find_files = {
+                    find_command = {
+                        "rg",
+                        "--files",
+                        "--hidden",
+                        "--no-ignore-vcs",
+                        "--glob", "!.git/*",
+                        "--glob", "!build/*",
+                        "--glob", "!%.idea"
+                    },
+                    
+                    follow = true, -- 跟踪符号链接
+                    hidden = true, -- 明确显示隐藏文件
+                },
+                live_grep = {
+                    additional_args = function(opts)
+                        return { "--hidden", "--smart-case", "--no-ignore-vcs" }
+                    end,
+                    theme = "dropdown", -- 使用下拉主题
+                    disable_coordinates = true, -- 提升性能
+                },
+                buffers = {
+                    sort_lastused = true, -- 按最后使用时间排序
+                    ignore_current_buffer = true, -- 忽略当前 buffer
+                    previewer = false, -- 提升性能
+                },
             },
-        },
-        pickers = {
-            find_files = {
-                find_command = { "rg", "--files", "--hidden", "--no-ignore", "--glob", "!.git/*" },
-                file_ignore_patterns = { "node_modules", "%.cache" },
-                winblend = 10,
-                layout_config = { height = 0.8 },
+            extensions = {
+                fzf = {
+                    fuzzy = true,
+                    override_generic_sorter = true,
+                    override_file_sorter = true,
+                    case_mode = "smart_case",
+                },
+                undo = { -- 撤销树配置
+                    use_delta = true,
+                    side_by_side = true,
+                },
             },
-            live_grep = {
-                winblend = 0,
-                additional_args = function()
-                    return { "--hidden" }
-                end,
-            },
-        },
-        extensions = {
-            fzf = {
-                fuzzy = true,
-                override_generic_sorter = true,
-                override_file_sorter = true,
-                case_mode = "smart_case",
-                layout = { horizontal = { prompt_position = "top" } },
-            },
-        },
-    },
+        }
+    end,
     config = function(_, opts)
         local telescope = require("telescope")
         telescope.setup(opts)
-        telescope.load_extension("fzf")
+        pcall(telescope.load_extension,"fzf")
+        pcall(telescope.load_extension,"undo")
     end,
     keys = {
         { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true }, -- 查找文件
         { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
-    },
-}
-
-config.undotree = {
-    "mbbill/undotree",
-    config = function()
-        -- 基础设置
-        vim.g.undotree_WindowLayout = 3 -- 窗口布局：3 表示底部显示
-        vim.g.undotree_TreeNodeShape = "-" -- 树节点形状
-        vim.g.undotree_SetFocusToActiveWindow = 1 -- 切换回编辑窗口时自动聚焦
-        vim.g.undotree_SwitchBufferOnUndo = 1 -- 撤销时切换到正确缓冲区
-
-        -- 持久化撤销配置undofile = true已在前面配置
-        vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
-        local undodir_path = vim.o.undodir
-        vim.fn.mkdir(undodir_path, "p")
-    end,
-    keys = {
-        --切换撤销树窗口的显示与隐藏。
-        { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
+        { "<leader>b", ":Telescope buffers<CR>", desc = "Toggle buffers" }, -- 切换缓冲区
+  			{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
+  			{ "<leader>uu", "<cmd>Telescope undo<CR>", desc = "Undo Tree" },
     },
 }
 
@@ -352,7 +375,7 @@ config["grug-far"] = {
     },
     keys = {
         {
-            "<leader>sr",
+            "<leader>r",
             function()
                 local grug = require("grug-far")
                 local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
@@ -371,17 +394,78 @@ config["grug-far"] = {
 
 -- 快速查找
 config.flash = {
-    "folke/flash.nvim",
-    event = "VeryLazy",
-    vscode = true,
-    ---@type Flash.Config
-    opts = {},
+  "folke/flash.nvim",
+  event = "VeryLazy",
+  ---@type Flash.Config
+  opts = {
+  	search = {
+      mode = "fuzzy",  -- 支持 fuzzy/regex/exact 模式
+      max_length = 10, -- 限制最大搜索长度
+      exclude = {      -- 排除不需要搜索的区域
+        "notify",
+        "noice",
+        "cmp_menu",
+        "flash_prompt",
+        function(win)
+          return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree"
+        end,
+      },
+    },
+    -- 界面优化配置
+    label = {
+      style = "inline",     -- 标签显示风格 (inline/overlay)
+      rainbow = {
+        enabled = true,     -- 彩虹色标签
+        shade = 5,          -- 颜色梯度
+      },
+      uppercase = false,    -- 禁用大写标签
+      format = function(opts)
+        return {
+          { opts.match.label,"FlashLabel" }  -- 自定义高亮组
+        }
+      end,
+    },
+    -- 性能优化
+    jump = {
+      nohlsearch = true,    -- 跳转后取消高亮
+      autojump = false,     -- 防止意外跳转
+      save_registers = true,-- 保存寄存器内容
+    },
+     -- 高级模式配置
+    modes = {
+      char = {
+        enabled = true,     -- 启用字符模式
+        jump_labels = true, -- 显示跳转标签
+        multi_line = false, -- 单行模式更高效
+      },
+      treesitter = {
+        labels = "abcdefghijklmnopqrstuvwxyz", -- 自定义标签序列
+        search = { type = "comment" },         -- 限制为注释内容
+      },
+      remote_op = {
+        restore = true,     -- 保留远程操作状态
+      },
+    },
+    -- 自定义提示
+    prompt = {
+      enabled = true,
+      prefix = { { "FLASH: ", "FlashPromptPrefix" } }, -- 带图标的提示前缀
+      win_config = {
+        relative = "editor",
+        width = 40,
+        height = 1,
+        row = -1,    -- 底部显示
+        col = 0,
+      },
+    },
+  },
   -- stylua: ignore
   keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
-    { "S", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash jump" },
+    { "gs", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
     { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
     { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+
     { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
   },
 }
@@ -419,15 +503,12 @@ config.noice = {
     },
   -- stylua: ignore
   keys = {
-    { "<leader>sn", "", desc = "+noice"},
     { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
-    { "<leader>snl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
-    { "<leader>snh", function() require("noice").cmd("history") end, desc = "Noice History" },
-    { "<leader>sna", function() require("noice").cmd("all") end, desc = "Noice All" },
-    { "<leader>snd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
-    { "<leader>snt", function() require("noice").cmd("pick") end, desc = "Noice Picker (Telescope/FzfLua)" },
-    { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
-    { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
+    { "<leader>nl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
+    { "<leader>nh", function() require("noice").cmd("history") end, desc = "Noice History" },
+    { "<leader>na", function() require("noice").cmd("all") end, desc = "Noice All" },
+    { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
+    { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
   },
     config = function(_, opts)
         -- HACK: noice shows messages from before it was enabled,
@@ -466,7 +547,7 @@ config["which-key"] = {
         spec = {
             { "<leader>l", group = "+lsp" },
             { "<leader>u", group = "+utils" },
-            { "<leader>s", group = "search" },
+            { "<leader>n", group = "notice" },
         },
         win = {
             border = "single",
