@@ -111,31 +111,76 @@ config.dashboard = {
 -- git状态
 config.gitsigns = {
     "lewis6991/gitsigns.nvim",
-    event = "User ZichuanLoad",
+    event = {"User ZichuanLoad","BufReadPost"},
     main = "gitsigns",
-    opts = {},
-    config = function()
-        require("gitsigns").setup({
-            signs = {
-                add = { text = "+" },
-                change = { text = "│" },
-                delete = { text = "_" },
-                topdelete = { text = "‾" },
-                changedelete = { text = "~" },
-                untracked = { text = "┆" },
-            },
-            signcolumn = true,  -- 自动显示 signcolumn
-						preview_config = {
-						  border = "rounded",
-						  style = "minimal",
-						  relative = "cursor",
-						},
-            performance = {
-						  count_timeout = 500,  -- 超时时间（ms）
-						  debounce_delay = 50,  -- 延迟（ms）
-						  mode = "diff",        -- 使用 diff 模式优化
-						},
-        })
+    opts = {
+    	signs = {
+          add          = { text = "▎" },
+          change       = { text = "▎" },
+          delete       = { text = "▁" },
+          topdelete    = { text = "▔" },
+          changedelete = { text = "▒" },
+          untracked    = { text = "┆" }
+      },
+      signcolumn = true, -- 显示符号列
+      sign_priority = 6, -- 避免与其他插件冲突
+      numhl = false,     -- 已弃用，由高亮组替代
+  		linehl = false,    -- 已弃用，由高亮组替代
+      preview_config = {
+          border = 'single',
+			    style = 'minimal',
+			    relative = 'cursor',
+			    row = 0,
+			    col = 1
+      },
+      _threaded_diff = true,        -- 启用多线程差异计算
+      _refresh_staged_on_update = true,
+      watch_gitdir = {
+          interval = 2000, -- 文件监视间隔
+          follow_files = true
+      },
+      on_attach = function(bufnr)
+      		local function map(mode, l, r, opts)
+			      opts = opts or {}
+			      opts.buffer = bufnr
+			      vim.keymap.set(mode, l, r, opts)
+			    end
+      		local gitsigns = require('gitsigns')
+          -- 定义快捷键映射
+          -- 暂存当前/选中 hunk
+          map('n', '<leader>gs', gitsigns.stage_hunk,{desc = "stage the hunk"})
+          map('v', '<leader>gs', function() gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,{desc = "stage the hunk"})
+          -- 重置当前/选中 hunk
+          map('n', '<leader>gr', gitsigns.reset_hunk,{desc = "reset the hunk"})
+          map('v', '<leader>gr', function() gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,{desc = "reset the hunk"})
+	        -- 暂存，重置整个缓冲区
+          map('n', '<leader>hS', gitsigns.stage_buffer,{desc = "stage all buffer"})
+    			map('n', '<leader>hR', gitsigns.reset_buffer,{desc = "reset all buffer"})
+    			-- 预览hunk差异
+          map("n", "<leader>gp", gitsigns.preview_hunk,{ desc = "Preview hunk diff" })
+          -- 显示当前行blame信息
+          map("n", "<leader>gb", function() gitsigns.blame_line({ full = true }) end,{ desc = "show blame line" })
+			    -- 比较当前文件和工作区
+          map("n", "<leader>gd", gitsigns.diffthis, { desc = "Diff with workspace" })
+          -- 比较当前文件和父提交
+          map('n', '<leader>hD', function() gitsigns.diffthis('~') end,{ desc = "Diff with lastcommit" })
+      end,
+    },
+    config = function(_,opts)
+    		-- 定义新的高亮组
+        vim.api.nvim_set_hl(0, "GitSignsAddNr",    { link = "GitSignsAdd" })
+        vim.api.nvim_set_hl(0, "GitSignsChangeNr", { link = "GitSignsChange" })
+        vim.api.nvim_set_hl(0, "GitSignsDeleteNr", { link = "GitSignsDelete" })
+        vim.api.nvim_set_hl(0, "GitSignsTopdeleteNr", { link = "GitSignsDelete" })
+        vim.api.nvim_set_hl(0, "GitSignsChangedeleteNr", { link = "GitSignsChange" })
+        vim.api.nvim_set_hl(0, "GitSignsUntrackedNr", { link = "GitSignsUntracked" })
+
+        -- 基础高亮组定义（若未在colorscheme中定义）
+        vim.api.nvim_set_hl(0, "GitSignsAdd",    { fg = "#98C379", bold = true })
+        vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#E5C07B", bold = true })
+        vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#E06C75", bold = true })
+        vim.api.nvim_set_hl(0, "GitSignsUntracked", { fg = "#56B6C2", italic = true })
+        require("gitsigns").setup(opts)
     end,
 }
 
@@ -145,7 +190,7 @@ config.lualine = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     event = "User ZichuanLoad",
     main = "lualine",
-      opts = {
+    opts = {
         options = {
             theme = "auto",
             component_separators = { left = "", right = "" },
@@ -153,7 +198,7 @@ config.lualine = {
             disabled_filetypes = { "diff" },
         },
         sections = {
-        		lualine_a = { "mode" },
+            lualine_a = { "mode" },
             lualine_b = { "branch", "diff" },
             lualine_c = {
                 "filename",
@@ -272,9 +317,9 @@ config.undotree = {
     config = function()
         -- 基础设置
         vim.g.undotree_WindowLayout = 3 -- 窗口布局：3 表示底部显示
-        vim.g.undotree_TreeNodeShape = "◈"  -- 树节点形状
-        vim.g.undotree_DiffpanelHeight = 10    -- 差异面板高度
-        vim.g.undotree_ShortIndicators = 1     -- 紧凑模式
+        vim.g.undotree_TreeNodeShape = "◈" -- 树节点形状
+        vim.g.undotree_DiffpanelHeight = 10 -- 差异面板高度
+        vim.g.undotree_ShortIndicators = 1 -- 紧凑模式
         vim.g.undotree_SetFocusToActiveWindow = 1 -- 切换回编辑窗口时自动聚焦
         vim.g.undotree_SwitchBufferOnUndo = 1 -- 撤销时切换到正确缓冲区
 
@@ -303,22 +348,22 @@ config.telescope = {
         },
     },
     -- ensure that other plugins that use telescope can function properly
-    cmd = "Telescope",
-    event = "VimEnter", -- 添加事件触发以提高加载效率
-    opts = function ()
-    	local actions = require("telescope.actions")
-    	local function find_command()
-	      if 1 == vim.fn.executable("rg") then
-	        return { "rg", "--files", "--color", "never", "-g", "!.git" }
-	      elseif 1 == vim.fn.executable("fd") then
-	        return { "fd", "--type", "f", "--color", "never", "-exclude", ".git" }
-	      elseif 1 == vim.fn.executable("where") then
-	        return { "where", "/r", ".", "*" }
-       	else
-          return { "find", ".", "-type", "f" }
-	      end
-	    end
-    	return {
+    cmd = "Telescope", -- 按需加载
+    event = "BufRead", -- 文件读取后加载
+    opts = function()
+        local actions = require("telescope.actions")
+        local function find_command()
+            if 1 == vim.fn.executable("rg") then
+                return { "rg", "--files", "--color", "never", "-g", "!.git" }
+            elseif 1 == vim.fn.executable("fd") then
+                return { "fd", "--type", "f", "--color", "never", "-exclude", ".git" }
+            elseif 1 == vim.fn.executable("where") then
+                return { "where", "/r", ".", "*" }
+            else
+                return { "find", ".", "-type", "f" }
+            end
+        end
+        return {
             defaults = {
                 initial_mode = "normal",
                 mappings = {
@@ -330,11 +375,10 @@ config.telescope = {
                         ["<C-c>"] = actions.close,
                         ["<C-u>"] = actions.preview_scrolling_up,
                         ["<C-d>"] = actions.preview_scrolling_down,
-                        ["<CR>"] = 
-                        function(prompt_bufnr)
-						              actions.select_default(prompt_bufnr)
-						              actions.center(prompt_bufnr)
-						            end, -- 添加居中动作
+                        ["<CR>"] = function(prompt_bufnr)
+                            actions.select_default(prompt_bufnr)
+                            actions.center(prompt_bufnr)
+                        end, -- 添加居中动作
                     },
                 },
                 preview = {
@@ -345,21 +389,25 @@ config.telescope = {
                 dynamic_preview_title = true, -- 动态预览标题
                 path_display = { "smart" }, -- 更智能的路径显示
                 winblend = 15, -- 全局窗口透明度
-                layout_strategy = "flex", -- 默认布局策略
+                layout_strategy = "horizontal", -- 默认布局策略
                 layout_config = {
-                		flex = {
-                        flip_columns = 120,
-                    },
-                    height = 0.95,
-                    width = 0.95,
-                    preview_cutoff = 120,
+                    height = 0.8,
+                    width = 0.9,
+                    preview_width =0.5,
+                    preview_cutoff = 80,-- 预览触发的最小行数
                 },
                 file_ignore_patterns = {
-                        "node_modules/.*", "venv/.*", "%.git/.*","%.cache/.*",
-                        "%.log", "*.tmp","%.swp", "%.bak" -- 添加更多忽略模式
+                    "node_modules/.*",
+                    "venv/.*",
+                    "%.git/.*",
+                    "%.cache/.*",
+                    "%.log",
+                    "*.tmp",
+                    "%.swp",
+                    "%.bak", -- 添加更多忽略模式
                 },
-                color_devicons = true,-- 启用图标
-                file_sorter = require("telescope.sorters").get_fzy_sorter,-- 使用 fzy 排序算法
+                color_devicons = true, -- 启用图标
+                file_sorter = require("telescope.sorters").get_fzy_sorter, -- 使用 fzy 排序算法
             },
             pickers = {
                 find_files = {
@@ -373,7 +421,6 @@ config.telescope = {
                     end,
                     theme = "ivy", -- 使用下拉主题
                     disable_coordinates = true, -- 提升性能
-                    layout_strategy = "vertical",
                 },
                 buffers = {
                     sort_lastused = true, -- 按最后使用时间排序
@@ -385,12 +432,20 @@ config.telescope = {
                 },
             },
             extensions = {
+            		help_doc = {
+					        -- 调整帮助页面的窗口布局
+					        layout_strategy = "horizontal",
+					        layout_config = {
+					          height = 0.8,           -- 帮助页面高度
+					          width = 0.8,            -- 帮助页面宽度
+					          prompt_position = "top",-- 搜索框位置（可选）
+					        },
+					      },
                 fzf = {
                     fuzzy = true,
                     override_generic_sorter = true,
                     override_file_sorter = true,
                     case_mode = "smart_case",
-                    layout = { window = { width = 0.9, height = 0.8 } },
                 },
             },
         }
@@ -398,7 +453,7 @@ config.telescope = {
     config = function(_, opts)
         local telescope = require("telescope")
         telescope.setup(opts)
-        pcall(telescope.load_extension,"fzf")
+        pcall(telescope.load_extension, "fzf")
     end,
     keys = {
         { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true }, -- 查找文件
@@ -406,10 +461,10 @@ config.telescope = {
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
         { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- 最近的命令
         { "<leader>b", ":Telescope buffers<CR>", desc = "Toggle buffers" }, -- 切换缓冲区
-  			{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
-  			{ "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" },-- 查询帮助文档
-  			{ "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" },-- 查看寄存器
-  			{ "<leader>ld", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" },-- 查看诊断信息
+        --{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
+        { "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" }, -- 查询帮助文档
+        { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
+        { "<leader>dn", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" }, -- 查看诊断信息
     },
 }
 
@@ -441,73 +496,73 @@ config["grug-far"] = {
 
 -- 快速查找
 config.flash = {
-  "folke/flash.nvim",
-  event = "VeryLazy",
-  opts = {
-  	search = {
-      mode = "regex",  -- 支持 fuzzy/regex/exact 模式
-      max_length = 10, -- 限制最大搜索长度
-      exclude = {      -- 排除不需要搜索的区域
-        "notify",
-        "noice",
-        "cmp_menu",
-        "flash_prompt",
-        function(win)
-          return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree"
-        end,
-      },
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {
+        search = {
+            mode = "regex", -- 支持 fuzzy/regex/exact 模式
+            max_length = 10, -- 限制最大搜索长度
+            exclude = { -- 排除不需要搜索的区域
+                "notify",
+                "noice",
+                "cmp_menu",
+                "flash_prompt",
+                function(win)
+                    return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree"
+                end,
+            },
+        },
+        -- 界面优化配置
+        label = {
+            after = { 0, 0 },
+            style = "inline", -- 标签显示风格 (inline/overlay)
+            rainbow = {
+                enabled = true, -- 彩虹色标签
+                shade = 10, -- 颜色梯度
+            },
+            uppercase = false, -- 禁用大写标签
+            format = function(opts)
+                return {
+                    { opts.match.label, "FlashLabel" }, -- 自定义高亮组
+                }
+            end,
+        },
+        -- 性能优化
+        jump = {
+            nohlsearch = true, -- 跳转后取消高亮
+            autojump = false, -- 防止意外跳转
+            save_registers = true, -- 保存寄存器内容
+        },
+        -- 高级模式配置
+        modes = {
+            char = {
+                enabled = true, -- 启用字符模式
+                jump_labels = true, -- 显示跳转标签
+                multi_line = false, -- 单行模式更高效
+            },
+            treesitter = {
+                labels = "asdfghjkl", -- 自定义标签序列
+                search = { type = { "comment", "string" } }, -- 限制为注释内容和字符串
+            },
+            remote_op = {
+                restore = true, -- 保留远程操作状态
+                keep_cursor = true,
+            },
+        },
+        -- 自定义提示
+        prompt = {
+            enabled = true,
+            prefix = { { "FLASH: ", "FlashPromptPrefix" } }, -- 带图标的提示前缀
+            win_config = {
+                relative = "editor",
+                width = 40,
+                height = 1,
+                row = vim.o.lines - 1,
+                col = 0,
+                anchor = "NW",
+            },
+        },
     },
-    -- 界面优化配置
-    label = {
-      style = "inline",     -- 标签显示风格 (inline/overlay)
-      rainbow = {
-        enabled = true,     -- 彩虹色标签
-        shade = 10,          -- 颜色梯度
-      },
-      uppercase = false,    -- 禁用大写标签
-      format = function(opts)
-        return {
-          { opts.match.label,"FlashLabel" }  -- 自定义高亮组
-        }
-      end,
-    },
-    -- 性能优化
-    jump = {
-      nohlsearch = true,    -- 跳转后取消高亮
-      autojump = false,     -- 防止意外跳转
-      save_registers = true,-- 保存寄存器内容
-    },
-     -- 高级模式配置
-    modes = {
-      char = {
-        enabled = true,     -- 启用字符模式
-        jump_labels = true, -- 显示跳转标签
-        multi_line = false, -- 单行模式更高效
-      },
-      treesitter = {
-        labels ="asdfghjkl", -- 自定义标签序列
-        search = { type = {"comment","string"} },   -- 限制为注释内容和字符串
-      },
-      remote_op = {
-        restore = true,     -- 保留远程操作状态
-        keep_cursor = true,
-      },
-    },
-    -- 自定义提示
-    prompt = {
-      enabled = true,
-      prefix = { { "FLASH: ", "FlashPromptPrefix" } }, -- 带图标的提示前缀
-      win_config = {
-        relative = "editor",
-        width = 40,
-        height = 1,
-        row = vim.o.lines - 1,
-        col = 0,
-        anchor = "NW",
-        winblend = 10,
-      },
-    },
-  },
   -- stylua: ignore
   keys = {
     { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash jump" },
@@ -534,23 +589,37 @@ config.noice = {
                 filter = {
                     event = "msg_show",
                     any = {
-                      { find = "%d+L, %d+B" },  -- 匹配行数和字节数
-							        { find = "; after #%d+" },  -- 匹配操作后的编号
-							        { find = "; before #%d+" }, -- 匹配操作前的编号
-							        { find = "E488: Trailing characters" },  -- 典型错误
+                        { find = "%d+L, %d+B" }, -- 匹配行数和字节数
+                        { find = "; after #%d+" }, -- 匹配操作后的编号
+                        { find = "; before #%d+" }, -- 匹配操作前的编号
+                        { find = "E488: Trailing characters" }, -- 典型错误
                     },
                 },
                 view = "mini",
             },
+            {
+            	filter = {
+                    event = "msg_show",
+                    any = {
+                        { find = "Pyright" },  -- 捕获所有 Pyright 通知
+                        { find = "Using Python" }
+                    },
+                },
+                view = "notify",
+            },
             -- 忽略特定错误
-			      {
-			        filter = {
-			          event = "msg_show",
-			          any = {
-			            { find = "E475: Invalid argument" },
-			          },
-			        },
-			        opts = { skip = true },  -- 直接忽略
+            {
+                filter = {
+                    event = "msg_show",
+                    any = {
+                        { find = "E475: Invalid argument" },
+                    },
+                },
+                opts = { skip = true }, -- 直接忽略
+            },
+            {
+			        filter = { event = "msg_show" },
+			        view = "notify",
 			      },
         },
         presets = {
@@ -558,15 +627,15 @@ config.noice = {
             command_palette = true,
             long_message_to_split = true,
             notify = {
-			        enabled = true,
-			        view = "notify",
-			        opts = {
-			          enter = true,
-			          timeout = 5000,
-			          max_width = 0.5,
-			          max_height = 0.5,
-			        },
-			      },  -- 启用通知优化
+                enabled = true,
+                view = "notify",
+                opts = {
+                    enter = true,
+                    timeout = 5000,
+                    max_width = 0.5,
+                    max_height = 0.5,
+                },
+            }, -- 启用通知优化
         },
     },
   -- stylua: ignore
@@ -575,7 +644,7 @@ config.noice = {
     { "<leader>nl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
     { "<leader>nh", function() require("noice").cmd("history") end, desc = "Noice History" },
     { "<leader>na", function() require("noice").cmd("all") end, desc = "Noice All" },
-    { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
+    { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "clear all notice" },
     { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
   },
     config = function(_, opts)
@@ -583,8 +652,8 @@ config.noice = {
         -- but this is not ideal when Lazy is installing plugins,
         -- so clear the messages in this case.
         if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
-				  vim.cmd([[messages clear]])
-				end
+            vim.cmd([[messages clear]])
+        end
         require("noice").setup(opts)
     end,
 }
@@ -616,14 +685,20 @@ config["which-key"] = {
             { "<leader>l", group = "+lsp" },
             { "<leader>u", group = "+utils" },
             { "<leader>n", group = "+notice" },
+            { "<leader>g", group = "+git" },
+            { "<leader>d", group = "+diagnostic" },
         },
         win = {
             border = "single",
-            padding = { 1, 0, 1, 0 },
+            padding = { 0, 0, 0, 0 },
             wo = {
                 winblend = 0,
             },
             zindex = 1000,
+        },
+        layout = {
+            spacing = 0,             -- 减少分组之间的间距
+            align_type = "center",   -- 内容居中对齐
         },
         debounce = 100, -- 触发延迟 100ms
     },

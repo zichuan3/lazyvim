@@ -6,12 +6,14 @@ Zichuan.plugins["null-ls"] = {
     event = "User ZichuanLoad",
     opts = {
         debug = false,
+        timeout = 2000,  -- 设置超时避免卡顿
     },
     config = function(_, opts)
         local null_ls = require("null-ls")
         local formatting = null_ls.builtins.formatting
 
         local sources = {}
+        --  从lsp中获取格式化的工具
         for _, config in pairs(Zichuan.lsp) do
             if config.formatter then
                 local source = formatting[config.formatter]

@@ -2,6 +2,7 @@ Zichuan.plugins["blink-cmp"] = {
     "saghen/blink.cmp",
     dependencies = { "rafamadriz/friendly-snippets" },
     event = { "InsertEnter", "CmdlineEnter", "User ZichuanLoad" },
+    lazy = true,
     version = "*",
     opts = {
         appearance = {
@@ -26,11 +27,11 @@ Zichuan.plugins["blink-cmp"] = {
             },
             documentation = {
                 auto_show = true,
-                auto_show_delay_ms = 200,
+                auto_show_delay_ms = 500,
             },
             ghost_text = {
                 enabled = true,
-                show_without_selection = true,
+                show_without_selection = false,
             },
             list = {
                 selection = {
@@ -49,15 +50,20 @@ Zichuan.plugins["blink-cmp"] = {
             },
         },
         enabled = function()
-            local filetype_is_allowed = not vim.tbl_contains({ "grug-far", "TelescopePrompt" }, vim.bo.filetype)
-
-            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(0))
-            local filesize_is_allowed = true
-            if ok and stats then
-                ---@diagnostic disable-next-line: need-check-nil
-                filesize_is_allowed = stats.size < 100 * 1024
+        		local ft = vim.bo.filetype
+        		if vim.tbl_contains({ "grug-far", "TelescopePrompt" }, ft) then
+                return false
             end
-            return filetype_is_allowed and filesize_is_allowed
+
+            -- 仅检查文件名是否存在（避免频繁调用uv.fs_stat）
+            local fname = vim.api.nvim_buf_get_name(0)
+            if fname == "" then  -- 未保存的缓冲区
+                return true
+            end
+
+            local ok, stats = pcall(vim.uv.fs_stat, fname)
+
+            return ok and stats.size < 100 * 1024
         end,
         keymap = {
             preset = "none",
@@ -100,13 +106,11 @@ Zichuan.plugins["blink-cmp"] = {
                 local cmdwin_type = vim.fn.getcmdwintype()
                 if cmdwin_type == "/" or cmdwin_type == "?" then
                     return { "buffer" }
-                end
-                if cmdwin_type == ":" or cmdwin_type == "@" then
+                elseif cmdwin_type == ":" or cmdwin_type == "@" then
                     return { "cmdline" }
-                end
-
-                local source = { "lsp", "path", "snippets", "buffer" }
-                return source
+              	else
+               			return { "lsp", "path", "snippets", "buffer" }
+             		end
             end,
         },
     },

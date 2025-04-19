@@ -29,25 +29,29 @@ Zichuan.plugins.mason = {
 			        package:install()
 			      end
         end
-        -- 配置诊断和符号（仅初始化一次）
-		    vim.diagnostic.config({
-		      update_in_insert = true,
-		      severity_sort = true,
-		      virtual_text = true,
-		    })
 
+
+        -- 定义图标
 				local signs = {
 		      Error = symbols.Error,
 		      Warn = symbols.Warn,
 		      Hint = symbols.Hint,
 		      Info = symbols.Info,
 		    }
-
-		    for type, icon in pairs(signs) do
-		      local hl = "DiagnosticSign" .. type
-		      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-		    end
-
+        -- 配置诊断和符号（仅初始化一次）
+		    vim.diagnostic.config({
+		    	signs = {
+		    		active = {
+		    			Error = {text = signs.Error},
+				      Warn =  {text = signs.Warn},
+				      Hint =  {text = signs.Hint},
+				      Info =  {text = signs.Info},
+		    		}
+			    },
+		      update_in_insert = false,
+		      severity_sort = true,
+		      virtual_text = { spacing = 0 },
+		    })
 		    for lsp_name, config in pairs(Zichuan.lsp) do
 		      if not config.enabled then
 		        goto continue
@@ -73,12 +77,13 @@ Zichuan.plugins.mason = {
 		        local setup = config.setup
 		        if type(setup) == "function" then
 		          setup = setup()
-		        elseif not setup then
+	        	end
+		        if not setup then
 		          setup = {}
 		        end
 
 		        -- 合并 capabilities
-		        local blink_capabilities = require("blink.cmp").get_lsp_capabilities()
+		         local blink_capabilities = require("blink.cmp").get_lsp_capabilities()
             blink_capabilities.textDocument.foldingRange = {
                 dynamicRegistration = false,
                 lineFoldingOnly = true,
