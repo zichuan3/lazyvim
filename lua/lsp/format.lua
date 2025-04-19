@@ -6,7 +6,7 @@ Zichuan.plugins["null-ls"] = {
     event = "User ZichuanLoad",
     opts = {
         debug = false,
-        timeout = 2000,  -- 设置超时避免卡顿
+        timeout = 2000, -- 设置超时避免卡顿
     },
     config = function(_, opts)
         local null_ls = require("null-ls")

@@ -34,7 +34,9 @@ M.check = function()
         vim.health.start("ZichuanNvim Optional Dependencies for Windows and WSL")
 
         check(vim.fn.stdpath("config") .. "/bin/im-select.exe", function()
-            vim.health.warn("You need im-select.exe to enable automatic IME switching for Chinese. Consider downloading it at https://github.com/daipeihust/im-select/raw/master/win/out/x86/im-select.exe")
+            vim.health.warn(
+                "You need im-select.exe to enable automatic IME switching for Chinese. Consider downloading it at https://github.com/daipeihust/im-select/raw/master/win/out/x86/im-select.exe"
+            )
         end)
 
         --check(vim.fn.stdpath "config" .. "/bin/uclip.exe", function()

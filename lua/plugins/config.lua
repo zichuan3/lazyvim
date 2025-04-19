@@ -111,64 +111,72 @@ config.dashboard = {
 -- git状态
 config.gitsigns = {
     "lewis6991/gitsigns.nvim",
-    event = {"User ZichuanLoad","BufReadPost"},
+    event = { "User ZichuanLoad", "BufReadPost" },
     main = "gitsigns",
     opts = {
-    	signs = {
-          add          = { text = "▎" },
-          change       = { text = "▎" },
-          delete       = { text = "▁" },
-          topdelete    = { text = "▔" },
-          changedelete = { text = "▒" },
-          untracked    = { text = "┆" }
-      },
-      signcolumn = true, -- 显示符号列
-      sign_priority = 6, -- 避免与其他插件冲突
-      numhl = false,     -- 已弃用，由高亮组替代
-  		linehl = false,    -- 已弃用，由高亮组替代
-      preview_config = {
-          border = 'single',
-			    style = 'minimal',
-			    relative = 'cursor',
-			    row = 0,
-			    col = 1
-      },
-      _threaded_diff = true,        -- 启用多线程差异计算
-      _refresh_staged_on_update = true,
-      watch_gitdir = {
-          interval = 2000, -- 文件监视间隔
-          follow_files = true
-      },
-      on_attach = function(bufnr)
-      		local function map(mode, l, r, opts)
-			      opts = opts or {}
-			      opts.buffer = bufnr
-			      vim.keymap.set(mode, l, r, opts)
-			    end
-      		local gitsigns = require('gitsigns')
-          -- 定义快捷键映射
-          -- 暂存当前/选中 hunk
-          map('n', '<leader>gs', gitsigns.stage_hunk,{desc = "stage the hunk"})
-          map('v', '<leader>gs', function() gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,{desc = "stage the hunk"})
-          -- 重置当前/选中 hunk
-          map('n', '<leader>gr', gitsigns.reset_hunk,{desc = "reset the hunk"})
-          map('v', '<leader>gr', function() gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') }) end,{desc = "reset the hunk"})
-	        -- 暂存，重置整个缓冲区
-          map('n', '<leader>hS', gitsigns.stage_buffer,{desc = "stage all buffer"})
-    			map('n', '<leader>hR', gitsigns.reset_buffer,{desc = "reset all buffer"})
-    			-- 预览hunk差异
-          map("n", "<leader>gp", gitsigns.preview_hunk,{ desc = "Preview hunk diff" })
-          -- 显示当前行blame信息
-          map("n", "<leader>gb", function() gitsigns.blame_line({ full = true }) end,{ desc = "show blame line" })
-			    -- 比较当前文件和工作区
-          map("n", "<leader>gd", gitsigns.diffthis, { desc = "Diff with workspace" })
-          -- 比较当前文件和父提交
-          map('n', '<leader>hD', function() gitsigns.diffthis('~') end,{ desc = "Diff with lastcommit" })
-      end,
+        signs = {
+            add = { text = "▎" },
+            change = { text = "▎" },
+            delete = { text = "▁" },
+            topdelete = { text = "▔" },
+            changedelete = { text = "▒" },
+            untracked = { text = "┆" },
+        },
+        signcolumn = true, -- 显示符号列
+        sign_priority = 6, -- 避免与其他插件冲突
+        numhl = false, -- 已弃用，由高亮组替代
+        linehl = false, -- 已弃用，由高亮组替代
+        preview_config = {
+            border = "single",
+            style = "minimal",
+            relative = "cursor",
+            row = 0,
+            col = 1,
+        },
+        _threaded_diff = true, -- 启用多线程差异计算
+        _refresh_staged_on_update = true,
+        watch_gitdir = {
+            interval = 2000, -- 文件监视间隔
+            follow_files = true,
+        },
+        on_attach = function(bufnr)
+            local function map(mode, l, r, opts)
+                opts = opts or {}
+                opts.buffer = bufnr
+                vim.keymap.set(mode, l, r, opts)
+            end
+            local gitsigns = require("gitsigns")
+            -- 定义快捷键映射
+            -- 暂存当前/选中 hunk
+            map("n", "<leader>gs", gitsigns.stage_hunk, { desc = "stage the hunk" })
+            map("v", "<leader>gs", function()
+                gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+            end, { desc = "stage the hunk" })
+            -- 重置当前/选中 hunk
+            map("n", "<leader>gr", gitsigns.reset_hunk, { desc = "reset the hunk" })
+            map("v", "<leader>gr", function()
+                gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+            end, { desc = "reset the hunk" })
+            -- 暂存，重置整个缓冲区
+            map("n", "<leader>gS", gitsigns.stage_buffer, { desc = "stage all buffer" })
+            map("n", "<leader>gR", gitsigns.reset_buffer, { desc = "reset all buffer" })
+            -- 预览hunk差异
+            map("n", "<leader>gp", gitsigns.preview_hunk, { desc = "Preview hunk diff" })
+            -- 显示当前行blame信息
+            map("n", "<leader>gb", function()
+                gitsigns.blame_line({ full = true })
+            end, { desc = "show blame line" })
+            -- 比较当前文件和工作区
+            map("n", "<leader>gd", gitsigns.diffthis, { desc = "Diff with workspace" })
+            -- 比较当前文件和父提交
+            map("n", "<leader>gD", function()
+                gitsigns.diffthis("~")
+            end, { desc = "Diff with lastcommit" })
+        end,
     },
-    config = function(_,opts)
-    		-- 定义新的高亮组
-        vim.api.nvim_set_hl(0, "GitSignsAddNr",    { link = "GitSignsAdd" })
+    config = function(_, opts)
+        -- 定义新的高亮组
+        vim.api.nvim_set_hl(0, "GitSignsAddNr", { link = "GitSignsAdd" })
         vim.api.nvim_set_hl(0, "GitSignsChangeNr", { link = "GitSignsChange" })
         vim.api.nvim_set_hl(0, "GitSignsDeleteNr", { link = "GitSignsDelete" })
         vim.api.nvim_set_hl(0, "GitSignsTopdeleteNr", { link = "GitSignsDelete" })
@@ -176,7 +184,7 @@ config.gitsigns = {
         vim.api.nvim_set_hl(0, "GitSignsUntrackedNr", { link = "GitSignsUntracked" })
 
         -- 基础高亮组定义（若未在colorscheme中定义）
-        vim.api.nvim_set_hl(0, "GitSignsAdd",    { fg = "#98C379", bold = true })
+        vim.api.nvim_set_hl(0, "GitSignsAdd", { fg = "#98C379", bold = true })
         vim.api.nvim_set_hl(0, "GitSignsChange", { fg = "#E5C07B", bold = true })
         vim.api.nvim_set_hl(0, "GitSignsDelete", { fg = "#E06C75", bold = true })
         vim.api.nvim_set_hl(0, "GitSignsUntracked", { fg = "#56B6C2", italic = true })
@@ -393,8 +401,8 @@ config.telescope = {
                 layout_config = {
                     height = 0.8,
                     width = 0.9,
-                    preview_width =0.5,
-                    preview_cutoff = 80,-- 预览触发的最小行数
+                    preview_width = 0.5,
+                    preview_cutoff = 80, -- 预览触发的最小行数
                 },
                 file_ignore_patterns = {
                     "node_modules/.*",
@@ -432,15 +440,15 @@ config.telescope = {
                 },
             },
             extensions = {
-            		help_doc = {
-					        -- 调整帮助页面的窗口布局
-					        layout_strategy = "horizontal",
-					        layout_config = {
-					          height = 0.8,           -- 帮助页面高度
-					          width = 0.8,            -- 帮助页面宽度
-					          prompt_position = "top",-- 搜索框位置（可选）
-					        },
-					      },
+                help_doc = {
+                    -- 调整帮助页面的窗口布局
+                    layout_strategy = "horizontal",
+                    layout_config = {
+                        height = 0.8, -- 帮助页面高度
+                        width = 0.8, -- 帮助页面宽度
+                        prompt_position = "top", -- 搜索框位置（可选）
+                    },
+                },
                 fzf = {
                     fuzzy = true,
                     override_generic_sorter = true,
@@ -598,11 +606,11 @@ config.noice = {
                 view = "mini",
             },
             {
-            	filter = {
+                filter = {
                     event = "msg_show",
                     any = {
-                        { find = "Pyright" },  -- 捕获所有 Pyright 通知
-                        { find = "Using Python" }
+                        { find = "Pyright" }, -- 捕获所有 Pyright 通知
+                        { find = "Using Python" },
                     },
                 },
                 view = "notify",
@@ -618,9 +626,9 @@ config.noice = {
                 opts = { skip = true }, -- 直接忽略
             },
             {
-			        filter = { event = "msg_show" },
-			        view = "notify",
-			      },
+                filter = { event = "msg_show" },
+                view = "notify",
+            },
         },
         presets = {
             bottom_search = true,
@@ -697,8 +705,8 @@ config["which-key"] = {
             zindex = 1000,
         },
         layout = {
-            spacing = 0,             -- 减少分组之间的间距
-            align_type = "center",   -- 内容居中对齐
+            spacing = 0, -- 减少分组之间的间距
+            align_type = "center", -- 内容居中对齐
         },
         debounce = 100, -- 触发延迟 100ms
     },

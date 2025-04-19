@@ -50,17 +50,23 @@ Zichuan.plugins["blink-cmp"] = {
             },
         },
         enabled = function()
-        		local ft = vim.bo.filetype
-        		if vim.tbl_contains({ "grug-far", "TelescopePrompt" }, ft) then
+            local ft = vim.bo.filetype
+            if vim.tbl_contains({ "grug-far", "TelescopePrompt" }, ft) then
                 return false
             end
 
             -- 仅检查文件名是否存在（避免频繁调用uv.fs_stat）
             local fname = vim.api.nvim_buf_get_name(0)
-            if fname == "" then  -- 未保存的缓冲区
+            if fname == "" then -- 未保存的缓冲区(无文件名)
                 return true
             end
 
+            local exists = vim.fn.filereadable(fname) == 1
+            if not exists then
+                return true -- 文件不存在 → 允许补全
+            end
+
+            -- 检查文件是否存在（即是否已保存到磁盘）
             local ok, stats = pcall(vim.uv.fs_stat, fname)
 
             return ok and stats.size < 100 * 1024
@@ -108,9 +114,9 @@ Zichuan.plugins["blink-cmp"] = {
                     return { "buffer" }
                 elseif cmdwin_type == ":" or cmdwin_type == "@" then
                     return { "cmdline" }
-              	else
-               			return { "lsp", "path", "snippets", "buffer" }
-             		end
+                else
+                    return { "lsp", "path", "snippets", "buffer" }
+                end
             end,
         },
     },

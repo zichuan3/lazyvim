@@ -31,7 +31,7 @@ local terminal_command
 if not require("core.utils").is_windows then
     terminal_command = "<Cmd>split | terminal<CR>" -- let $SHELL decide the default shell
 else
-    local executables = { "bash", "pwsh", "bash", "cmd" }
+    local executables = { "bash", "cmd", "pwsh", "zsh" }
     for _, executable in require("core.utils").ordered_pair(executables) do
         if vim.fn.executable(executable) == 1 then
             terminal_command = "<Cmd>split term://" .. executable .. "<CR>"

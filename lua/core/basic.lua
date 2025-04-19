@@ -98,8 +98,7 @@ g.netrw_liststyle = 3
 --- 高亮组
 vim.api.nvim_set_hl(0, "FlashLabel", { link = "Comment" })
 
-
-collectgarbage("setpause", 150)   -- 默认100，调高可减少GC频率
+collectgarbage("setpause", 150) -- 默认100，调高可减少GC频率
 collectgarbage("setstepmul", 5000) -- 默认1000，延长触发GC的间隔
 
 vim.api.nvim_create_autocmd("TermOpen", {
