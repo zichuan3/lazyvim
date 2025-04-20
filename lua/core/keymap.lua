@@ -48,14 +48,17 @@ Zichuan.keymap.general = {
 
     -- 分割屏幕右和下
     new_windowterminal_right = { "n", "<leader>v", "<C-w>v", opts },
+    new_windowterminal_bottom = { "n", "<leader>s", "<C-w>s", opts },
     -- 调整窗体大小  ctrl+方向控制
     resize_window_up = { "n", "<C-Up>", ":resize +2<CR>", opts },
     resize_window_down = { "n", "<C-Down>", ":resize -2<CR>", opts },
     resize_window_left = { "n", "<C-Left>", ":vertical resize -2<CR>", opts },
     resize_window_right = { "n", "<C-Right>", ":vertical resize +2<CR>", opts },
-    -- 窗口左右跳动
+    -- 窗口上下左右跳动
     window_jump_left = { { "n", "t" }, "<C-h>", "<C-w>h" },
     window_jump_right = { { "n", "t" }, "<C-l>", "<C-w>l" },
+    window_jump_up = { { "n", "t" }, "<C-k>", "<C-w>k" },
+    window_jump_down = { { "n", "t" }, "<C-j>", "<C-w>j" },
     -- 打开资源管理器
     open_file_manager = { "n", "<leader>e", ":Lex 30<cr>", opts },
     -- 缓存区的文件跳转

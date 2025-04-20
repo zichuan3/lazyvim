@@ -2,7 +2,6 @@ Zichuan.plugins["blink-cmp"] = {
     "saghen/blink.cmp",
     dependencies = { "rafamadriz/friendly-snippets" },
     event = { "InsertEnter", "CmdlineEnter", "User ZichuanLoad" },
-    lazy = true,
     version = "*",
     opts = {
         appearance = {
@@ -31,7 +30,7 @@ Zichuan.plugins["blink-cmp"] = {
             },
             ghost_text = {
                 enabled = true,
-                show_without_selection = false,
+                show_without_selection = true,
             },
             list = {
                 selection = {
@@ -50,26 +49,15 @@ Zichuan.plugins["blink-cmp"] = {
             },
         },
         enabled = function()
-            local ft = vim.bo.filetype
-            if vim.tbl_contains({ "grug-far", "TelescopePrompt" }, ft) then
-                return false
+            local filetype_is_allowed = not vim.tbl_contains({ "grug-far", "TelescopePrompt" }, vim.bo.filetype)
+
+            local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(0))
+            local filesize_is_allowed = true
+            if ok and stats then
+                ---@diagnostic disable-next-line: need-check-nil
+                filesize_is_allowed = stats.size < 100 * 1024
             end
-
-            -- 仅检查文件名是否存在（避免频繁调用uv.fs_stat）
-            local fname = vim.api.nvim_buf_get_name(0)
-            if fname == "" then -- 未保存的缓冲区(无文件名)
-                return true
-            end
-
-            local exists = vim.fn.filereadable(fname) == 1
-            if not exists then
-                return true -- 文件不存在 → 允许补全
-            end
-
-            -- 检查文件是否存在（即是否已保存到磁盘）
-            local ok, stats = pcall(vim.uv.fs_stat, fname)
-
-            return ok and stats.size < 100 * 1024
+            return filetype_is_allowed and filesize_is_allowed
         end,
         keymap = {
             preset = "none",
@@ -118,6 +106,13 @@ Zichuan.plugins["blink-cmp"] = {
                     return { "lsp", "path", "snippets", "buffer" }
                 end
             end,
+            providers = {
+                snippets = {
+                    opts = {
+                        search_paths = { vim.fn.stdpath "config" .. "/lua/custom/snippets" },
+                    },
+                },
+            },
         },
     },
 }

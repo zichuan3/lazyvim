@@ -192,6 +192,77 @@ config.gitsigns = {
     end,
 }
 
+config.bufferline = {
+    "akinsho/bufferline.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
+    event = "User ZichuanLoad",
+    opts = {
+        options = {
+            close_command = ":BufferLineClose %d",
+            right_mouse_command = ":BufferLineClose %d",
+            separator_style = "thin",
+            offsets = {
+                {
+                    filetype = "netrw",
+                    text = "File Explorer",
+                    highlight = "Directory",
+                    text_align = "left",
+                },
+            },
+            diagnostics = "nvim_lsp",
+            diagnostics_indicator = function(_, _, diagnostics_dict, _)
+                local s = " "
+                for e, n in pairs(diagnostics_dict) do
+                    local sym = e == "error" and symbols.Error or (e == "warning" and symbols.Warn or symbols.Info)
+                    s = s .. n .. sym
+                end
+                return s
+            end,
+        },
+    },
+    config = function(_, opts)
+        vim.api.nvim_create_user_command("BufferLineClose", function(buffer_line_opts)
+            local bufnr = 1 * buffer_line_opts.args
+            local buf_is_modified = vim.api.nvim_get_option_value("modified", { buf = bufnr })
+
+            local bdelete_arg
+            if bufnr == 0 then
+                bdelete_arg = ""
+            else
+                bdelete_arg = " " .. bufnr
+            end
+            local command = "bdelete!" .. bdelete_arg
+            if buf_is_modified then
+                local option = vim.fn.confirm("File is not saved. Close anyway?", "&Yes\n&No", 2)
+                if option == 1 then
+                    vim.cmd(command)
+                end
+            else
+                vim.cmd(command)
+            end
+        end, { nargs = 1 })
+
+        require("bufferline").setup(opts)
+
+        require("nvim-web-devicons").setup {
+            override = {
+                typ = { icon = "󰰥", color = "#239dad", name = "typst" },
+            },
+        }
+    end,
+    keys = {
+        { "<leader>bc", "<Cmd>BufferLinePickClose<CR>", desc = "pick close", silent = true },
+        -- <esc> is added in case current buffer is the last
+        { "<leader>bd", "<Cmd>BufferLineClose 0<CR><ESC>", desc = "close current buffer", silent = true },
+        { "<leader>bh", "<Cmd>BufferLineCyclePrev<CR>", desc = "prev buffer", silent = true },
+        { "<leader>bl", "<Cmd>BufferLineCycleNext<CR>", desc = "next buffer", silent = true },
+        { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "close others", silent = true },
+        { "<leader>bp", "<Cmd>BufferLinePick<CR>", desc = "pick buffer", silent = true },
+        { "<leader>bm", "<Cmd>ZichuanRepeat BufferLineMoveNext<CR>", desc = "move right", silent = true },
+        { "<leader>bM", "<Cmd>ZichuanRepeat BufferLineMovePrev<CR>", desc = "move left", silent = true },
+    },
+}
+
 -- 一个用 Lua 编写的极快速且易于配置的 Neovim 状态行。
 config.lualine = {
     "nvim-lualine/lualine.nvim",
@@ -212,6 +283,12 @@ config.lualine = {
                 "filename",
             },
             lualine_x = {
+            	{
+                    function() return vim.fn.reg_recording() ~= "" and "REC: " .. vim.fn.reg_recording() or "" end,
+                    color = { fg = "#ff0000" },
+              },
+            },
+            lualine_y = {
                 "filesize",
                 {
                     "fileformat",
@@ -502,84 +579,6 @@ config["grug-far"] = {
     },
 }
 
--- 快速查找
-config.flash = {
-    "folke/flash.nvim",
-    event = "VeryLazy",
-    opts = {
-        search = {
-            mode = "regex", -- 支持 fuzzy/regex/exact 模式
-            max_length = 10, -- 限制最大搜索长度
-            exclude = { -- 排除不需要搜索的区域
-                "notify",
-                "noice",
-                "cmp_menu",
-                "flash_prompt",
-                function(win)
-                    return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree"
-                end,
-            },
-        },
-        -- 界面优化配置
-        label = {
-            after = { 0, 0 },
-            style = "inline", -- 标签显示风格 (inline/overlay)
-            rainbow = {
-                enabled = true, -- 彩虹色标签
-                shade = 10, -- 颜色梯度
-            },
-            uppercase = false, -- 禁用大写标签
-            format = function(opts)
-                return {
-                    { opts.match.label, "FlashLabel" }, -- 自定义高亮组
-                }
-            end,
-        },
-        -- 性能优化
-        jump = {
-            nohlsearch = true, -- 跳转后取消高亮
-            autojump = false, -- 防止意外跳转
-            save_registers = true, -- 保存寄存器内容
-        },
-        -- 高级模式配置
-        modes = {
-            char = {
-                enabled = true, -- 启用字符模式
-                jump_labels = true, -- 显示跳转标签
-                multi_line = false, -- 单行模式更高效
-            },
-            treesitter = {
-                labels = "asdfghjkl", -- 自定义标签序列
-                search = { type = { "comment", "string" } }, -- 限制为注释内容和字符串
-            },
-            remote_op = {
-                restore = true, -- 保留远程操作状态
-                keep_cursor = true,
-            },
-        },
-        -- 自定义提示
-        prompt = {
-            enabled = true,
-            prefix = { { "FLASH: ", "FlashPromptPrefix" } }, -- 带图标的提示前缀
-            win_config = {
-                relative = "editor",
-                width = 40,
-                height = 1,
-                row = vim.o.lines - 1,
-                col = 0,
-                anchor = "NW",
-            },
-        },
-    },
-  -- stylua: ignore
-  keys = {
-    { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash jump" },
-    { "gs", mode = { "n", "o", "x" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
-    { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
-    { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-  },
-}
-
 -- messages, cmdline and the popupmenu.
 config.noice = {
     "folke/noice.nvim",
@@ -589,7 +588,7 @@ config.noice = {
             override = {
                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
                 ["vim.lsp.util.stylize_markdown"] = true,
-                ["cmp.entry.get_documentation"] = true,
+                ["cmp.entry.get_documentation"] = false,
             },
         },
         routes = {
@@ -607,7 +606,7 @@ config.noice = {
             },
             {
                 filter = {
-                    event = "msg_show",
+                    event = "python_msg",
                     any = {
                         { find = "Pyright" }, -- 捕获所有 Pyright 通知
                         { find = "Using Python" },
@@ -634,14 +633,28 @@ config.noice = {
             bottom_search = true,
             command_palette = true,
             long_message_to_split = true,
+            lsp = {
+		            -- 签名帮助的窗口配置
+		            signature = {
+		                enabled = true,
+		                -- 窗口位置和大小
+		                -- 例如：显示在顶部，宽度占 50%
+		                opts = {
+		                    row = 10,        -- 窗口起始行
+		                    col = 8,         -- 窗口起始列
+		                    width = 0.3,     -- 窗口宽度（相对比例）
+		                    height = 8,      -- 窗口高度
+		                },
+		            },
+		        },
             notify = {
                 enabled = true,
                 view = "notify",
                 opts = {
                     enter = true,
                     timeout = 5000,
-                    max_width = 0.5,
-                    max_height = 0.5,
+                    max_width = 0.3,
+                    max_height = 0.3,
                 },
             }, -- 启用通知优化
         },
@@ -694,6 +707,7 @@ config["which-key"] = {
             { "<leader>u", group = "+utils" },
             { "<leader>n", group = "+notice" },
             { "<leader>g", group = "+git" },
+            { "<leader>b", group = "+buffer" },
             { "<leader>d", group = "+diagnostic" },
         },
         win = {

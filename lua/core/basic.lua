@@ -40,7 +40,7 @@ local options = {
     -- neovim 命令行中有更多空间用于显示消息
     cmdheight = 1,
     -- 显示补全菜单，不自动选中第一个补全项
-    completeopt = { "menuone", "noselect" },
+    --completeopt = { "menuone", "noselect" },
     -- ：允许光标在行首/行尾时，按左/右箭头跳到上一行或下一行
     whichwrap = "<,>,[,],h,l",
     -- 允许切换缓冲区时不保存当前缓冲区

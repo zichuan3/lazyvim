@@ -24,12 +24,6 @@ M.check = function()
         check(cmd)
     end
 
-    if vim.fn.executable("gzip") == 1 or vim.fn.executable("7z") == 1 then
-        vim.health.ok("One of gzip / 7zip is installed.")
-    else
-        vim.health.error("You must install one of gzip or 7zip.")
-    end
-
     if require("core.utils").is_windows or require("core.utils").is_wsl then
         vim.health.start("ZichuanNvim Optional Dependencies for Windows and WSL")
 
