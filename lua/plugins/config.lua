@@ -3,7 +3,6 @@
 local config = {}
 local symbols = Zichuan.symbols
 local config_root = string.gsub(vim.fn.stdpath("config") --[[@as string]], "\\", "/")
-local priority = { LOW = 100, MEDIUM = 200, HIGH = 615 }
 
 -- Add ZichuanLoad event
 -- If user starts neovim but does not edit a file, i.e., entering Dashboard directly, the ZichuanLoad event is hooked to the
@@ -198,18 +197,35 @@ config.bufferline = {
     event = "User ZichuanLoad",
     opts = {
         options = {
+            mode = "buffers", --使用缓冲区模式（显示所有打开的缓冲区）
+            numbers = "none", -- 不显示缓冲区编号
             close_command = ":BufferLineClose %d",
-            right_mouse_command = ":BufferLineClose %d",
+            right_mouse_command = ":BufferLineClose %d", -- 右键点击关闭缓冲区
+            left_trunc_marker = "", -- 左侧截断标记图标
+            right_trunc_marker = "", -- 右侧截断标记图标
             separator_style = "thin",
+            always_show_tabs = true, -- 总是显示标签页
             offsets = {
                 {
                     filetype = "netrw",
-                    text = "File Explorer",
+                    text = "Explorer",
                     highlight = "Directory",
                     text_align = "left",
                 },
             },
+            diagnostics_update_in_insert = false,
             diagnostics = "nvim_lsp",
+            enforce_regular_tabs = true, -- 强制使用常规标签页
+            custom_filter = function(buf_number)
+                -- 排除特定缓冲区（如终端）
+                local excluded = {
+                    "help",
+                    "terminal",
+                    "notify",
+                }
+                local buf_ft = vim.api.nvim_buf_get_option(buf_number, "filetype")
+                return not vim.tbl_contains(excluded, buf_ft)
+            end,
             diagnostics_indicator = function(_, _, diagnostics_dict, _)
                 local s = " "
                 for e, n in pairs(diagnostics_dict) do
@@ -244,11 +260,11 @@ config.bufferline = {
 
         require("bufferline").setup(opts)
 
-        require("nvim-web-devicons").setup {
+        require("nvim-web-devicons").setup({
             override = {
                 typ = { icon = "󰰥", color = "#239dad", name = "typst" },
             },
-        }
+        })
     end,
     keys = {
         { "<leader>bc", "<Cmd>BufferLinePickClose<CR>", desc = "pick close", silent = true },
@@ -283,10 +299,12 @@ config.lualine = {
                 "filename",
             },
             lualine_x = {
-            	{
-                    function() return vim.fn.reg_recording() ~= "" and "REC: " .. vim.fn.reg_recording() or "" end,
+                {
+                    function()
+                        return vim.fn.reg_recording() ~= "" and "REC: " .. vim.fn.reg_recording() or ""
+                    end,
                     color = { fg = "#ff0000" },
-              },
+                },
             },
             lualine_y = {
                 "filesize",
@@ -545,7 +563,6 @@ config.telescope = {
         { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
         { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- 最近的命令
-        { "<leader>b", ":Telescope buffers<CR>", desc = "Toggle buffers" }, -- 切换缓冲区
         --{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
         { "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" }, -- 查询帮助文档
         { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
@@ -583,6 +600,10 @@ config["grug-far"] = {
 config.noice = {
     "folke/noice.nvim",
     event = "VeryLazy",
+    dependencies = {
+        "MunifTanjim/nui.nvim",
+        "rcarriga/nvim-notify", -- 补充通知功能依赖
+    },
     opts = {
         lsp = {
             override = {
@@ -596,33 +617,21 @@ config.noice = {
                 filter = {
                     event = "msg_show",
                     any = {
-                        { find = "%d+L, %d+B" }, -- 匹配行数和字节数
-                        { find = "; after #%d+" }, -- 匹配操作后的编号
-                        { find = "; before #%d+" }, -- 匹配操作前的编号
-                        { find = "E488: Trailing characters" }, -- 典型错误
+                        { find = "^%d+L, %d+B$" }, -- 行首行尾精确匹配
+                        { find = "; after #%d+" },
+                        { find = "; before #%d+" },
                     },
                 },
                 view = "mini",
             },
             {
                 filter = {
-                    event = "python_msg",
-                    any = {
-                        { find = "Pyright" }, -- 捕获所有 Pyright 通知
-                        { find = "Using Python" },
-                    },
+                    event = "lsp_message",
+                    kind = "Diagnostic",
+                    ft = "python",
+                    find = "Pyright", -- 捕获所有 Pyright 通知
                 },
-                view = "notify",
-            },
-            -- 忽略特定错误
-            {
-                filter = {
-                    event = "msg_show",
-                    any = {
-                        { find = "E475: Invalid argument" },
-                    },
-                },
-                opts = { skip = true }, -- 直接忽略
+                view = "split",
             },
             {
                 filter = { event = "msg_show" },
@@ -630,31 +639,17 @@ config.noice = {
             },
         },
         presets = {
-            bottom_search = true,
-            command_palette = true,
+            bottom_search = false,
+            command_palette = false,
             long_message_to_split = true,
-            lsp = {
-		            -- 签名帮助的窗口配置
-		            signature = {
-		                enabled = true,
-		                -- 窗口位置和大小
-		                -- 例如：显示在顶部，宽度占 50%
-		                opts = {
-		                    row = 10,        -- 窗口起始行
-		                    col = 8,         -- 窗口起始列
-		                    width = 0.3,     -- 窗口宽度（相对比例）
-		                    height = 8,      -- 窗口高度
-		                },
-		            },
-		        },
             notify = {
                 enabled = true,
                 view = "notify",
                 opts = {
                     enter = true,
-                    timeout = 5000,
-                    max_width = 0.3,
-                    max_height = 0.3,
+                    timeout = 2000,
+                    max_width = 0.4,
+                    max_height = 0.4,
                 },
             }, -- 启用通知优化
         },
@@ -662,16 +657,13 @@ config.noice = {
   -- stylua: ignore
   keys = {
     { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
-    { "<leader>nl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
     { "<leader>nh", function() require("noice").cmd("history") end, desc = "Noice History" },
     { "<leader>na", function() require("noice").cmd("all") end, desc = "Noice All" },
     { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "clear all notice" },
     { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
   },
     config = function(_, opts)
-        -- HACK: noice shows messages from before it was enabled,
-        -- but this is not ideal when Lazy is installing plugins,
-        -- so clear the messages in this case.
+        -- 清除 Lazy 插件安装时的消息
         if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
             vim.cmd([[messages clear]])
         end
@@ -707,6 +699,7 @@ config["which-key"] = {
             { "<leader>u", group = "+utils" },
             { "<leader>n", group = "+notice" },
             { "<leader>g", group = "+git" },
+            { "<leader>w", group = "+split windows" },
             { "<leader>b", group = "+buffer" },
             { "<leader>d", group = "+diagnostic" },
         },

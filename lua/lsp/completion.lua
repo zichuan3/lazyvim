@@ -20,13 +20,37 @@ Zichuan.plugins["blink-cmp"] = {
                 ["<C-j>"] = { "select_next", "fallback" },
             },
         },
+        signature = {
+            enabled = false,
+            trigger = {
+                enabled = false,
+                show_on_trigger_character = true,
+                show_on_insert = false,
+                show_on_insert_on_trigger_character = false,
+            },
+            window = {
+                min_width = 1,
+                max_width = 50,
+                max_height = 5,
+                border = nil, -- Defaults to `vim.o.winborder` on nvim 0.11+ or 'padded' when not defined/<=0.10
+                winblend = 0,
+                winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+                scrollbar = false, -- Note that the gutter will be disabled when border ~= 'none'
+                -- Which directions to show the window,
+                -- falling back to the next direction when there's not enough space,
+                -- or another window is in the way
+                direction_priority = { "n", "s" },
+                -- Disable if you run into performance issues
+                treesitter_highlighting = true,
+                show_documentation = true,
+            },
+        },
         completion = {
             accept = {
                 auto_brackets = { enabled = true },
             },
             documentation = {
-                auto_show = true,
-                auto_show_delay_ms = 500,
+                auto_show = false,
             },
             ghost_text = {
                 enabled = true,
@@ -81,6 +105,7 @@ Zichuan.plugins["blink-cmp"] = {
             ["<S-Tab>"] = { "snippet_backward", "fallback" },
             ["<C-k>"] = { "select_prev", "fallback" },
             ["<C-j>"] = { "select_next", "fallback" },
+            ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
             ["<A-c>"] = {
                 -- DO NOT add "fallback" here!!!
                 -- It would cause the letter "c" to be inserted as well
@@ -92,8 +117,8 @@ Zichuan.plugins["blink-cmp"] = {
                     end
                 end,
             },
-            ["<C-d>"] = { "scroll_documentation_down", "fallback" },
-            ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+            --["<C-d>"] = { "scroll_documentation_down", "fallback" },
+            --["<C-u>"] = { "scroll_documentation_up", "fallback" },
         },
         sources = {
             default = function()
@@ -109,7 +134,7 @@ Zichuan.plugins["blink-cmp"] = {
             providers = {
                 snippets = {
                     opts = {
-                        search_paths = { vim.fn.stdpath "config" .. "/lua/custom/snippets" },
+                        search_paths = { vim.fn.stdpath("config") .. "/lua/custom/snippets" },
                     },
                 },
             },

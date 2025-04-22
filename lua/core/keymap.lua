@@ -45,10 +45,11 @@ local opts = { noremap = true, silent = true }
 Zichuan.keymap.general = {
     -- 设置visual模式下p不作用
     disable_visual_past = { "v", "p", '"_dP', opts },
+    show_lsp_document = { { "n", "i" }, "<C-K>", vim.lsp.buf.signature_help, { desc = "Signature Help" } },
 
     -- 分割屏幕右和下
-    new_windowterminal_right = { "n", "<leader>v", "<C-w>v", opts },
-    new_windowterminal_bottom = { "n", "<leader>s", "<C-w>s", opts },
+    new_windowterminal_right = { "n", "<leader>wv", "<C-w>v", opts },
+    new_windowterminal_bottom = { "n", "<leader>ws", "<C-w>s", opts },
     -- 调整窗体大小  ctrl+方向控制
     resize_window_up = { "n", "<C-Up>", ":resize +2<CR>", opts },
     resize_window_down = { "n", "<C-Down>", ":resize -2<CR>", opts },

@@ -11,17 +11,19 @@ Zichuan.plugins["null-ls"] = {
     config = function(_, opts)
         local null_ls = require("null-ls")
         local formatting = null_ls.builtins.formatting
-
-        local sources = {}
-        --  从lsp中获取格式化的工具
-        for _, config in pairs(Zichuan.lsp) do
-            if config.formatter then
-                local source = formatting[config.formatter]
-                sources[#sources + 1] = source
-            end
-        end
-
-        null_ls.setup(vim.tbl_deep_extend("keep", opts, { sources = sources }))
+        
+        null_ls.setup(
+        	vim.tbl_deep_extend("keep", opts, { 
+	        	sources = {
+			        	null_ls.builtins.formatting.shfmt, -- bash
+			          null_ls.builtins.formatting.prettier.with({
+			              filetypes = { "css", "html", "json" },
+			          }),
+			          null_ls.builtins.formatting.black,
+			          null_ls.builtins.formatting.stylua,
+	        	}
+        	})
+        )
     end,
     keys = {
         {

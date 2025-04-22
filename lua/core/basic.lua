@@ -108,6 +108,17 @@ vim.api.nvim_create_autocmd("TermOpen", {
     end,
 })
 
+-- 配置诊断和符号（仅初始化一次）
+vim.diagnostic.config({
+    update_in_insert = false,
+    float = { border = "rounded" },
+    virtual_text = {
+        spacing = 0,
+        source = "if_many", -- 仅显示多个诊断时的来源
+        severity = { min = vim.diagnostic.severity.WARN },
+    },
+})
+
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {
     once = true,
     callback = function()

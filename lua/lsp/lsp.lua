@@ -15,23 +15,14 @@ local css_family = {
 }
 
 local default_flags = {
-    allow_incremental_sync = nil,
-    debounce_text_changes = 250,
+    allow_incremental_sync = false,
+    debounce_text_changes = 200,
 }
 
-local common_setup = function(client, bufnr)
-    -- 禁用LSP的格式化能力，统一由null-ls处理
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-end
-
 lsp = {
-    ["bash-language-server"] = {
-        formatter = "shfmt",
-    },
+    bashls = {},
     clangd = {},
-    ["css-lsp"] = {
-        formatter = "prettier",
+    cssls = {
         setup = {
             settings = {
                 css = css_family,
@@ -40,15 +31,11 @@ lsp = {
             },
         },
     },
-    ["html-lsp"] = {
-        formatter = "prettier",
-    },
-    ["json-lsp"] = {
-        formatter = "prettier",
-    },
-    ["lua-language-server"] = {
+    html = {},
+    jsonls = {},
+    lua_ls = {
         enabled = true,
-        formatter = "stylua",
+        filetypes = { "lua" },
         setup = {
             settings = {
                 Lua = {
@@ -80,69 +67,55 @@ lsp = {
     },
     pyright = {
         enabled = true,
-        formatter = "black",
         setup = function()
-        	local get_python_path = function()
-              -- 优先检测常用虚拟环境目录
-              local venv_path = vim.fn.finddir("venv", ".;") or vim.fn.finddir(".venv", ".;")
-              if venv_path ~= "" then
-                  local python_bin = "Scripts/python.exe"
-                  local full_path = vim.fn.fnamemodify(venv_path, ":p") .. python_bin
-                  if vim.fn.filereadable(full_path) == 1 then
-                      return full_path
-                  end
-              end
+            local get_python_path = function()
+                -- 优先检测常用虚拟环境目录
+                local venv_paths = { "venv", ".venv" }
+                local python_bin = "Scripts/python.exe"
+                for _, path in ipairs(venv_paths) do
+                    local full_path = vim.fn.fnamemodify(path, ":p") .. python_bin
+                    if vim.fn.filereadable(full_path) == 1 then
+                        return full_path
+                    end
+                end
 
-              local conda_env = os.getenv("CONDA_DEFAULT_ENV")
-              if conda_env then
-                  return os.getenv("CONDA_PREFIX") .. "/python.exe"
-              end
+                local conda_env = os.getenv("CONDA_PREFIX")
+                if conda_env then
+                    return conda_env .. "\\python.exe"
+                end
 
-              return vim.fn.exepath("python") or vim.fn.exepath("python3") or "F:/python/python.exe"
-          end
-          -- 生成动态配置
-          local dynamic_settings = {
-              python = {
-                  pythonPath = get_python_path(),
-                  analysis = {
-                      typeCheckingMode = "basic",
-                      diagnosticMode = "openFilesOnly",
-                      useLibraryCodeForTypes = true,
-                      autoSearchPaths = true,
-                      diagnosticSeverityOverrides = {
-                          reportUnusedVariable = "warning", -- 降低未使用变量级别
-                          reportMissingImports = "none", -- 关闭缺失导入警告
-                      },
-                  },
-              },
-          }
-        	return {
-        		flags = default_flags,
-        		on_attach = function(client, bufnr)
-        				-- 显式声明服务器能力
-				        client.server_capabilities.signatureHelpProvider = {
-				          triggerCharacters = {"(", ","},
-				          retriggerCharacters = {")"}
-				        }
-                common_setup(client, bufnr)
-                -- 添加环境提示
-                vim.notify("[Pyright] Using Python: " .. dynamic_settings.python.pythonPath)
-            end,
-            settings = dynamic_settings,
-        	}
+                return vim.fn.exepath("python") or vim.fn.exepath("python3")
+            end
+            return {
+                flags = default_flags,
+                on_attach = function(client, bufnr) end,
+                settings = {
+                    python = {
+                        pythonPath = get_python_path(),
+                        analysis = {
+                            typeCheckingMode = "basic",
+                            autoSearchPaths = true,
+                            useLibrayCodeForTypes = true,
+                            diagnosticSeverityOverrides = {
+                                reportUnusedVariable = "warning", -- 降低未使用变量级别
+                                reportMissingImports = "none", -- 关闭缺失导入警告
+                            },
+                        },
+                    },
+                },
+            }
         end,
     },
-    rust = {
-        managed_by_plugin = true,
-    },
-    ["typescript-language-server"] = {
-        formatter = "prettier",
+    --rust = {
+    --    managed_by_plugin = true,
+    --},
+    ts_ls = {
         setup = {
             single_file_support = true,
             flags = default_flags,
-            on_attach = function(client)
+            on_new_config = function(new_config, _)
                 if #vim.lsp.get_clients({ name = "denols" }) > 0 then
-                    client.stop()
+                    new_config.enabled = false
                 end
             end,
         },
