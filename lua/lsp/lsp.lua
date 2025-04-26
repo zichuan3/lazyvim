@@ -34,7 +34,7 @@ lsp = {
     html = {},
     jsonls = {},
     lua_ls = {
-        enabled = true,
+        --enabled = true,
         filetypes = { "lua" },
         setup = {
             settings = {
@@ -65,50 +65,8 @@ lsp = {
             },
         },
     },
-    pyright = {
-        enabled = true,
-        setup = function()
-            local get_python_path = function()
-                -- 优先检测常用虚拟环境目录
-                local venv_paths = { "venv", ".venv" }
-                local python_bin = "Scripts/python.exe"
-                for _, path in ipairs(venv_paths) do
-                    local full_path = vim.fn.fnamemodify(path, ":p") .. python_bin
-                    if vim.fn.filereadable(full_path) == 1 then
-                        return full_path
-                    end
-                end
-
-                local conda_env = os.getenv("CONDA_PREFIX")
-                if conda_env then
-                    return conda_env .. "\\python.exe"
-                end
-
-                return vim.fn.exepath("python") or vim.fn.exepath("python3")
-            end
-            return {
-                flags = default_flags,
-                on_attach = function(client, bufnr) end,
-                settings = {
-                    python = {
-                        pythonPath = get_python_path(),
-                        analysis = {
-                            typeCheckingMode = "basic",
-                            autoSearchPaths = true,
-                            useLibrayCodeForTypes = true,
-                            diagnosticSeverityOverrides = {
-                                reportUnusedVariable = "warning", -- 降低未使用变量级别
-                                reportMissingImports = "none", -- 关闭缺失导入警告
-                            },
-                        },
-                    },
-                },
-            }
-        end,
+    ruff = {
     },
-    --rust = {
-    --    managed_by_plugin = true,
-    --},
     ts_ls = {
         setup = {
             single_file_support = true,

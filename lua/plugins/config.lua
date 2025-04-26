@@ -125,6 +125,19 @@ config.gitsigns = {
         sign_priority = 6, -- 避免与其他插件冲突
         numhl = false, -- 已弃用，由高亮组替代
         linehl = false, -- 已弃用，由高亮组替代
+        word_diff = false,--已启用，由高亮组替代
+        attach_to_untracked = true,
+        current_line_blame = false,
+        current_line_blame_opts = {
+            virt_text = true,
+            virt_text_pos = 'eol',
+            delay = 1000,
+            ignore_whitespace = false,
+        },
+        current_line_blame_formatter = '<author>,<author_time:%Y-%m-%d> - <summary>',
+        update_debounce = 100,
+        status_formatter = nil,
+        max_file_length = 40000,
         preview_config = {
             border = "single",
             style = "minimal",
@@ -287,7 +300,8 @@ config.lualine = {
     main = "lualine",
     opts = {
         options = {
-            theme = "auto",
+            icons_enabled = true,
+            theme = "tokyonight",
             component_separators = { left = "", right = "" },
             section_separators = { left = "", right = "" },
             disabled_filetypes = { "diff" },
@@ -296,7 +310,10 @@ config.lualine = {
             lualine_a = { "mode" },
             lualine_b = { "branch", "diff" },
             lualine_c = {
-                "filename",
+            		{
+	            		"filename",
+	                file_status = true,
+            		},
             },
             lualine_x = {
                 {
@@ -305,6 +322,7 @@ config.lualine = {
                     end,
                     color = { fg = "#ff0000" },
                 },
+                "progress",
             },
             lualine_y = {
                 "filesize",
@@ -563,7 +581,6 @@ config.telescope = {
         { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
         { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- 最近的命令
-        --{ "<leader>g", ":Telescope git_files<CR>", desc = "Search git manager files" }, -- 搜索 Git 管理的文件
         { "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" }, -- 查询帮助文档
         { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
         { "<leader>dn", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" }, -- 查看诊断信息
@@ -628,20 +645,20 @@ config.noice = {
                 filter = {
                     event = "lsp_message",
                     kind = "Diagnostic",
-                    ft = "python",
-                    find = "Pyright", -- 捕获所有 Pyright 通知
                 },
-                view = "split",
+                view = "mini",
+                opts = {lang = "python",replace = true}
             },
             {
                 filter = { event = "msg_show" },
-                view = "notify",
+                view = "mini",
             },
         },
         presets = {
-            bottom_search = false,
-            command_palette = false,
+            bottom_search = true,
+            command_palette = true,
             long_message_to_split = true,
+            lsp_doc_border = false,
             notify = {
                 enabled = true,
                 view = "notify",

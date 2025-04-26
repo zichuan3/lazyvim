@@ -28,7 +28,8 @@ local options = {
     colorcolumn = "80",
     -- Tab宽度为4，缩进宽度与tabstop一致，Tab转换为空格，自动插入适当缩进
     tabstop = 4,
-    shiftwidth = 0,
+    shiftwidth = 4,
+    softtabstop = 4,
     expandtab = true,
     smartindent = true,
     -- 搜索忽略大小写，搜索包含大写时自动区分大小写，禁用搜索结果高亮
@@ -40,7 +41,7 @@ local options = {
     -- neovim 命令行中有更多空间用于显示消息
     cmdheight = 1,
     -- 显示补全菜单，不自动选中第一个补全项
-    --completeopt = { "menuone", "noselect" },
+    completeopt = {"menu","menuone", "noselect" },
     -- ：允许光标在行首/行尾时，按左/右箭头跳到上一行或下一行
     whichwrap = "<,>,[,],h,l",
     -- 允许切换缓冲区时不保存当前缓冲区
