@@ -34,8 +34,6 @@ lsp = {
     html = {},
     jsonls = {},
     lua_ls = {
-        --enabled = true,
-        filetypes = { "lua" },
         setup = {
             settings = {
                 Lua = {
@@ -65,7 +63,49 @@ lsp = {
             },
         },
     },
+    pyright = {
+        setup = function()
+            return {
+                flags = default_flags,
+                on_attach = function(client, bufnr) end,
+                settings = {
+                    python = {
+                        analysis = {
+	                        	-- 关闭Pyright的诊断，但保留类型检查
+	                        diagnosticMode = "openFilesOnly",
+	                        diagnosticSeverityOverrides = {
+	                            -- 关闭Pyright的静态分析诊断
+	                            ["Pyflakes"] = "none",
+	                            ["Pylint"] = "none",
+	                            ["TypeChecking"] = "information"  -- 保留类型检查提示
+	                        },
+                        }
+                    },
+                    pyright = {
+								      -- 使用Ruff的导入组织功能
+								      disableOrganizeImports = true,
+								    },
+                },
+            }
+        end,
+    },
     ruff = {
+    	setup = {
+  			settings = {
+  				configurationPreference = "filesystemFirst",
+  				lineLength = 500,
+  				lint = {
+  					enable = true
+  				},
+  				format = {
+  					enable = true
+  				}
+  			},
+  			on_attach = function(client, bufnr)
+  				client.server_capabilities.hoverProvider = false -- 禁用Ruff的hover功能（如果不需要）
+  				client.server_capabilities.completionProvider = nil -- 禁用Ruff的代码完成（如果Pyright已提供）
+  			end,
+    	}
     },
     ts_ls = {
         setup = {

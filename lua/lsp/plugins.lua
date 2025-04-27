@@ -1,18 +1,13 @@
 local symbols = Zichuan.symbols
 
 local common_setup = function(client, bufnr)
+		client.server_capabilities.positionEncoding = { "utf-8" }
 		local nmap = function(keys, func, desc)
         if desc then
             desc = 'LSP: ' .. desc
         end
         vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
     end
-    -- 禁用LSP的格式化能力，统一由null-ls处理
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentRangeFormattingProvider = false
-    client.server_capabilities.codeActionProvider = true -- 启用代码动作
-    client.server_capabilities.codeLensProvider = true -- 启用代码透镜
-    
 		nmap("gD", vim.lsp.buf.declaration, "go declaration")
 		nmap("gd", vim.lsp.buf.definition, "go definition")
 		nmap("K", vim.lsp.buf.hover, "hover")

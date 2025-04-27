@@ -293,7 +293,7 @@ config.bufferline = {
 }
 
 -- 一个用 Lua 编写的极快速且易于配置的 Neovim 状态行。
-config.lualine = {
+config.lualine = { 
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     event = "User ZichuanLoad",
@@ -322,7 +322,7 @@ config.lualine = {
                     end,
                     color = { fg = "#ff0000" },
                 },
-                "progress",
+                { "progress", separator = " ", padding = { left = 1, right = 0 } },
             },
             lualine_y = {
                 "filesize",
@@ -626,10 +626,11 @@ config.noice = {
             override = {
                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
                 ["vim.lsp.util.stylize_markdown"] = true,
-                ["cmp.entry.get_documentation"] = false,
+                ["cmp.entry.get_documentation"] = false,-- 禁用 cmp 的文档窗口
             },
         },
         routes = {
+        		-- 过滤冗余的 Vim 内置消息
             {
                 filter = {
                     event = "msg_show",
@@ -637,22 +638,34 @@ config.noice = {
                         { find = "^%d+L, %d+B$" }, -- 行首行尾精确匹配
                         { find = "; after #%d+" },
                         { find = "; before #%d+" },
+                        { find = "E121: Undefined variable" },  -- 特定错误
+                        { find = "No information available"},
                     },
                 },
                 view = "mini",
             },
+            -- LSP 诊断信息增强
             {
                 filter = {
                     event = "lsp_message",
                     kind = "Diagnostic",
                 },
                 view = "mini",
-                opts = {lang = "python",replace = true}
+                opts = {
+	                lang = "python",
+	                replace = true,
+	                format = { "{message} ({source})", "Diagnostic" },  -- 自定义格式
+                },
             },
-            {
-                filter = { event = "msg_show" },
-                view = "mini",
-            },
+            -- 自动折叠冗长输出
+				    {
+				      filter = {
+				        event = "msg_show",
+				        min_height = 5,  -- 高度超过5行自动折叠
+				      },
+				      view = "split",
+				      opts = { enter = false },
+				    },
         },
         presets = {
             bottom_search = true,
@@ -667,10 +680,29 @@ config.noice = {
                     timeout = 2000,
                     max_width = 0.4,
                     max_height = 0.4,
+                    icons = {
+						          error = " ",      -- 自定义图标
+						          warn = " ",
+						          info = " ",
+						          debug = "",
+						          trace = "✎",
+						        },
                 },
             }, -- 启用通知优化
         },
     },
+    -- UI 增强
+  views = {
+    cmdline_popup = {
+      relative = "editor",   -- 相对于编辑器定位
+      border = "rounded",    -- 圆角边框
+      win_options = { winblend = 10 },  -- 半透明效果
+    },
+    popupmenu = {
+      row = 0.5, col = 0.5,  -- 居中显示
+      win_options = { winblend = 15 },
+    },
+  },
   -- stylua: ignore
   keys = {
     { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
@@ -679,13 +711,13 @@ config.noice = {
     { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "clear all notice" },
     { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
   },
-    config = function(_, opts)
-        -- 清除 Lazy 插件安装时的消息
-        if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
-            vim.cmd([[messages clear]])
-        end
-        require("noice").setup(opts)
-    end,
+  config = function(_, opts)
+      -- 清除 Lazy 插件安装时的消息
+      if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
+          vim.cmd([[messages clear]])
+      end
+      require("noice").setup(opts)
+  end,
 }
 
 config["which-key"] = {
