@@ -1,7 +1,6 @@
 local symbols = Zichuan.symbols
 
 local common_setup = function(client, bufnr)
-		client.server_capabilities.positionEncoding = { "utf-8" }
 		local nmap = function(keys, func, desc)
         if desc then
             desc = 'LSP: ' .. desc
