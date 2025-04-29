@@ -9,10 +9,15 @@ Zichuan.plugins["blink-cmp"] = {
         },
         cmdline = {
             completion = {
-                menu = {
-                    auto_show = true,
-                },
-            },
+							-- 自动显示补全窗口，仅在输入命令时显示菜单，而搜索或使用其他输入菜单时则不显示
+							menu = {
+								auto_show = function(ctx)
+									return vim.fn.getcmdtype() == ":"
+								end,
+							},
+							-- 不在当前行上显示所选项目的预览
+							ghost_text = { enabled = false },
+						},
             keymap = {
                 preset = "none",
                 ["<Tab>"] = { "accept" },
@@ -22,7 +27,8 @@ Zichuan.plugins["blink-cmp"] = {
         },
         completion = {
             documentation = {
-                auto_show = false,
+                auto_show = true,
+                auto_show_delay_ms = 2000
             },
             ghost_text = {
                 enabled = true,
@@ -58,15 +64,12 @@ Zichuan.plugins["blink-cmp"] = {
         end,
         keymap = {
             preset = "none",
-            ["<CR>"] = {
-            		"accept",
-                "snippet_forward",
-                "fallback",
-            },
-            ["<Tab>"] = {"select_next","fallback"},
-            ["<S-Tab>"] = { "select_prev", "fallback" },
-            ["<Up>"] = { "select_prev", "fallback" },
-            ["<Down>"] = { "select_next", "fallback" },
+            ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+            ["<CR>"] = { "accept","fallback"},
+            ["<Tab>"] = {"select_next", "snippet_forward","fallback"},
+            ["<S-Tab>"] = { "select_prev", "snippet_forward","fallback" },
+            ["<Up>"] = { "select_prev", "snippet_forward","fallback" },
+            ["<Down>"] = { "select_next", "snippet_forward","fallback" },
             ["<C-k>"] = { "show_signature", "hide_signature","fallback" },
             ["<C-d>"] = { "scroll_documentation_down", "fallback" },
             ["<C-u>"] = { "scroll_documentation_up", "fallback" },

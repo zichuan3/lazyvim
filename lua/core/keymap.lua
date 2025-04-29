@@ -60,8 +60,8 @@ Zichuan.keymap.general = {
     window_jump_right = { { "n", "t" }, "<C-l>", "<C-w>l" },
     window_jump_up = { { "n", "t" }, "<C-k>", "<C-w>k" },
     window_jump_down = { { "n", "t" }, "<C-j>", "<C-w>j" },
-    -- 打开资源管理器
-    open_file_manager = { "n", "<leader>e", ":Lex 30<cr>", opts },
+    -- 打开资源管理器,后续被nvim-tree取代
+    --open_file_manager = { "n", "<leader>e", ":Lex 30<cr>", opts },
     -- 缓存区的文件跳转
     buffer_open_next = { "n", "<S-l>", ":bnext<CR>", opts },
     buffer_open_pre = { "n", "<S-h>", ":bprevious<CR>", opts },

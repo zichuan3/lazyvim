@@ -24,7 +24,7 @@ Zichuan.lazy = {
                 "man",
                 "matchit",
                 "matchparen",
-                --"netrwPlugin",
+                "netrwPlugin",
                 "osc52",
                 "rplugin",
                 "shada",

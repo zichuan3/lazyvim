@@ -63,6 +63,8 @@ local options = {
     termguicolors = true,
     -- 简化提示信息，避免冗长消息。
     shortmess = vim.o.shortmess .. "s",
+    -- 随文件自动更改当前路径
+    autochdir = true,
     -- 限制补全菜单的最大高度为 16 行。
     pumheight = 16,
     -- 始终显示标签栏。
@@ -91,10 +93,13 @@ for k, v in pairs(options) do
     opt[k] = v
 end
 
-g.netrw_banner = 0
-g.netrw_mouse = 2
+--g.netrw_banner = 0
+--g.netrw_mouse = 2
 -- 内置的netrw文件浏览树形展示
-g.netrw_liststyle = 3
+--g.netrw_liststyle = 3
+
+g.loaded_netrw = 1
+g.loaded_netrwPlugin = 1
 
 --- 高亮组
 vim.api.nvim_set_hl(0, "FlashLabel", { link = "Comment" })
@@ -114,10 +119,11 @@ vim.diagnostic.config({
     update_in_insert = false,
     float = { border = "rounded" },
     virtual_text = {
-        spacing = 0,
+        spacing = 2,
         source = "if_many", -- 仅显示多个诊断时的来源
         severity = { min = vim.diagnostic.severity.WARN },
     },
+    virtual_lines = true
 })
 
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {
