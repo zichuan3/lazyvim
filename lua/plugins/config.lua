@@ -25,11 +25,16 @@ vim.api.nvim_create_autocmd("User", {
 config.snacks = {
 	"folke/snacks.nvim",
 	opts = {
-		indent = {
-      scope = { enabled = true },
-    },
-	}
-	
+		indent = { enabled = true },
+    input = { enabled = true },
+    notifier = { enabled = true },
+    scope = { enabled = true },
+    scroll = { enabled = true },
+    statuscolumn = { enabled = false }, -- we set this in options.lua
+    --toggle = { map = LazyVim.safe_keymap_set },
+    words = { enabled = true },
+    
+	},
 }
 
 -- 面板
@@ -53,26 +58,14 @@ config.dashboard = {
                 " ",
             },
             center = {
-                {
-                    icon = "  ",
-                    desc = "Lazy Profile",
-                    action = "Lazy profile",
-                },
-                {
-                    icon = "  ",
-                    desc = "Edit preferences   ",
-                    action = string.format("edit %s/lua/custom/init.lua", config_root),
-                },
-                {
-                    icon = "  ",
-                    desc = "Mason",
-                    action = "Mason",
-                },
-                {
-                    icon = "  ",
-                    desc = "About ZichuanNvim",
-                    action = "ZichuanAbout",
-                },
+            	{ icon = " ", key = "f", desc = "Find File", action = "Telescope find_files" },
+            	{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+            	{ icon = " ", key = "g", desc = "Find Text", action = ":Telescope live_grep" },
+            	{ icon = " ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
+            	{ icon = " ", key = "c", desc = "Config", action = string.format("edit %s/lua/custom/init.lua", config_root) },
+            	{ icon = " ", key = "m", desc = "Mason", action = "Mason"},
+            	{ icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+            	{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
             },
             footer = { "🧊 Hope that you enjoy using ZichuanNvim 😀😀😀" },
         },
@@ -197,14 +190,21 @@ config.bufferline = {
     event = "User ZichuanLoad",
     opts = {
         options = {
-            mode = "buffers", --使用缓冲区模式（显示所有打开的缓冲区）
-            numbers = "none", -- 不显示缓冲区编号
-            close_command = ":BufferLineClose %d",
-            right_mouse_command = ":BufferLineClose %d", -- 右键点击关闭缓冲区
-            left_trunc_marker = "", -- 左侧截断标记图标
-            right_trunc_marker = "", -- 右侧截断标记图标
-            separator_style = "thin",
-            always_show_tabs = true, -- 总是显示标签页
+            close_command = function(n) Snacks.bufdelete(n) end,
+            right_mouse_command = function(n) Snacks.bufdelete(n) end, -- 右键点击关闭缓冲区
+            diagnostics = "nvim_lsp",
+            always_show_bufferline = false,
+            diagnostics_indicator = function(_, _, diagnostics_dict, _)
+                local s = " "
+                for e, n in pairs(diagnostics_dict) do
+                    local sym = e == "error" and symbols.Error or (e == "warning" and symbols.Warn or symbols.Info)
+                    s = s .. n .. sym
+                end
+                return s
+            end,
+            --left_trunc_marker = "", -- 左侧截断标记图标
+            --right_trunc_marker = "", -- 右侧截断标记图标
+            --separator_style = "thin",
             offsets = {
                 {
                     filetype = "NvimTree",
@@ -214,8 +214,6 @@ config.bufferline = {
                 },
             },
             diagnostics_update_in_insert = false,
-            diagnostics = "nvim_lsp",
-            enforce_regular_tabs = true, -- 强制使用常规标签页
             custom_filter = function(buf_number)
                 -- 排除特定缓冲区（如终端）
                 local excluded = {
@@ -226,14 +224,7 @@ config.bufferline = {
                 local buf_ft = vim.api.nvim_buf_get_option(buf_number, "filetype")
                 return not vim.tbl_contains(excluded, buf_ft)
             end,
-            diagnostics_indicator = function(_, _, diagnostics_dict, _)
-                local s = " "
-                for e, n in pairs(diagnostics_dict) do
-                    local sym = e == "error" and symbols.Error or (e == "warning" and symbols.Warn or symbols.Info)
-                    s = s .. n .. sym
-                end
-                return s
-            end,
+            
         },
     },
     config = function(_, opts)
@@ -259,12 +250,11 @@ config.bufferline = {
         end, { nargs = 1 })
 
         require("bufferline").setup(opts)
-
-        require("nvim-web-devicons").setup({
-            override = {
-                typ = { icon = "󰰥", color = "#239dad", name = "typst" },
-            },
-        })
+        --require("nvim-web-devicons").setup({
+        --    override = {
+        --        typ = { icon = "󰰥", color = "#239dad", name = "typst" },
+        --    },
+        --})
     end,
     keys = {
     		{ "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
@@ -279,28 +269,39 @@ config.bufferline = {
 }
 
 -- 一个用 Lua 编写的极快速且易于配置的 Neovim 状态行。
-config.lualine = { 
+config.lualine = {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     event = "User ZichuanLoad",
     main = "lualine",
+    init = function()
+	    vim.g.lualine_laststatus = vim.o.laststatus
+	    if vim.fn.argc(-1) > 0 then
+	      -- set an empty statusline till lualine loads
+	      vim.o.statusline = " "
+	    else
+	      -- hide the statusline on the starter page
+	      vim.o.laststatus = 0
+	    end
+	  end,
     opts = {
         options = {
             icons_enabled = true,
             theme = "tokyonight",
             component_separators = { left = "", right = "" },
             section_separators = { left = "", right = "" },
-            disabled_filetypes = { "diff" },
+            disabled_filetypes = { statusline = { "dashboard", "alpha", "ministarter", "snacks_dashboard" } },
         },
-        extensions = { "nvim-tree" },
+        extensions = { "nvim-tree","lazy" },
         sections = {
             lualine_a = { "mode" },
-            lualine_b = { "branch", "diff" },
+            lualine_b = { "branch" },
             lualine_c = {
             		{
 	            		"filename",
 	                file_status = true,
             		},
+            		{ "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
             },
             lualine_x = {
                 {
@@ -309,21 +310,113 @@ config.lualine = {
                     end,
                     color = { fg = "#ff0000" },
                 },
-                { "progress", separator = " ", padding = { left = 1, right = 0 } },
+                "diff"
             },
             lualine_y = {
                 "filesize",
-                {
-                    "fileformat",
-                    symbols = { unix = symbols.Unix, dos = symbols.Dos, mac = symbols.Mac },
-                },
-                "encoding",
+                { "progress", separator = " ", padding = { left = 1, right = 0 } },
+                { "location", padding = { left = 0, right = 1 } },
                 "filetype",
             },
+            lualine_z = {
+          		{
+                  "fileformat",
+                  symbols = { unix = symbols.Unix, dos = symbols.Dos, mac = symbols.Mac },
+              },
+            	"encoding",
+            }
         },
     },
 }
 
+
+-- messages, cmdline and the popupmenu.
+config.noice = {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    dependencies = {
+        "MunifTanjim/nui.nvim",
+        "rcarriga/nvim-notify", -- 补充通知功能依赖
+    },
+    opts = {
+        lsp = {
+            override = {
+                ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                ["vim.lsp.util.stylize_markdown"] = true,
+                ["cmp.entry.get_documentation"] = false,-- 禁用 cmp 的文档窗口
+            },
+        },
+        routes = {
+        		-- 过滤冗余的 Vim 内置消息
+            {
+                filter = {
+                    event = "msg_show",
+                    any = {
+                        { find = "%d+L, %d+B" },
+						            { find = "; after #%d+" },
+						            { find = "; before #%d+" },
+                        { find = "E121: Undefined variable" },  -- 特定错误
+                        { find = "No information available"},
+                    },
+                },
+                view = "mini",
+            },
+        },
+        presets = {
+            bottom_search = true,
+            command_palette = true,
+            long_message_to_split = true,
+            lsp_doc_border = false,
+            notify = {
+                enabled = true,
+                view = "notify",
+                opts = {
+                    enter = true,
+                    timeout = 2000,
+                    max_width = 0.4,
+                    max_height = 0.4,
+                    icons = {
+						          error = " ",      -- 自定义图标
+						          warn = " ",
+						          info = " ",
+						          debug = "",
+						          trace = "✎",
+						        },
+                },
+            }, -- 启用通知优化
+        },
+    },
+    -- UI 增强
+  views = {
+    cmdline_popup = {
+      relative = "editor",   -- 相对于编辑器定位
+      border = "rounded",    -- 圆角边框
+      win_options = { winblend = 10 },  -- 半透明效果
+    },
+    popupmenu = {
+      row = 0.5, col = 0.5,  -- 居中显示
+      win_options = { winblend = 15 },
+    },
+  },
+  -- stylua: ignore
+  keys = {
+    { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
+    { "<leader>nl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
+    { "<leader>nh", function() require("noice").cmd("history") end, desc = "Noice History" },
+    { "<leader>na", function() require("noice").cmd("all") end, desc = "Noice All" },
+    { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "clear all notice" },
+    { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
+    { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
+    { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
+  },
+  config = function(_, opts)
+      -- 清除 Lazy 插件安装时的消息
+      if vim.o.filetype == "lazy" then
+      	vim.cmd([[messages clear]])
+    	end
+      require("noice").setup(opts)
+  end,
+}
 
 config["nvim-tree"] = {
     "nvim-tree/nvim-tree.lua",
@@ -683,112 +776,7 @@ config["grug-far"] = {
     },
 }
 
--- messages, cmdline and the popupmenu.
-config.noice = {
-    "folke/noice.nvim",
-    event = "VeryLazy",
-    dependencies = {
-        "MunifTanjim/nui.nvim",
-        "rcarriga/nvim-notify", -- 补充通知功能依赖
-    },
-    opts = {
-        lsp = {
-            override = {
-                ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-                ["vim.lsp.util.stylize_markdown"] = true,
-                ["cmp.entry.get_documentation"] = false,-- 禁用 cmp 的文档窗口
-            },
-        },
-        routes = {
-        		-- 过滤冗余的 Vim 内置消息
-            {
-                filter = {
-                    event = "msg_show",
-                    any = {
-                        { find = "^%d+L, %d+B$" }, -- 行首行尾精确匹配
-                        { find = "; after #%d+" },
-                        { find = "; before #%d+" },
-                        { find = "E121: Undefined variable" },  -- 特定错误
-                        { find = "No information available"},
-                    },
-                },
-                view = "mini",
-            },
-            -- LSP 诊断信息增强
-            {
-                filter = {
-                    event = "lsp_message",
-                    kind = "Diagnostic",
-                },
-                view = "mini",
-                opts = {
-	                lang = "python",
-	                replace = true,
-	                format = { "{message} ({source})", "Diagnostic" },  -- 自定义格式
-                },
-            },
-            -- 自动折叠冗长输出
-				    {
-				      filter = {
-				        event = "msg_show",
-				        min_height = 5,  -- 高度超过5行自动折叠
-				      },
-				      view = "split",
-				      opts = { enter = false },
-				    },
-        },
-        presets = {
-            bottom_search = true,
-            command_palette = true,
-            long_message_to_split = true,
-            lsp_doc_border = false,
-            notify = {
-                enabled = true,
-                view = "notify",
-                opts = {
-                    enter = true,
-                    timeout = 2000,
-                    max_width = 0.4,
-                    max_height = 0.4,
-                    icons = {
-						          error = " ",      -- 自定义图标
-						          warn = " ",
-						          info = " ",
-						          debug = "",
-						          trace = "✎",
-						        },
-                },
-            }, -- 启用通知优化
-        },
-    },
-    -- UI 增强
-  views = {
-    cmdline_popup = {
-      relative = "editor",   -- 相对于编辑器定位
-      border = "rounded",    -- 圆角边框
-      win_options = { winblend = 10 },  -- 半透明效果
-    },
-    popupmenu = {
-      row = 0.5, col = 0.5,  -- 居中显示
-      win_options = { winblend = 15 },
-    },
-  },
-  -- stylua: ignore
-  keys = {
-    { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
-    { "<leader>nh", function() require("noice").cmd("history") end, desc = "Noice History" },
-    { "<leader>na", function() require("noice").cmd("all") end, desc = "Noice All" },
-    { "<leader>nd", function() require("noice").cmd("dismiss") end, desc = "clear all notice" },
-    { "<leader>nt", function() require("noice").cmd("pick") end, desc = "Noice Picker Telescope" },
-  },
-  config = function(_, opts)
-      -- 清除 Lazy 插件安装时的消息
-      if vim.startswith(vim.api.nvim_buf_get_name(0), "Lazy") then
-          vim.cmd([[messages clear]])
-      end
-      require("noice").setup(opts)
-  end,
-}
+
 
 config["which-key"] = {
     "folke/which-key.nvim",

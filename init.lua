@@ -23,18 +23,5 @@ if not require("core.utils").noplugin then
     require("core.utils").group_map(Zichuan.keymap.plugins)
 
     -- Define colorscheme
-    if not Zichuan.colorscheme then
-        local colorscheme_cache = vim.fn.stdpath "data" .. "/colorscheme"
-        if require("core.utils").file_exists(colorscheme_cache) then
-            local colorscheme_cache_file = io.open(colorscheme_cache, "r")
-            ---@diagnostic disable: need-check-nil
-            local colorscheme = colorscheme_cache_file:read "*a"
-            colorscheme_cache_file:close()
-            Zichuan.colorscheme = colorscheme
-        else
-            Zichuan.colorscheme = "tokyonight"
-        end
-    end
-
-    require("plugins.utils").colorscheme(Zichuan.colorscheme)
+    require("plugins.utils").colorscheme("tokyonight")
 end
