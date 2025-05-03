@@ -21,30 +21,17 @@ vim.api.nvim_create_autocmd("User", {
         end
     end,
 })
--- 高亮颜色值
-config.colorizer = {
-    "NvChad/nvim-colorizer.lua",
-    main = "colorizer",
-    event = "User ZichuanLoad",
-    opts = {
-        filetypes = {
-            "*",
-            css = {
-                names = true,
-            },
-        },
-        user_default_options = {
-            css = true,
-            css_fn = true,
-            names = false,
-            always_update = true,
-        },
+
+config.snacks = {
+	"folke/snacks.nvim",
+	opts = {
+		indent = {
+      scope = { enabled = true },
     },
-    config = function(_, opts)
-        require("colorizer").setup(opts)
-        vim.cmd("ColorizerToggle")
-    end,
+	}
+	
 }
+
 -- 面板
 config.dashboard = {
     "nvimdev/dashboard-nvim",
@@ -280,15 +267,14 @@ config.bufferline = {
         })
     end,
     keys = {
-        { "<leader>bc", "<Cmd>BufferLinePickClose<CR>", desc = "pick close", silent = true },
-        -- <esc> is added in case current buffer is the last
-        { "<leader>bd", "<Cmd>BufferLineClose 0<CR><ESC>", desc = "close current buffer", silent = true },
-        { "<leader>bh", "<Cmd>BufferLineCyclePrev<CR>", desc = "prev buffer", silent = true },
-        { "<leader>bl", "<Cmd>BufferLineCycleNext<CR>", desc = "next buffer", silent = true },
-        { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "close others", silent = true },
-        { "<leader>bp", "<Cmd>BufferLinePick<CR>", desc = "pick buffer", silent = true },
-        { "<leader>bm", "<Cmd>ZichuanRepeat BufferLineMoveNext<CR>", desc = "move right", silent = true },
-        { "<leader>bM", "<Cmd>ZichuanRepeat BufferLineMovePrev<CR>", desc = "move left", silent = true },
+    		{ "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
+    		{ "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete Non-Pinned Buffers" },
+    		{ "<leader>br", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete Buffers to the Right" },
+    		{ "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete Buffers to the Left" },
+				{ "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
+    		{ "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
+    		{ "<leader>b[", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
+    		{ "<leader>b]", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
     },
 }
 
@@ -443,7 +429,7 @@ config["nvim-treesitter"] = {
     opts = {
       -- stylua: ignore start
       ensure_installed = {
-        "bash", "c", "cpp", "css", "html", "javascript","java", "json", "lua", "markdown",
+        "bash", "c", "cpp", "css", "html", "javascript","java", "json5", "lua", "markdown",
         "markdown_inline", "python", "toml", "vim", "vimdoc","html","csv","ini","sql","xml"
       },
         -- stylua: ignore end
