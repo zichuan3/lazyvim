@@ -39,21 +39,22 @@ lsp = {
                 Lua = {
                     runtime = {
                         version = "LuaJIT",
-                        path = (function()
-                            local runtime_path = vim.split(package.path, ";")
-                            table.insert(runtime_path, "lua/?.lua")
-                            table.insert(runtime_path, "lua/?/init.lua")
-                            return runtime_path
-                        end)(),
+                    --     path = (function()
+                    --         local runtime_path = vim.split(package.path, ";")
+                    --         table.insert(runtime_path, "lua/?.lua")
+                    --         table.insert(runtime_path, "lua/?/init.lua")
+                    --         return runtime_path
+                    --     end)(),
                     },
                     diagnostics = {
                         globals = { "vim" },
                     },
                     workspace = {
-                        library = {
-                            vim.env.VIMRUNTIME,
-                            "${3rd}/luv/library",
-                        },
+                        -- library = {
+                        --     vim.env.VIMRUNTIME,
+                        --     "${3rd}/luv/library",
+                        -- },
+                        library = vim.api.nvim_get_runtime_file("",true),
                         checkThirdParty = false,
                     },
                     telemetry = {

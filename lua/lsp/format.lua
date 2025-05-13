@@ -22,6 +22,16 @@ Zichuan.plugins["conform"] = {
       },
       formatters = {
       	injected = { options = { ignore_errors = true } },
+        ocamlformat = {
+				prepend_args = {
+					"--if-then-else",
+					"vertical",
+					"--break-cases",
+					"fit-or-vertical",
+					"--type-decl",
+					"sparse",
+				},
+		},
       },
     }
     return opts
