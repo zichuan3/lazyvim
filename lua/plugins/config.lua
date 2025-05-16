@@ -23,18 +23,17 @@ vim.api.nvim_create_autocmd("User", {
 })
 
 config.snacks = {
-	"folke/snacks.nvim",
-	opts = {
-		indent = { enabled = true },
-    input = { enabled = true },
-    notifier = { enabled = true },
-    scope = { enabled = true },
-    scroll = { enabled = true },
-    statuscolumn = { enabled = false }, -- we set this in options.lua
-    --toggle = { map = LazyVim.safe_keymap_set },
-    words = { enabled = true },
-    
-	},
+    "folke/snacks.nvim",
+    opts = {
+        indent = { enabled = true },
+        input = { enabled = true },
+        notifier = { enabled = true },
+        scope = { enabled = true },
+        scroll = { enabled = true },
+        statuscolumn = { enabled = false }, -- we set this in options.lua
+        --toggle = { map = LazyVim.safe_keymap_set },
+        words = { enabled = true },
+    },
 }
 
 -- 面板
@@ -58,14 +57,19 @@ config.dashboard = {
                 " ",
             },
             center = {
-            	{ icon = " ", key = "f", desc = "Find File", action = "Telescope find_files" },
-            	{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-            	{ icon = " ", key = "g", desc = "Find Text", action = ":Telescope live_grep" },
-            	{ icon = " ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
-            	{ icon = " ", key = "c", desc = "Config", action = string.format("edit %s/lua/custom/init.lua", config_root) },
-            	{ icon = " ", key = "m", desc = "Mason", action = "Mason"},
-            	{ icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
-            	{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
+                { icon = " ", key = "f", desc = "Find File", action = "Telescope find_files" },
+                { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+                { icon = " ", key = "g", desc = "Find Text", action = ":Telescope live_grep" },
+                { icon = " ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
+                {
+                    icon = " ",
+                    key = "c",
+                    desc = "Config",
+                    action = string.format("edit %s/lua/custom/init.lua", config_root),
+                },
+                { icon = " ", key = "m", desc = "Mason", action = "Mason" },
+                { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+                { icon = " ", key = "q", desc = "Quit", action = ":qa" },
             },
             footer = { "🧊 Hope that you enjoy using ZichuanNvim 😀😀😀" },
         },
@@ -105,16 +109,16 @@ config.gitsigns = {
         sign_priority = 6, -- 避免与其他插件冲突
         numhl = false, -- 已弃用，由高亮组替代
         linehl = false, -- 已弃用，由高亮组替代
-        word_diff = false,--已启用，由高亮组替代
+        word_diff = false, --已启用，由高亮组替代
         attach_to_untracked = true,
         current_line_blame = false,
         current_line_blame_opts = {
             virt_text = true,
-            virt_text_pos = 'eol',
+            virt_text_pos = "eol",
             delay = 1000,
             ignore_whitespace = false,
         },
-        current_line_blame_formatter = '<author>,<author_time:%Y-%m-%d> - <summary>',
+        current_line_blame_formatter = "<author>,<author_time:%Y-%m-%d> - <summary>",
         update_debounce = 100,
         status_formatter = nil,
         max_file_length = 40000,
@@ -190,8 +194,12 @@ config.bufferline = {
     event = "User ZichuanLoad",
     opts = {
         options = {
-            close_command = function(n) Snacks.bufdelete(n) end,
-            right_mouse_command = function(n) Snacks.bufdelete(n) end, -- 右键点击关闭缓冲区
+            close_command = function(n)
+                Snacks.bufdelete(n)
+            end,
+            right_mouse_command = function(n)
+                Snacks.bufdelete(n)
+            end, -- 右键点击关闭缓冲区
             diagnostics = "nvim_lsp",
             always_show_bufferline = false,
             diagnostics_indicator = function(_, _, diagnostics_dict, _)
@@ -224,7 +232,6 @@ config.bufferline = {
                 local buf_ft = vim.api.nvim_buf_get_option(buf_number, "filetype")
                 return not vim.tbl_contains(excluded, buf_ft)
             end,
-            
         },
     },
     config = function(_, opts)
@@ -257,14 +264,14 @@ config.bufferline = {
         --})
     end,
     keys = {
-    		{ "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
-    		{ "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete Non-Pinned Buffers" },
-    		{ "<leader>br", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete Buffers to the Right" },
-    		{ "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete Buffers to the Left" },
-				{ "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
-    		{ "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-    		{ "<leader>b[", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
-    		{ "<leader>b]", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
+        { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
+        { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete Non-Pinned Buffers" },
+        { "<leader>bh", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete Buffers to the Right" },
+        { "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete Buffers to the Left" },
+        { "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
+        { "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
+        { "<leader>b[", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
+        { "<leader>b]", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
     },
 }
 
@@ -275,15 +282,15 @@ config.lualine = {
     event = "User ZichuanLoad",
     main = "lualine",
     init = function()
-	    vim.g.lualine_laststatus = vim.o.laststatus
-	    if vim.fn.argc(-1) > 0 then
-	      -- set an empty statusline till lualine loads
-	      vim.o.statusline = " "
-	    else
-	      -- hide the statusline on the starter page
-	      vim.o.laststatus = 0
-	    end
-	  end,
+        vim.g.lualine_laststatus = vim.o.laststatus
+        if vim.fn.argc(-1) > 0 then
+            -- set an empty statusline till lualine loads
+            vim.o.statusline = " "
+        else
+            -- hide the statusline on the starter page
+            vim.o.laststatus = 0
+        end
+    end,
     opts = {
         options = {
             icons_enabled = true,
@@ -292,43 +299,40 @@ config.lualine = {
             section_separators = { left = "", right = "" },
             disabled_filetypes = { statusline = { "dashboard", "alpha", "ministarter", "snacks_dashboard" } },
         },
-        extensions = { "nvim-tree","lazy" },
+        extensions = { "nvim-tree", "lazy", "mason", "fzf" },
         sections = {
             lualine_a = { "mode" },
-            lualine_b = { "branch" },
+            lualine_b = { "branch", "diagnostics" },
             lualine_c = {
-            		{
-	            		"filename",
-	                file_status = true,
-            		},
-            		{ "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+                {
+                    "filename",
+                    file_status = true,
+                },
+                { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
             },
             lualine_x = {
+                "searchcount",
+                "selectioncount",
                 {
                     function()
                         return vim.fn.reg_recording() ~= "" and "REC: " .. vim.fn.reg_recording() or ""
                     end,
                     color = { fg = "#ff0000" },
                 },
-                "diff"
+                "diff",
+                "fileformat",
             },
             lualine_y = {
                 "filesize",
                 { "progress", separator = " ", padding = { left = 1, right = 0 } },
                 { "location", padding = { left = 0, right = 1 } },
-                "filetype",
             },
             lualine_z = {
-          		{
-                  "fileformat",
-                  symbols = { unix = symbols.Unix, dos = symbols.Dos, mac = symbols.Mac },
-              },
-            	"encoding",
-            }
+                "encoding",
+            },
         },
     },
 }
-
 
 -- messages, cmdline and the popupmenu.
 config.noice = {
@@ -343,20 +347,20 @@ config.noice = {
             override = {
                 ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
                 ["vim.lsp.util.stylize_markdown"] = true,
-                ["cmp.entry.get_documentation"] = false,-- 禁用 cmp 的文档窗口
+                ["cmp.entry.get_documentation"] = false, -- 禁用 cmp 的文档窗口
             },
         },
         routes = {
-        		-- 过滤冗余的 Vim 内置消息
+            -- 过滤冗余的 Vim 内置消息
             {
                 filter = {
                     event = "msg_show",
                     any = {
                         { find = "%d+L, %d+B" },
-						            { find = "; after #%d+" },
-						            { find = "; before #%d+" },
-                        { find = "E121: Undefined variable" },  -- 特定错误
-                        { find = "No information available"},
+                        { find = "; after #%d+" },
+                        { find = "; before #%d+" },
+                        { find = "E121: Undefined variable" }, -- 特定错误
+                        { find = "No information available" },
                     },
                 },
                 view = "mini",
@@ -376,28 +380,29 @@ config.noice = {
                     max_width = 0.4,
                     max_height = 0.4,
                     icons = {
-						          error = " ",      -- 自定义图标
-						          warn = " ",
-						          info = " ",
-						          debug = "",
-						          trace = "✎",
-						        },
+                        error = " ", -- 自定义图标
+                        warn = " ",
+                        info = " ",
+                        debug = "",
+                        trace = "✎",
+                    },
                 },
             }, -- 启用通知优化
         },
     },
     -- UI 增强
-  views = {
-    cmdline_popup = {
-      relative = "editor",   -- 相对于编辑器定位
-      border = "rounded",    -- 圆角边框
-      win_options = { winblend = 10 },  -- 半透明效果
+    views = {
+        cmdline_popup = {
+            relative = "editor", -- 相对于编辑器定位
+            border = "rounded", -- 圆角边框
+            win_options = { winblend = 10 }, -- 半透明效果
+        },
+        popupmenu = {
+            row = 0.5,
+            col = 0.5, -- 居中显示
+            win_options = { winblend = 15 },
+        },
     },
-    popupmenu = {
-      row = 0.5, col = 0.5,  -- 居中显示
-      win_options = { winblend = 15 },
-    },
-  },
   -- stylua: ignore
   keys = {
     { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
@@ -409,13 +414,13 @@ config.noice = {
     { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
     { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
   },
-  config = function(_, opts)
-      -- 清除 Lazy 插件安装时的消息
-      if vim.o.filetype == "lazy" then
-      	vim.cmd([[messages clear]])
-    	end
-      require("noice").setup(opts)
-  end,
+    config = function(_, opts)
+        -- 清除 Lazy 插件安装时的消息
+        if vim.o.filetype == "lazy" then
+            vim.cmd([[messages clear]])
+        end
+        require("noice").setup(opts)
+    end,
 }
 
 config["nvim-tree"] = {
@@ -423,7 +428,7 @@ config["nvim-tree"] = {
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
         on_attach = function(bufnr)
-            local api = require "nvim-tree.api"
+            local api = require("nvim-tree.api")
             local opt = { buffer = bufnr, silent = true }
 
             api.config.mappings.default_on_attach(bufnr)
@@ -510,6 +515,41 @@ config["nvim-autopairs"] = {
     event = "InsertEnter",
     main = "nvim-autopairs",
     opts = {},
+}
+config.toggleterm = {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    opts = {
+        open_mapping = [[<C-\>]],
+        direction = "float",
+        float_opts = {
+            width = 120,
+            height = 30,
+        },
+    },
+    config = function(_, opts)
+        require("toggleterm").setup(opts)
+        local create_cmd = vim.api.nvim_create_user_command
+        local Terminal = require("toggleterm.terminal").Terminal
+        local float_opts = {
+            border = "none",
+            width = function()
+                return vim.o.columns
+            end,
+            height = function()
+                return vim.o.lines - 2
+            end,
+        }
+        local lazygit = Terminal:new({ cmd = "lazygit", hidden = false, float_opts = float_opts })
+        create_cmd("LazyGit", function()
+            lazygit:toggle()
+        end, {})
+    end,
+    keys = {
+        { "<C-\\>" },
+        { "<leader>gl", "<cmd>LazyGit<CR>" },
+    },
+    cmd = { "LazyGit" },
 }
 
 -- 代码高亮
@@ -775,8 +815,6 @@ config["grug-far"] = {
         },
     },
 }
-
-
 
 config["which-key"] = {
     "folke/which-key.nvim",

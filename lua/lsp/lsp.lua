@@ -39,12 +39,12 @@ lsp = {
                 Lua = {
                     runtime = {
                         version = "LuaJIT",
-                    --     path = (function()
-                    --         local runtime_path = vim.split(package.path, ";")
-                    --         table.insert(runtime_path, "lua/?.lua")
-                    --         table.insert(runtime_path, "lua/?/init.lua")
-                    --         return runtime_path
-                    --     end)(),
+                        --     path = (function()
+                        --         local runtime_path = vim.split(package.path, ";")
+                        --         table.insert(runtime_path, "lua/?.lua")
+                        --         table.insert(runtime_path, "lua/?/init.lua")
+                        --         return runtime_path
+                        --     end)(),
                     },
                     diagnostics = {
                         globals = { "vim" },
@@ -54,7 +54,7 @@ lsp = {
                         --     vim.env.VIMRUNTIME,
                         --     "${3rd}/luv/library",
                         -- },
-                        library = vim.api.nvim_get_runtime_file("",true),
+                        library = vim.api.nvim_get_runtime_file("", true),
                         checkThirdParty = false,
                     },
                     telemetry = {
@@ -66,7 +66,7 @@ lsp = {
     },
     pyright = {
         setup = function()
-        		local get_python_path = function()
+            local get_python_path = function()
                 -- 优先检测常用虚拟环境目录
                 local venv_paths = { "venv", ".venv" }
                 local python_bin = "Scripts/python.exe"
@@ -87,47 +87,47 @@ lsp = {
             return {
                 flags = default_flags,
                 on_attach = function(client, bufnr) end,
-                offset_encoding = 'utf-8',
+                offset_encoding = "utf-8",
                 settings = {
                     python = {
-                    		pythonPath = get_python_path(),
+                        pythonPath = get_python_path(),
                         analysis = {
-	                        	-- 关闭Pyright的诊断，但保留类型检查
-	                        diagnosticMode = "openFilesOnly",
-	                        diagnosticSeverityOverrides = {
-	                            -- 关闭Pyright的静态分析诊断
-	                            ["Pyflakes"] = "none",
-	                            ["Pylint"] = "none",
-	                            ["TypeChecking"] = "information"  -- 保留类型检查提示
-	                        },
-	                        useLibraryCodeForTypes = false
-                        }
+                            -- 关闭Pyright的诊断，但保留类型检查
+                            diagnosticMode = "openFilesOnly",
+                            diagnosticSeverityOverrides = {
+                                -- 关闭Pyright的静态分析诊断
+                                ["Pyflakes"] = "none",
+                                ["Pylint"] = "none",
+                                ["TypeChecking"] = "information", -- 保留类型检查提示
+                            },
+                            useLibraryCodeForTypes = false,
+                        },
                     },
                     pyright = {
-								      -- 使用Ruff的导入组织功能
-								      disableOrganizeImports = true,
-								    },
+                        -- 使用Ruff的导入组织功能
+                        disableOrganizeImports = true,
+                    },
                 },
             }
         end,
     },
     ruff = {
-    	setup = {
-  			settings = {
-  				configurationPreference = "filesystemFirst",
-  				lineLength = 500,
-  				lint = {
-  					enable = true
-  				},
-  				format = {
-  					enable = true
-  				}
-  			},
-  			on_attach = function(client, bufnr)
-  				client.server_capabilities.hoverProvider = false -- 禁用Ruff的hover功能（如果不需要）
-  				client.server_capabilities.completionProvider = nil -- 禁用Ruff的代码完成（如果Pyright已提供）
-  			end,
-    	}
+        setup = {
+            settings = {
+                configurationPreference = "filesystemFirst",
+                lineLength = 500,
+                lint = {
+                    enable = true,
+                },
+                format = {
+                    enable = true,
+                },
+            },
+            on_attach = function(client, bufnr)
+                client.server_capabilities.hoverProvider = false -- 禁用Ruff的hover功能（如果不需要）
+                client.server_capabilities.completionProvider = nil -- 禁用Ruff的代码完成（如果Pyright已提供）
+            end,
+        },
     },
     ts_ls = {
         setup = {

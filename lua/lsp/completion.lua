@@ -1,7 +1,7 @@
 Zichuan.plugins["blink-cmp"] = {
     "saghen/blink.cmp",
     dependencies = { "rafamadriz/friendly-snippets" },
-    event = { "InsertEnter", "CmdlineEnter", "User ZichuanLoad" },
+    event = { "InsertEnter", "CmdlineEnter" },
     version = "*",
     opts = {
         appearance = {
@@ -9,15 +9,15 @@ Zichuan.plugins["blink-cmp"] = {
         },
         cmdline = {
             completion = {
-							-- 自动显示补全窗口，仅在输入命令时显示菜单，而搜索或使用其他输入菜单时则不显示
-							menu = {
-								auto_show = function(ctx)
-									return vim.fn.getcmdtype() == ":"
-								end,
-							},
-							-- 不在当前行上显示所选项目的预览
-							ghost_text = { enabled = false },
-						},
+                -- 自动显示补全窗口，仅在输入命令时显示菜单，而搜索或使用其他输入菜单时则不显示
+                menu = {
+                    auto_show = function()
+                        return vim.fn.getcmdtype() == ":"
+                    end,
+                },
+                -- 不在当前行上显示所选项目的预览
+                ghost_text = { enabled = false },
+            },
             keymap = {
                 preset = "none",
                 ["<Tab>"] = { "accept" },
@@ -28,11 +28,10 @@ Zichuan.plugins["blink-cmp"] = {
         completion = {
             documentation = {
                 auto_show = true,
-                auto_show_delay_ms = 2000
+                auto_show_delay_ms = 2000,
             },
             ghost_text = {
-                enabled = true,
-                show_without_selection = true,
+                enabled = false,
             },
             list = {
                 selection = {
@@ -44,7 +43,7 @@ Zichuan.plugins["blink-cmp"] = {
                 draw = {
                     columns = {
                         { "label", "label_description", gap = 1 },
-                        { "kind_icon" },
+                        { "source_name" },
                     },
                     treesitter = { "lsp" },
                 },
@@ -65,12 +64,23 @@ Zichuan.plugins["blink-cmp"] = {
         keymap = {
             preset = "none",
             ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
-            ["<CR>"] = { "accept","fallback"},
-            ["<Tab>"] = {"select_next", "snippet_forward","fallback"},
-            ["<S-Tab>"] = { "select_prev", "snippet_forward","fallback" },
-            ["<Up>"] = { "select_prev", "snippet_forward","fallback" },
-            ["<Down>"] = { "select_next", "snippet_forward","fallback" },
-            ["<C-k>"] = { "show_signature", "hide_signature","fallback" },
+            ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
+            ["<C-e>"] = { "hide", "fallback" },
+            ["<CR>"] = { "accept", "fallback" },
+            ["<Tab>"] = {
+                function(cmp)
+                    if cmp.snippets_active() then
+                        return cmp.accept()
+                    else
+                        return cmp.select_and_accept()
+                    end
+                end,
+                "snippet_forward",
+                "fallback",
+            },
+            ["<S-Tab>"] = { "snippet_backward", "fallback" },
+            ["<Up>"] = { "select_prev", "fallback" },
+            ["<Down>"] = { "select_next", "fallback" },
             ["<C-d>"] = { "scroll_documentation_down", "fallback" },
             ["<C-u>"] = { "scroll_documentation_up", "fallback" },
         },
