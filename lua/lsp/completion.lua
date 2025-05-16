@@ -68,13 +68,7 @@ Zichuan.plugins["blink-cmp"] = {
             ["<C-e>"] = { "hide", "fallback" },
             ["<CR>"] = { "accept", "fallback" },
             ["<Tab>"] = {
-                function(cmp)
-                    if cmp.snippets_active() then
-                        return cmp.accept()
-                    else
-                        return cmp.select_and_accept()
-                    end
-                end,
+                "select_next",
                 "snippet_forward",
                 "fallback",
             },
