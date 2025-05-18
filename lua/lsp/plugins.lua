@@ -7,10 +7,7 @@ local common_setup = function(client, bufnr)
         end
         vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
     end
-    nmap("gD", vim.lsp.buf.declaration, "go declaration")
-    nmap("gd", vim.lsp.buf.definition, "go definition")
     nmap("K", vim.lsp.buf.hover, "hover")
-    nmap("gi", vim.lsp.buf.implementation, "go implementation")
     nmap("<C-k>", vim.lsp.buf.signature_help, "signature_help")
     nmap("<space>la", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
     nmap("<space>lr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")

@@ -25,15 +25,46 @@ vim.api.nvim_create_autocmd("User", {
 config.snacks = {
     "folke/snacks.nvim",
     opts = {
+        bigfile = { enabled = true },
+        dashboard = { enabled = true },
+        explorer = { enabled = true },
         indent = { enabled = true },
         input = { enabled = true },
-        notifier = { enabled = true },
+        notifier = {
+            enabled = true,
+            timeout = 2000,
+        },
+        picker = { enabled = true },
+        quickfile = { enabled = true },
         scope = { enabled = true },
         scroll = { enabled = true },
         statuscolumn = { enabled = false }, -- we set this in options.lua
         --toggle = { map = LazyVim.safe_keymap_set },
         words = { enabled = true },
     },
+    keys = {
+    	{ "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
+    	{ "<leader>sp", function() Snacks.picker.projects() end, desc = "Projects" },
+    	-- git 
+    	{ "<leader>sgb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
+	    { "<leader>sgl", function() Snacks.picker.git_log() end, desc = "Git Log" },
+	    { "<leader>sgL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
+	    { "<leader>sgs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+	    { "<leader>sgS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
+	    { "<leader>sgd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
+	    { "<leader>sgf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
+	    
+	    { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
+
+	    { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
+	    { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
+	    { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
+	    { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
+	    { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
+
+	    { "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete Buffer" },
+	    { "<leader>sr", function() Snacks.rename.rename_file() end, desc = "Rename File" },
+    }
 }
 
 -- 面板
@@ -636,28 +667,6 @@ config.surround = {
     event = "User ZichuanLoad",
 }
 
-config.undotree = {
-    "mbbill/undotree",
-    config = function()
-        -- 基础设置
-        vim.g.undotree_WindowLayout = 3 -- 窗口布局：3 表示底部显示
-        vim.g.undotree_TreeNodeShape = "◈" -- 树节点形状
-        vim.g.undotree_DiffpanelHeight = 10 -- 差异面板高度
-        vim.g.undotree_ShortIndicators = 1 -- 紧凑模式
-        vim.g.undotree_SetFocusToActiveWindow = 1 -- 切换回编辑窗口时自动聚焦
-        vim.g.undotree_SwitchBufferOnUndo = 1 -- 撤销时切换到正确缓冲区
-
-        -- 持久化撤销配置undofile = true已在前面配置
-        vim.opt.undodir = vim.fn.stdpath("data") .. "/undodir"
-        local undodir_path = vim.o.undodir
-        vim.fn.mkdir(undodir_path, "p")
-    end,
-    keys = {
-        --切换撤销树窗口的显示与隐藏。
-        { "<leader>uu", "<Cmd>UndotreeToggle<CR>", desc = "Toggle Undo Tree", silent = true },
-        { "<leader>uR", "<cmd>UndotreeRefresh<CR>", desc = "Refresh Undo Tree" },
-    },
-}
 -- 一个高度可扩展的列表模糊查找器
 config.telescope = {
     "nvim-telescope/telescope.nvim",
@@ -783,7 +792,6 @@ config.telescope = {
         { "<leader>f", ":Telescope find_files<CR>", desc = "find file", silent = true }, -- 查找文件
         { "<leader>F", ":Telescope live_grep<CR>", desc = "grep file", silent = true }, -- 查找文本
         { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
-        { "<leader>:", "<cmd>Telescope command_history<cr>", desc = "Command History" }, -- 最近的命令
         { "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" }, -- 查询帮助文档
         { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
         { "<leader>dn", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" }, -- 查看诊断信息
@@ -847,6 +855,7 @@ config["which-key"] = {
             { "<leader>w", group = "+split windows" },
             { "<leader>b", group = "+buffer" },
             { "<leader>d", group = "+diagnostic" },
+            { "<leaeder>s", group = "+snacks"},
         },
         win = {
             border = "single",
