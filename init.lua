@@ -19,9 +19,6 @@ if not require("core.utils").noplugin then
         config[#config + 1] = plugin
     end
     require("lazy").setup(config, Zichuan.lazy)
-
-    require("core.utils").group_map(Zichuan.keymap.plugins)
-
     -- Define colorscheme
     require("plugins.utils").colorscheme("tokyonight")
 end

@@ -93,16 +93,6 @@ for k, v in pairs(options) do
     opt[k] = v
 end
 
---g.netrw_banner = 0
---g.netrw_mouse = 2
--- 内置的netrw文件浏览树形展示
---g.netrw_liststyle = 3
-
-g.loaded_netrw = 1
-g.loaded_netrwPlugin = 1
-
---- 高亮组
-vim.api.nvim_set_hl(0, "FlashLabel", { link = "Comment" })
 
 collectgarbage("setpause", 150) -- 默认100，调高可减少GC频率
 collectgarbage("setstepmul", 5000) -- 默认1000，延长触发GC的间隔

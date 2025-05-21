@@ -158,8 +158,6 @@ vim.api.nvim_create_user_command("ZichuanCheckPlugins", function()
     end
 end, { nargs = 0 })
 
-vim.api.nvim_create_user_command("ZichuanUpdate", "lua require('core.utils').update()", { nargs = 0 })
-
 vim.api.nvim_create_user_command("ZichuanHealth", "checkhealth core", { nargs = 0 })
 
 -- Allow a command to be repeated based on v:count1

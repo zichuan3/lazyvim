@@ -24,9 +24,79 @@ vim.api.nvim_create_autocmd("User", {
 
 config.snacks = {
     "folke/snacks.nvim",
+    lazy = false,
     opts = {
         bigfile = { enabled = true },
-        dashboard = { enabled = true },
+        dashboard = {
+            preset = {
+                pick = nil,
+                header = [[
+                ██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z
+                ██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    
+                ██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       
+                ██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         
+                ███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           
+                ╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝           
+               ]],
+                keys = {
+                    { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+                    { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+                    {
+                        icon = " ",
+                        key = "g",
+                        desc = "Find Text",
+                        action = ":lua Snacks.dashboard.pick('live_grep')",
+                    },
+                    {
+                        icon = " ",
+                        key = "r",
+                        desc = "Recent Files",
+                        action = ":lua Snacks.dashboard.pick('oldfiles')",
+                    },
+                    {
+                        icon = " ",
+                        key = "c",
+                        desc = "Config",
+                        action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+                    },
+                    {
+                        icon = "󰒲 ",
+                        key = "L",
+                        desc = "Lazy",
+                        action = ":Lazy",
+                    },
+                    { icon = " ", key = "q", desc = "Quit", action = ":qa" },
+                },
+            },
+            formats = {
+                icon = function(item)
+                    return { item.icon, width = 2, hl = "icon" }
+                end,
+                footer = { "%s", align = "center" },
+                header = { "%s", align = "center" },
+                file = function(item, ctx)
+                    local fname = vim.fn.fnamemodify(item.file, ":~")
+                    fname = ctx.width and #fname > ctx.width and vim.fn.pathshorten(fname) or fname
+                    if #fname > ctx.width then
+                        local dir = vim.fn.fnamemodify(fname, ":h")
+                        local file = vim.fn.fnamemodify(fname, ":t")
+                        if dir and file then
+                            file = file:sub(-(ctx.width - #dir - 2))
+                            fname = dir .. "/…" .. file
+                        end
+                    end
+                    local dir, file = fname:match("^(.*)/(.+)$")
+                    return dir and { { dir .. "/", hl = "dir" }, { file, hl = "file" } } or { { fname, hl = "file" } }
+                end,
+            },
+            sections = {
+                { section = "header" },
+                { section = "keys", gap = 1, padding = 1 },
+                { icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
+                { icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
+                { section = "startup" },
+            },
+        },
         explorer = { enabled = true },
         indent = { enabled = true },
         input = { enabled = true },
@@ -43,85 +113,135 @@ config.snacks = {
         words = { enabled = true },
     },
     keys = {
-    	{ "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-    	{ "<leader>sp", function() Snacks.picker.projects() end, desc = "Projects" },
-    	-- git 
-    	{ "<leader>sgb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
-	    { "<leader>sgl", function() Snacks.picker.git_log() end, desc = "Git Log" },
-	    { "<leader>sgL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
-	    { "<leader>sgs", function() Snacks.picker.git_status() end, desc = "Git Status" },
-	    { "<leader>sgS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
-	    { "<leader>sgd", function() Snacks.picker.git_diff() end, desc = "Git Diff (Hunks)" },
-	    { "<leader>sgf", function() Snacks.picker.git_log_file() end, desc = "Git Log File" },
-	    
-	    { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
+        {
+            "<leader>:",
+            function()
+                require("snacks").picker.command_history()
+            end,
+            desc = "Command History",
+        },
+        {
+            "<leader>sp",
+            function()
+                require("snacks").picker.projects()
+            end,
+            desc = "Projects",
+        },
+        -- git
+        {
+            "<leader>sgb",
+            function()
+                require("snacks").picker.git_branches()
+            end,
+            desc = "Git Branches",
+        },
+        {
+            "<leader>sgl",
+            function()
+                require("snacks").picker.git_log()
+            end,
+            desc = "Git Log",
+        },
+        {
+            "<leader>sgL",
+            function()
+                require("snacks").picker.git_log_line()
+            end,
+            desc = "Git Log Line",
+        },
+        {
+            "<leader>sgs",
+            function()
+                require("snacks").picker.git_status()
+            end,
+            desc = "Git Status",
+        },
+        {
+            "<leader>sgS",
+            function()
+                require("snacks").picker.git_stash()
+            end,
+            desc = "Git Stash",
+        },
+        {
+            "<leader>sgd",
+            function()
+                require("snacks").picker.git_diff()
+            end,
+            desc = "Git Diff (Hunks)",
+        },
+        {
+            "<leader>sgf",
+            function()
+                require("snacks").picker.git_log_file()
+            end,
+            desc = "Git Log File",
+        },
+        {
+            "<leader>su",
+            function()
+                require("snacks").picker.undo()
+            end,
+            desc = "Undo History",
+        },
 
-	    { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
-	    { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
-	    { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
-	    { "gI", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
-	    { "gy", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto T[y]pe Definition" },
+        {
+            "gd",
+            function()
+                require("snacks").picker.lsp_definitions()
+            end,
+            desc = "Goto Definition",
+        },
+        {
+            "gD",
+            function()
+                require("snacks").picker.lsp_declarations()
+            end,
+            desc = "Goto Declaration",
+        },
+        {
+            "gr",
+            function()
+                require("snacks").picker.lsp_references()
+            end,
+            nowait = true,
+            desc = "References",
+        },
+        {
+            "gI",
+            function()
+                require("snacks").picker.lsp_implementations()
+            end,
+            desc = "Goto Implementation",
+        },
+        {
+            "gy",
+            function()
+                require("snacks").picker.lsp_type_definitions()
+            end,
+            desc = "Goto T[y]pe Definition",
+        },
 
-	    { "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete Buffer" },
-	    { "<leader>sr", function() Snacks.rename.rename_file() end, desc = "Rename File" },
-    }
-}
-
--- 面板
-config.dashboard = {
-    "nvimdev/dashboard-nvim",
-    lazy = false,
-    opts = {
-        theme = "doom",
-        config = {
-            -- https://patorjk.com/software/taag/#p=display&f=ANSI%20Shadow&t=Zichuannvim
-            header = {
-                "",
-                "██╗      █████╗ ███████╗██╗   ██╗██╗   ██╗██╗███╗   ███╗          Z",
-                "██║     ██╔══██╗╚══███╔╝╚██╗ ██╔╝██║   ██║██║████╗ ████║      Z    ",
-                "██║     ███████║  ███╔╝  ╚████╔╝ ██║   ██║██║██╔████╔██║   z       ",
-                "██║     ██╔══██║ ███╔╝    ╚██╔╝  ╚██╗ ██╔╝██║██║╚██╔╝██║ z         ",
-                "███████╗██║  ██║███████╗   ██║    ╚████╔╝ ██║██║ ╚═╝ ██║           ",
-                "╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝     ╚═══╝  ╚═╝╚═╝     ╚═╝   ",
-                " ",
-                string.format("                      %s                       ", require("core.utils").version),
-                " ",
-            },
-            center = {
-                { icon = " ", key = "f", desc = "Find File", action = "Telescope find_files" },
-                { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
-                { icon = " ", key = "g", desc = "Find Text", action = ":Telescope live_grep" },
-                { icon = " ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
-                {
-                    icon = " ",
-                    key = "c",
-                    desc = "Config",
-                    action = string.format("edit %s/lua/custom/init.lua", config_root),
-                },
-                { icon = " ", key = "m", desc = "Mason", action = "Mason" },
-                { icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
-                { icon = " ", key = "q", desc = "Quit", action = ":qa" },
-            },
-            footer = { "🧊 Hope that you enjoy using ZichuanNvim 😀😀😀" },
+        {
+            "<leader>bd",
+            function()
+                require("snacks").bufdelete()
+            end,
+            desc = "Delete Buffer",
+        },
+        {
+            "<leader>sr",
+            function()
+                require("snacks").rename.rename_file()
+            end,
+            desc = "Rename File",
         },
     },
     config = function(_, opts)
-        require("dashboard").setup(opts)
-
-        -- Force the footer to be non-italic
-        -- Dashboard loads before the colorscheme plugin, so we should defer the setting of the highlight group to when
-        -- all plugins are finished loading
-        vim.api.nvim_create_autocmd("User", {
-            pattern = "VeryLazy",
-            once = true,
-            callback = function()
-                -- Use the highlight command to replace instead of overriding the original highlight group
-                -- Much more convenient than using vim.api.nvim_set_hl()
-                vim.cmd("highlight DashboardFooter cterm=NONE gui=NONE")
-            end,
-        })
+        require("snacks").setup(opts)
     end,
 }
+
 -- git状态
 config.gitsigns = {
     "lewis6991/gitsigns.nvim",
@@ -226,10 +346,10 @@ config.bufferline = {
     opts = {
         options = {
             close_command = function(n)
-                Snacks.bufdelete(n)
+                require("snacks").bufdelete(n)
             end,
             right_mouse_command = function(n)
-                Snacks.bufdelete(n)
+                require("snacks").bufdelete(n)
             end, -- 右键点击关闭缓冲区
             diagnostics = "nvim_lsp",
             always_show_bufferline = false,
@@ -288,11 +408,6 @@ config.bufferline = {
         end, { nargs = 1 })
 
         require("bufferline").setup(opts)
-        --require("nvim-web-devicons").setup({
-        --    override = {
-        --        typ = { icon = "󰰥", color = "#239dad", name = "typst" },
-        --    },
-        --})
     end,
     keys = {
         { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
@@ -465,32 +580,6 @@ config["nvim-tree"] = {
             api.config.mappings.default_on_attach(bufnr)
 
             require("core.utils").group_map({
-                edit = {
-                    "n",
-                    "<CR>",
-                    function()
-                        local node = api.tree.get_node_under_cursor()
-                        if node.name ~= ".." and node.fs_stat.type == "file" then
-                            -- Taken partially from:
-                            -- https://support.microsoft.com/en-us/windows/common-file-name-extensions-in-windows-da4a4430-8e76-89c5-59f7-1cdbbc75cb01
-                            --
-                            -- Not all are included for speed's sake
-                            -- stylua: ignore start
-                            local extensions_opened_externally = {
-                                "avi", "bmp", "doc", "docx", "exe", "flv", "gif", "jpg", "jpeg", "m4a", "mov", "mp3",
-                                "mp4", "mpeg", "mpg", "pdf", "png", "ppt", "pptx", "psd", "pub", "rar", "rtf", "tif",
-                                "tiff", "wav", "xls", "xlsx", "zip",
-                            }
-                            -- stylua: ignore end
-                            if table.find(extensions_opened_externally, node.extension) then
-                                api.node.run.system()
-                                return
-                            end
-                        end
-
-                        api.node.open.edit()
-                    end,
-                },
                 vertical_split = { "n", "<leader>wv", api.node.open.vertical },
                 horizontal_split = { "n", "<leader>ws", api.node.open.horizontal },
                 --toggle_hidden_file = { "n", ".", api.tree.toggle_hidden_filter },
@@ -849,13 +938,12 @@ config["which-key"] = {
         },
         spec = {
             { "<leader>l", group = "+lsp" },
-            { "<leader>u", group = "+utils" },
             { "<leader>n", group = "+notice" },
             { "<leader>g", group = "+git" },
             { "<leader>w", group = "+split windows" },
             { "<leader>b", group = "+buffer" },
             { "<leader>d", group = "+diagnostic" },
-            { "<leaeder>s", group = "+snacks"},
+            { "<leader>s", group = "+snacks" },
         },
         win = {
             border = "single",
