@@ -20,5 +20,5 @@ if not require("core.utils").noplugin then
     end
     require("lazy").setup(config, Zichuan.lazy)
     -- Define colorscheme
-    require("plugins.utils").colorscheme("tokyonight")
+    vim.cmd("colorscheme tokyonight-storm")
 end

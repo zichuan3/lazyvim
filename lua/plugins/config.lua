@@ -43,7 +43,7 @@ config.snacks = {
                     { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
                     {
                         icon = " ",
-                        key = "g",
+                        key = "w",
                         desc = "Find Text",
                         action = ":lua Snacks.dashboard.pick('live_grep')",
                     },
@@ -59,6 +59,7 @@ config.snacks = {
                         desc = "Config",
                         action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
                     },
+                    { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
                     {
                         icon = "󰒲 ",
                         key = "L",
@@ -98,7 +99,13 @@ config.snacks = {
             },
         },
         explorer = { enabled = true },
-        indent = { enabled = true },
+        indent = {
+            priority = 1,
+            char = "|",
+            enabled = true,
+            only_scope = false,
+            only_current = true,
+        },
         input = { enabled = true },
         notifier = {
             enabled = true,
@@ -106,7 +113,13 @@ config.snacks = {
         },
         picker = { enabled = true },
         quickfile = { enabled = true },
-        scope = { enabled = true },
+        scope = {
+            enabled = true,
+            priority = 200,
+            char = "|",
+            underline = false,
+            only_current = true,
+        },
         scroll = { enabled = true },
         statuscolumn = { enabled = false }, -- we set this in options.lua
         --toggle = { map = LazyVim.safe_keymap_set },
@@ -962,6 +975,17 @@ config["which-key"] = {
 }
 
 -- Colorschemes
-config["tokyonight"] = { "folke/tokyonight.nvim", lazy = true }
+config["tokyonight"] = {
+    "folke/tokyonight.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {
+        style = "storm",
+        styles = {
+            comments = { italic = true },
+            keywords = { italic = false },
+        },
+    },
+}
 
 Zichuan.plugins = config
