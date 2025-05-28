@@ -61,8 +61,6 @@ local options = {
     splitright = true,
     -- 启用终端真彩色支持
     termguicolors = true,
-    -- 简化提示信息，避免冗长消息。
-    shortmess = vim.o.shortmess .. "s",
     -- 随文件自动更改当前路径
     autochdir = true,
     -- 限制补全菜单的最大高度为 16 行。
@@ -74,7 +72,7 @@ local options = {
     -- 禁用代码折叠功能
     foldlevel = 99,
     foldlevelstart = 99,
-    foldenable = false,
+    foldenable = true,
     -- windows系统中使用/ 作为路径分隔符
     shellslash = true,
     -- 不可见字符的显示，把空格显示为一个点

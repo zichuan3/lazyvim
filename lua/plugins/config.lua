@@ -59,7 +59,6 @@ config.snacks = {
                         desc = "Config",
                         action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
                     },
-                    { icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
                     {
                         icon = "󰒲 ",
                         key = "L",

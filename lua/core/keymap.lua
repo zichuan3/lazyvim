@@ -45,6 +45,7 @@ local opts = { noremap = true, silent = true }
 Zichuan.keymap.general = {
     -- 设置visual模式下p不作用
     disable_visual_past = { "v", "p", '"_dP', opts },
+    disable_delete_register = { {"n","v"},"d",'"_d',opts},
     show_lsp_document = { { "n", "i" }, "<C-K>", vim.lsp.buf.signature_help, { desc = "Signature Help" } },
 
     -- 分割屏幕右和下
