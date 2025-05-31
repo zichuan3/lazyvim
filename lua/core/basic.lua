@@ -11,7 +11,7 @@ vim.cmd("syntax off")
 local win_height = vim.fn.winheight(0)
 opt.scrolloff = math.floor((win_height - 1) / 2)
 opt.sidescrolloff = math.floor((win_height - 1) / 2)
-
+opt.wildignore:append({ "*/node_modules/*" })
 local options = {
   -- 编码
   fileencoding = "utf-8",
@@ -24,9 +24,9 @@ local options = {
   relativenumber = true,
   cursorline = true,
   -- Tab宽度为4，缩进宽度与tabstop一致，Tab转换为空格，自动插入适当缩进
-  tabstop = 4,
-  shiftwidth = 4,
-  softtabstop = 4,
+  tabstop = 2,
+  shiftwidth = 2,
+  softtabstop = 2,
   expandtab = true,
   smartindent = true,
   -- 搜索忽略大小写，搜索包含大写时自动区分大小写，禁用搜索结果高亮
@@ -108,5 +108,31 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
     vim.cmd("startinsert")
     vim.wo.number = false
     vim.wo.relativenumber = false
+  end,
+})
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+  callback = function()
+    local nmap = function(keys, func, desc)
+      if desc then
+        desc = "LSP: " .. desc
+      end
+      vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    nmap("K", vim.lsp.buf.hover, "hover")
+    nmap("<C-k>", vim.lsp.buf.signature_help, "signature_help")
+    nmap("<space>la", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
+    nmap("<space>lr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")
+    nmap("<space>ll", function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, "list_workspace_folders")
+    nmap("<space>D", vim.lsp.buf.type_definition, "type_definition")
+    nmap("<space>ln", vim.lsp.buf.rename, "rename")
+    nmap("<space>lc", vim.lsp.buf.code_action, "code_action")
+    nmap("gr", vim.lsp.buf.references, "references")
+    nmap("<space>lf", function()
+      require("conform").format({ async = true, lsp_fallback = true })
+    end, "format")
   end,
 })

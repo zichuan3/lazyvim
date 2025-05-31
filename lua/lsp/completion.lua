@@ -29,14 +29,58 @@ Zichuan.plugins["blink-cmp"] = {
       documentation = {
         auto_show = true,
         auto_show_delay_ms = 2000,
+        window = {
+            min_width = 10,
+            max_width = 120,
+            max_height = 20,
+            border = "rounded",
+            winblend = 0,
+            winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
+            -- Note that the gutter will be disabled when border ~= 'none'
+            scrollbar = true,
+            -- Which directions to show the documentation window,
+            -- for each of the possible menu window directions,
+            -- falling back to the next direction when there's not enough space
+            direction_priority = {
+              menu_north = { "e", "w", "n", "s" },
+              menu_south = { "e", "w", "s", "n" },
+            },
+        },
       },
       ghost_text = {
-        enabled = false,
+        enabled = true,
+        -- Show the ghost text when an item has been selected
+          show_with_selection = true,
+          -- Show the ghost text when no item has been selected, defaulting to the first item
+          show_without_selection = false,
+          -- Show the ghost text when the menu is open
+          show_with_menu = true,
+          -- Show the ghost text when the menu is closed
+          show_without_menu = true,
       },
       list = {
         selection = {
-          preselect = false,
-          auto_insert = true,
+          preselect = true,
+          auto_insert = false,
+        },
+      },
+    signature = {
+        enabled = true,
+        window = {
+          min_width = 1,
+          max_width = 100,
+          max_height = 10,
+          border = "single", -- Defaults to `vim.o.winborder` on nvim 0.11+ or 'padded' when not defined/<=0.10
+          winblend = 0,
+          winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+          scrollbar = false, -- Note that the gutter will be disabled when border ~= 'none'
+          -- Which directions to show the window,
+          -- falling back to the next direction when there's not enough space,
+          -- or another window is in the way
+          direction_priority = { "n" },
+          -- Disable if you run into performance issues
+          treesitter_highlighting = true,
+          show_documentation = true,
         },
       },
       menu = {

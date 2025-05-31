@@ -97,9 +97,7 @@ config.snacks = {
         { section = "startup" },
       },
     },
-    explorer = { enabled = true },
     indent = {
-      priority = 1,
       char = "|",
       enabled = true,
       only_scope = false,
@@ -110,7 +108,9 @@ config.snacks = {
       enabled = true,
       timeout = 2000,
     },
-    picker = { enabled = true },
+    picker = {
+      enabled = true,
+    },
     quickfile = { enabled = true },
     scope = {
       enabled = true,
@@ -665,27 +665,10 @@ config.toggleterm = {
   },
   config = function(_, opts)
     require("toggleterm").setup(opts)
-    local create_cmd = vim.api.nvim_create_user_command
-    local Terminal = require("toggleterm.terminal").Terminal
-    local float_opts = {
-      border = "none",
-      width = function()
-        return vim.o.columns
-      end,
-      height = function()
-        return vim.o.lines - 2
-      end,
-    }
-    local lazygit = Terminal:new({ cmd = "lazygit", hidden = false, float_opts = float_opts })
-    create_cmd("LazyGit", function()
-      lazygit:toggle()
-    end, {})
   end,
   keys = {
     { "<C-\\>" },
-    { "<leader>gl", "<cmd>LazyGit<CR>" },
   },
-  cmd = { "LazyGit" },
 }
 
 -- 代码高亮
@@ -915,10 +898,6 @@ config["grug-far"] = {
     require("grug-far").setup(opts)
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "grug-far",
-      callback = function()
-        -- Map <Esc> to quit after ensuring we're in normal mode
-        vim.keymap.set({ "i", "n" }, "<Esc>", "<Cmd>stopinsert | bd!<CR>", { buffer = true })
-      end,
     })
   end,
   keys = {
