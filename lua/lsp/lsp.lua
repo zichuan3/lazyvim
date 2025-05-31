@@ -39,21 +39,21 @@ lsp = {
         Lua = {
           runtime = {
             version = "LuaJIT",
-            --     path = (function()
-            --         local runtime_path = vim.split(package.path, ";")
-            --         table.insert(runtime_path, "lua/?.lua")
-            --         table.insert(runtime_path, "lua/?/init.lua")
-            --         return runtime_path
-            --     end)(),
+            path = (function()
+              local runtime_path = vim.split(package.path, ";")
+              table.insert(runtime_path, "lua/?.lua")
+              table.insert(runtime_path, "lua/?/init.lua")
+              return runtime_path
+            end)(),
           },
           diagnostics = {
             globals = { "vim" },
           },
           workspace = {
-            -- library = {
-            --     vim.env.VIMRUNTIME,
-            --     "${3rd}/luv/library",
-            -- },
+            library = {
+              vim.env.VIMRUNTIME,
+              "${3rd}/luv/library",
+            },
             library = vim.api.nvim_get_runtime_file("", true),
             checkThirdParty = false,
           },
@@ -65,51 +65,44 @@ lsp = {
     },
   },
   pyright = {
-    setup = function()
-      local get_python_path = function()
-        -- 优先检测常用虚拟环境目录
-        local venv_paths = { "venv", ".venv" }
-        local python_bin = "Scripts/python.exe"
-        for _, path in ipairs(venv_paths) do
-          local full_path = vim.fn.fnamemodify(path, ":p") .. python_bin
-          if vim.fn.filereadable(full_path) == 1 then
-            return full_path
-          end
-        end
-
-        local conda_env = os.getenv("CONDA_PREFIX")
-        if conda_env then
-          return conda_env .. "\\python.exe"
-        end
-
-        return vim.fn.exepath("python") or vim.fn.exepath("python3")
-      end
-      return {
-        flags = default_flags,
-        on_attach = function(client, bufnr) end,
-        offset_encoding = "utf-8",
-        settings = {
-          python = {
-            pythonPath = get_python_path(),
-            analysis = {
-              -- 关闭Pyright的诊断，但保留类型检查
-              diagnosticMode = "openFilesOnly",
-              diagnosticSeverityOverrides = {
-                -- 关闭Pyright的静态分析诊断
-                ["Pyflakes"] = "none",
-                ["Pylint"] = "none",
-                ["TypeChecking"] = "information", -- 保留类型检查提示
-              },
-              useLibraryCodeForTypes = false,
+    setup = {
+      settings = {
+        python = {
+          pythonPath = function()
+            local venv_paths = { "venv", ".venv" }
+            local python_bin = "Scripts/python.exe"
+            for _, path in ipairs(venv_paths) do
+              local full_path = vim.fn.fnamemodify(path, ":p") .. python_bin
+              if vim.fn.filereadable(full_path) == 1 then
+                return full_path
+              end
+            end
+            local conda_env = os.getenv("CONDA_PREFIX")
+            if conda_env then
+              return conda_env .. "\\python.exe"
+            end
+            return vim.fn.exepath("python") or vim.fn.exepath("python3")
+          end,
+          analysis = {
+            -- 关闭Pyright的诊断，但保留类型检查
+            diagnosticMode = "openFilesOnly",
+            diagnosticSeverityOverrides = {
+              -- 关闭Pyright的静态分析诊断
+              ["Pyflakes"] = "none",
+              ["Pylint"] = "none",
+              ["TypeChecking"] = "information", -- 保留类型检查提示
             },
-          },
-          pyright = {
-            -- 使用Ruff的导入组织功能
-            disableOrganizeImports = true,
+            useLibraryCodeForTypes = false,
           },
         },
-      }
-    end,
+        pyright = {
+          -- 使用Ruff的导入组织功能
+          disableOrganizeImports = true,
+        },
+      },
+      flags = default_flags,
+      offset_encoding = "utf-8",
+    },
   },
   ruff = {
     setup = {

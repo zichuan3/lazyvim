@@ -23,9 +23,6 @@ local options = {
   number = true,
   relativenumber = true,
   cursorline = true,
-  -- 标记列,在80列处生成竖线,帮助控制代码宽度
-  signcolumn = "yes",
-  colorcolumn = "80",
   -- Tab宽度为4，缩进宽度与tabstop一致，Tab转换为空格，自动插入适当缩进
   tabstop = 4,
   shiftwidth = 4,
@@ -43,7 +40,7 @@ local options = {
   -- 显示补全菜单，不自动选中第一个补全项
   completeopt = { "menu", "menuone", "noselect" },
   -- ：允许光标在行首/行尾时，按左/右箭头跳到上一行或下一行
-  whichwrap = "<,>,[,],h,l",
+  whichwrap = "<,>,[,]",
   -- 允许切换缓冲区时不保存当前缓冲区
   hidden = true,
   -- 默认不换行
@@ -69,10 +66,6 @@ local options = {
   showtabline = 2,
   -- 禁用模式提示（如插入模式）,在插件中包含
   showmode = false,
-  -- 禁用代码折叠功能
-  foldlevel = 99,
-  foldlevelstart = 99,
-  foldenable = true,
   -- windows系统中使用/ 作为路径分隔符
   shellslash = true,
   -- 不可见字符的显示，把空格显示为一个点
@@ -99,18 +92,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
     vim.wo.number = false
     vim.wo.relativenumber = false
   end,
-})
-
--- 配置诊断和符号（仅初始化一次）
-vim.diagnostic.config({
-  update_in_insert = false,
-  float = { border = "rounded" },
-  virtual_text = {
-    spacing = 2,
-    source = "if_many", -- 仅显示多个诊断时的来源
-    severity = { min = vim.diagnostic.severity.WARN },
-  },
-  virtual_lines = true,
 })
 
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {

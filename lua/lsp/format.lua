@@ -1,6 +1,6 @@
 Zichuan.plugins["conform"] = {
   "stevearc/conform.nvim",
-  dependencies = { "williamboman/mason.nvim" },
+  dependencies = { "mason-org/mason.nvim" },
   lazy = true,
   cmd = "ConformInfo",
   opts = function()

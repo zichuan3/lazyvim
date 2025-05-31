@@ -23,10 +23,10 @@ local common_setup = function(client, bufnr)
   end, "format")
 end
 Zichuan.plugins.mason = {
-  "williamboman/mason.nvim",
+  "mason-org/mason.nvim",
   dependencies = {
     "neovim/nvim-lspconfig",
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
   },
   event = "User ZichuanLoad",
   cmd = "Mason",
@@ -46,32 +46,30 @@ Zichuan.plugins.mason = {
       automatic_installation = true, -- 可选：自动安装新加入的 LSP
     })
     local lspconfig = require("lspconfig")
-    require("mason-lspconfig").setup_handlers({
-      function(server_name)
-        local config = Zichuan.lsp[server_name] or {}
-        if config.managed_by_plugin then
-          return
-        end
+    for lsp, config in pairs(Zichuan.lsp) do
+      if config.managed_by_plugin then
+        goto continue
+      end
 
-        local setup = config.setup or {}
-        if type(setup) == "function" then
-          setup = setup()
-        end
-
-        -- 合并公共配置
-        setup.capabilities =
-          vim.tbl_deep_extend("force", require("blink.cmp").get_lsp_capabilities(), setup.capabilities or {})
-        setup.on_attach = function(client, bufnr)
-          common_setup(client, bufnr)
-          -- 其他自定义 on_attach 逻辑
-          if config.custom_attach then
-            config.custom_attach(client, bufnr)
-          end
-        end
-
-        lspconfig[server_name].setup(setup)
-      end,
-    })
+      local setup = config.setup
+      if type(setup) == "function" then
+        setup = setup()
+      elseif setup == nil then
+        setup = {}
+      end
+      local blink_capabilities = require("blink.cmp").get_lsp_capabilities()
+      blink_capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
+      -- 合并公共配置
+      setup = vim.tbl_deep_extend("force", setup, {
+        capabilities = blink_capabilities,
+        on_attach = common_setup,
+      })
+      lspconfig[lsp].setup(setup)
+      ::continue::
+    end
     vim.cmd("LspStart")
   end,
 }
