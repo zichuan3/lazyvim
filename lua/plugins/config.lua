@@ -533,36 +533,6 @@ config.noice = {
       command_palette = true,
       long_message_to_split = true,
       lsp_doc_border = false,
-      notify = {
-        enabled = true,
-        view = "notify",
-        opts = {
-          enter = true,
-          timeout = 2000,
-          max_width = 0.4,
-          max_height = 0.4,
-          icons = {
-            error = " ", -- 自定义图标
-            warn = " ",
-            info = " ",
-            debug = "",
-            trace = "✎",
-          },
-        },
-      }, -- 启用通知优化
-    },
-  },
-  -- UI 增强
-  views = {
-    cmdline_popup = {
-      relative = "editor", -- 相对于编辑器定位
-      border = "rounded", -- 圆角边框
-      win_options = { winblend = 10 }, -- 半透明效果
-    },
-    popupmenu = {
-      row = 0.5,
-      col = 0.5, -- 居中显示
-      win_options = { winblend = 15 },
     },
   },
   -- stylua: ignore
