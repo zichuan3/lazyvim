@@ -81,6 +81,8 @@ local options = {
   shadafile = "NONE",
   -- 撤销持久化
   undofile = true,
+  -- 提高性能
+  updatetime = 200,
 }
 
 for k, v in pairs(options) do

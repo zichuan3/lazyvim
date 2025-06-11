@@ -70,6 +70,10 @@ Zichuan.keymap.general = {
   -- 命令行模式退回普通模式
   normal_mode_in_terminal = { "t", "<Esc>", "<C-\\><C-n>" },
 
+  -- coderunner
+  run_by_filetype = { "n", "<leader>rr",":RunCode<cr>",{ noremap = true, silent=false }},
+  run_the_project = {'n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false }},
+
   undo = { { "n", "i", "v", "t", "c" }, "<C-z>", undo },
   visual_line = { "n", "V", "0v$" },
 }
