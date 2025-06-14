@@ -28,21 +28,15 @@ Zichuan.plugins.mason = {
       if config.managed_by_plugin then
         goto continue
       end
-
-      local setup = config.setup
-      if type(setup) == "function" then
-        setup = setup()
-      elseif setup == nil then
-        setup = {}
-      end
-      local blink_capabilities = require("blink.cmp").get_lsp_capabilities()
-      -- 合并公共配置
-      setup.capabilities = vim.tbl_deep_extend("force", blink_capabilities, setup.capabilities or {})
-      setup.on_attach = function(client, bufnr)
-        if config.on_attach then
-          config.on_attach(client, bufnr)
-        end
-      end
+      local blink_capabilities = require("blink.cmp").get_lsp_capabilities() or {}
+      blink_capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
+      local setup = { settings = config.settings }
+      setup = vim.tbl_deep_extend("force", setup, {
+        capabilities = blink_capabilities,
+      })
       lspconfig[lsp].setup(setup)
       ::continue::
     end

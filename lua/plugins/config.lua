@@ -47,7 +47,9 @@ config["nvim-autopairs"] = {
   "windwp/nvim-autopairs",
   event = "InsertEnter",
   main = "nvim-autopairs",
-  opts = {},
+  opts = {
+    ignored_next_char = "[%w%.]",
+  },
 }
 config.toggleterm = {
   "akinsho/toggleterm.nvim",
@@ -55,9 +57,11 @@ config.toggleterm = {
   opts = {
     open_mapping = [[<C-\>]],
     direction = "float",
+    hide_numbers = true,
+    start_in_insert = true,
     float_opts = {
-      width = 120,
-      height = 30,
+      width = 100,
+      height = 25,
     },
   },
   config = function(_, opts)

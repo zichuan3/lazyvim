@@ -27,7 +27,6 @@ return {
       { "<leader>g", group = "+git" },
       { "<leader>w", group = "+split windows" },
       { "<leader>b", group = "+buffer" },
-      { "<leader>d", group = "+diagnostic" },
       { "<leader>s", group = "+snacks" },
       { "<leader>r", group = "+run and replace"}
     },

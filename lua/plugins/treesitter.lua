@@ -40,7 +40,6 @@ return {
     },
   },
   config = function(_, opts)
-    require("nvim-treesitter.install").prefer_git = true
     require("nvim-treesitter.configs").setup(opts)
 
     local rainbow_delimiters = require("rainbow-delimiters")

@@ -2,7 +2,7 @@ Zichuan.plugins["conform"] = {
   "stevearc/conform.nvim",
   dependencies = { "mason-org/mason.nvim" },
   lazy = true,
-  cmd = "ConformInfo",
+  event = "BufWritePre",
   opts = function()
     local opts = {
       default_format_opts = {

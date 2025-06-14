@@ -125,7 +125,6 @@ return {
     { "<leader>q", ":Telescope oldfiles<CR>", desc = "oldfiles" }, -- 查找最近的文件
     { "<leader>?", ":Telescope help_tags<CR>", desc = "Search Help Tags" }, -- 查询帮助文档
     { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
-    { "<leader>dn", ":Telescope diagnostics<CR>", desc = "Show Diagnostics" }, -- 查看诊断信息
   },
 }
 

@@ -15,7 +15,8 @@ return {
       diagnostics_indicator = function(_, _, diagnostics_dict, _)
         local s = " "
         for e, n in pairs(diagnostics_dict) do
-          local sym = e == "error" and Zichuan.symbols.Error or (e == "warning" and Zichuan.symbols.Warn or Zichuan.symbols.Info)
+          local sym = e == "error" and Zichuan.symbols.Error
+            or (e == "warning" and Zichuan.symbols.Warn or Zichuan.symbols.Info)
           s = s .. n .. sym
         end
         return s
@@ -79,4 +80,3 @@ return {
     { "<leader>b]", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
   },
 }
-

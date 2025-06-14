@@ -12,7 +12,44 @@ local function undo()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
   end
 end
-
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.keymap.set("n", "gx", function()
+      local line = vim.fn.getline(".")
+      local cursor_col = vim.fn.col(".")
+      local pos = 1
+      while pos <= #line do
+        local open_bracket = line:find("%[", pos)
+        if not open_bracket then
+          break
+        end
+        local close_bracket = line:find("%]", open_bracket + 1)
+        if not close_bracket then
+          break
+        end
+        local open_paren = line:find("%(", close_bracket + 1)
+        if not open_paren then
+          break
+        end
+        local close_paren = line:find("%)", open_paren + 1)
+        if not close_paren then
+          break
+        end
+        if
+          (cursor_col >= open_bracket and cursor_col <= close_bracket)
+          or (cursor_col >= open_paren and cursor_col <= close_paren)
+        then
+          local url = line:sub(open_paren + 1, close_paren - 1)
+          vim.ui.open(url)
+          return
+        end
+        pos = close_paren + 1
+      end
+      vim.cmd("normal! gx")
+    end, { buffer = true, desc = "URL opener for markdown" })
+  end,
+})
 Zichuan.keymap = {}
 local opts = { noremap = true, silent = true }
 Zichuan.keymap.general = {
@@ -71,8 +108,8 @@ Zichuan.keymap.general = {
   normal_mode_in_terminal = { "t", "<Esc>", "<C-\\><C-n>" },
 
   -- coderunner
-  run_by_filetype = { "n", "<leader>rr",":RunCode<cr>",{ noremap = true, silent=false }},
-  run_the_project = {'n', '<leader>rp', ':RunProject<CR>', { noremap = true, silent = false }},
+  run_by_filetype = { "n", "<leader>rr", ":RunCode<cr>", { noremap = true, silent = false } },
+  run_the_project = { "n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false } },
 
   undo = { { "n", "i", "v", "t", "c" }, "<C-z>", undo },
   visual_line = { "n", "V", "0v$" },

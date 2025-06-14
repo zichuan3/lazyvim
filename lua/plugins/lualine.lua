@@ -25,13 +25,12 @@ return {
     extensions = { "nvim-tree", "lazy", "mason", "fzf" },
     sections = {
       lualine_a = { "mode" },
-      lualine_b = { "branch", "diagnostics" },
+      lualine_b = { "branch", "diff","diagnostics" },
       lualine_c = {
         {
           "filename",
           file_status = true,
         },
-        { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
       },
       lualine_x = {
         "searchcount",
@@ -42,16 +41,15 @@ return {
           end,
           color = { fg = "#ff0000" },
         },
-        "diff",
-        "fileformat",
       },
       lualine_y = {
-        "filesize",
-        { "progress", separator = " ", padding = { left = 1, right = 0 } },
-        { "location", padding = { left = 0, right = 1 } },
+        "encoding",
+        "fileformat",
+        "filetype",
+        "progress",
       },
       lualine_z = {
-        "encoding",
+        { "location", padding = { left = 0, right = 1 } },
       },
     },
   },

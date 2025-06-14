@@ -2,7 +2,6 @@ return {
   "folke/snacks.nvim",
   lazy = false,
   opts = {
-    bigfile = { enabled = true },
     dashboard = {
       preset = {
         pick = nil,
@@ -73,20 +72,23 @@ return {
         { section = "startup" },
       },
     },
+    bigfile = { enabled = true },
     indent = {
-      char = "|",
       enabled = true,
+      char = "|",
       only_scope = false,
       only_current = true,
     },
     input = { enabled = true },
     notifier = {
       enabled = true,
+      style = "notification",
       timeout = 2000,
     },
     picker = {
       enabled = true,
     },
+    explorer = { enabled = false },
     quickfile = { enabled = true },
     scope = {
       enabled = true,
@@ -95,8 +97,17 @@ return {
       underline = false,
       only_current = true,
     },
-    scroll = { enabled = true },
-    statuscolumn = { enabled = false }, -- we set this in options.lua
+    scroll = { enabled = false },
+    statuscolumn = {
+      enabled = true,
+      left = { "mark", "sign" }, -- priority of signs on the left (high to low)
+      right = { "fold", "git" }, -- priority of signs on the right (high to low)
+      folds = {
+        open = true, -- show open fold icons
+        git_hl = false, -- use Git Signs hl for fold icons
+      },
+      refresh = 300, -- refresh at most every 50ms
+    }, -- we set this in options.lua
     --toggle = { map = LazyVim.safe_keymap_set },
     words = { enabled = true },
   },
@@ -117,53 +128,25 @@ return {
     },
     -- git
     {
-      "<leader>sgb",
+      "<leader>gb",
       function()
-        require("snacks").picker.git_branches()
+        require("snacks").git.blame_line()
       end,
-      desc = "Git Branches",
+      desc = "Git blame_line",
     },
     {
-      "<leader>sgl",
+      "<leader>gl",
       function()
         require("snacks").picker.git_log()
       end,
       desc = "Git Log",
     },
     {
-      "<leader>sgL",
-      function()
-        require("snacks").picker.git_log_line()
-      end,
-      desc = "Git Log Line",
-    },
-    {
-      "<leader>sgs",
-      function()
-        require("snacks").picker.git_status()
-      end,
-      desc = "Git Status",
-    },
-    {
-      "<leader>sgS",
-      function()
-        require("snacks").picker.git_stash()
-      end,
-      desc = "Git Stash",
-    },
-    {
-      "<leader>sgd",
+      "<leader>gd",
       function()
         require("snacks").picker.git_diff()
       end,
       desc = "Git Diff (Hunks)",
-    },
-    {
-      "<leader>sgf",
-      function()
-        require("snacks").picker.git_log_file()
-      end,
-      desc = "Git Log File",
     },
     {
       "<leader>su",
@@ -172,7 +155,7 @@ return {
       end,
       desc = "Undo History",
     },
-
+    -- LSP
     {
       "gd",
       function()
@@ -209,7 +192,28 @@ return {
       end,
       desc = "Goto T[y]pe Definition",
     },
-
+    {
+      "<leader>ss",
+      function()
+        require("snacks").picker.lsp_symbols()
+      end,
+      desc = "LSP symbols",
+    },
+    -- notification
+    {
+      "<leader>nt",
+      function()
+        require("snacks").picker.notifications()
+      end,
+      desc = "[Snacks] Notification history",
+    },
+    {
+      "<leader>nh",
+      function()
+        require("snacks").notifier.show_history()
+      end,
+      desc = "[Snacks] Notification history",
+    },
     {
       "<leader>bd",
       function()
@@ -218,7 +222,21 @@ return {
       desc = "Delete Buffer",
     },
     {
+      "<leader>d",
+      function()
+        require("snacks").picker.diagnostics_buffer()
+      end,
+      desc = "Diagnostics buffer",
+    },
+    {
       "<leader>sr",
+      function()
+        require("snacks").picker.resume()
+      end,
+      desc = "Resume last operate",
+    },
+    {
+      "<leader>sR",
       function()
         require("snacks").rename.rename_file()
       end,

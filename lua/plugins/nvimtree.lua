@@ -9,8 +9,8 @@ return {
       api.config.mappings.default_on_attach(bufnr)
 
       require("core.utils").group_map({
-        vertical_split = { "n", "<leader>wv", api.node.open.vertical },
-        horizontal_split = { "n", "<leader>ws", api.node.open.horizontal },
+        -- vertical_split = { "n", "<leader>wv", api.node.open.vertical },
+        -- horizontal_split = { "n", "<leader>ws", api.node.open.horizontal },
         --toggle_hidden_file = { "n", ".", api.tree.toggle_hidden_filter },
         reload = { "n", "<F5>", api.tree.reload },
         create = { "n", "a", api.fs.create },
@@ -28,6 +28,7 @@ return {
     },
     update_focused_file = {
       enable = true,
+      update_cwd = true,
     },
     filters = {
       dotfiles = false,

@@ -1,6 +1,6 @@
 Zichuan.plugins["blink-cmp"] = {
   "saghen/blink.cmp",
-  dependencies = { "rafamadriz/friendly-snippets" },
+  dependencies = { "rafamadriz/friendly-snippets", "folke/lazydev.nvim" },
   event = { "InsertEnter", "CmdlineEnter" },
   version = "*",
   opts = {
@@ -30,33 +30,33 @@ Zichuan.plugins["blink-cmp"] = {
         auto_show = true,
         auto_show_delay_ms = 2000,
         window = {
-            min_width = 10,
-            max_width = 120,
-            max_height = 20,
-            border = "rounded",
-            winblend = 0,
-            winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
-            -- Note that the gutter will be disabled when border ~= 'none'
-            scrollbar = true,
-            -- Which directions to show the documentation window,
-            -- for each of the possible menu window directions,
-            -- falling back to the next direction when there's not enough space
-            direction_priority = {
-              menu_north = { "e", "w", "n", "s" },
-              menu_south = { "e", "w", "s", "n" },
-            },
+          min_width = 10,
+          max_width = 120,
+          max_height = 20,
+          border = "rounded",
+          winblend = 0,
+          winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
+          -- Note that the gutter will be disabled when border ~= 'none'
+          scrollbar = true,
+          -- Which directions to show the documentation window,
+          -- for each of the possible menu window directions,
+          -- falling back to the next direction when there's not enough space
+          direction_priority = {
+            menu_north = { "e", "w", "n", "s" },
+            menu_south = { "e", "w", "s", "n" },
+          },
         },
       },
       ghost_text = {
         enabled = true,
         -- Show the ghost text when an item has been selected
-          show_with_selection = true,
-          -- Show the ghost text when no item has been selected, defaulting to the first item
-          show_without_selection = false,
-          -- Show the ghost text when the menu is open
-          show_with_menu = true,
-          -- Show the ghost text when the menu is closed
-          show_without_menu = true,
+        show_with_selection = true,
+        -- Show the ghost text when no item has been selected, defaulting to the first item
+        show_without_selection = false,
+        -- Show the ghost text when the menu is open
+        show_with_menu = true,
+        -- Show the ghost text when the menu is closed
+        show_without_menu = true,
       },
       list = {
         selection = {
@@ -64,7 +64,7 @@ Zichuan.plugins["blink-cmp"] = {
           auto_insert = false,
         },
       },
-    signature = {
+      signature = {
         enabled = true,
         window = {
           min_width = 1,
@@ -84,6 +84,8 @@ Zichuan.plugins["blink-cmp"] = {
         },
       },
       menu = {
+        border = "rounded",
+        max_height = 20,
         draw = {
           columns = {
             { "label", "label_description", gap = 1 },
@@ -116,7 +118,7 @@ Zichuan.plugins["blink-cmp"] = {
         "snippet_forward",
         "fallback",
       },
-      ["<S-Tab>"] = { "select_prev","snippet_backward", "fallback" },
+      ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
       ["<Up>"] = { "select_prev", "fallback" },
       ["<Down>"] = { "select_next", "fallback" },
       ["<C-d>"] = { "scroll_documentation_down", "fallback" },
@@ -130,9 +132,27 @@ Zichuan.plugins["blink-cmp"] = {
         elseif cmdwin_type == ":" or cmdwin_type == "@" then
           return { "cmdline" }
         else
-          return { "lsp", "path", "snippets", "buffer" }
+          return { "lazydev", "lsp", "path", "snippets", "buffer" }
         end
       end,
+      providers = {
+        lazydev = {
+          name = "LazyDev",
+          module = "lazydev.integrations.blink",
+          score_offset = 95,
+        },
+        path = {
+          score_offset = 95,
+          opts = {
+            get_cwd = function(_)
+              return vim.fn.getcwd()
+            end,
+          },
+        },
+        buffer = {
+          score_offset = 20,
+        },
+      },
     },
   },
 }

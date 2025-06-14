@@ -1,9 +1,10 @@
 local g = vim.g
 local opt = vim.opt
-
+vim.loader.enable()
 vim.cmd("language en_US.UTF-8")
 g.encoding = "UTF-8"
 
+vim.g.bigfile_size = 1024 * 1024 * 1.5
 -- 关闭语法高亮
 vim.cmd("syntax off")
 
@@ -14,8 +15,7 @@ opt.sidescrolloff = math.floor((win_height - 1) / 2)
 opt.wildignore:append({ "*/node_modules/*" })
 local options = {
   autowrite = true,
-  foldlevel = 99,
-  spelllang = {"en"},
+  spelllang = { "en" },
   -- 编码
   fileencoding = "utf-8",
   -- 允许neovim访问系统粘贴板
@@ -25,7 +25,7 @@ local options = {
   -- 显示绝对行号，相对行号，高亮当前行
   number = true,
   relativenumber = true,
-  cursorline = true,
+  cursorline = false,
   -- Tab宽度为4，缩进宽度与tabstop一致，Tab转换为空格，自动插入适当缩进
   tabstop = 2,
   shiftwidth = 2,
@@ -54,8 +54,6 @@ local options = {
   backup = false,
   writebackup = false,
   swapfile = false,
-  -- 组合键等待时间0.5秒
-  timeoutlen = 500,
   -- 分屏从下方和右边打开
   splitbelow = true,
   splitright = true,
@@ -72,7 +70,8 @@ local options = {
   -- windows系统中使用/ 作为路径分隔符
   shellslash = true,
   -- 不可见字符的显示，把空格显示为一个点
-  listchars = "space:·",
+  list = true,
+  listchars = { tab = "» ", trail = "·", nbsp = "␣" },
   -- 命令行窗口有更多空间
   cmdwinheight = 1,
   -- 启用二进制，十六进制，字母序的支持
@@ -82,7 +81,18 @@ local options = {
   -- 撤销持久化
   undofile = true,
   -- 提高性能
-  updatetime = 200,
+  updatetime = 250,
+  -- 组合键等待时间0.5秒
+  timeout = false,
+  timeoutlen = 500,
+  -- 在换行时保持光标在词内而非行首。
+  linebreak = true,
+  -- 设置窗口边框为单线样式
+  winborder = "single",
+  -- 在折行时保留缩进对齐
+  breakindent = true,
+  -- 实时显示 :substitute 命令的替换结果
+  inccommand = "split",
 }
 
 for k, v in pairs(options) do
@@ -92,52 +102,5 @@ end
 collectgarbage("setpause", 150) -- 默认100，调高可减少GC频率
 collectgarbage("setstepmul", 5000) -- 默认1000，延长触发GC的间隔
 
-vim.api.nvim_create_autocmd("TermOpen", {
-  callback = function()
-    vim.wo.number = false
-    vim.wo.relativenumber = false
-  end,
-})
-
-vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {
-  once = true,
-  callback = function()
-    local shada = vim.fn.stdpath("state") .. "/shada/main.shada"
-    vim.o.shadafile = shada
-    vim.cmd("rshada! " .. shada)
-  end,
-})
-
-vim.api.nvim_create_autocmd("CmdwinEnter", {
-  callback = function()
-    vim.cmd("startinsert")
-    vim.wo.number = false
-    vim.wo.relativenumber = false
-  end,
-})
-vim.api.nvim_create_autocmd("LspAttach", {
-  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-  callback = function()
-    local nmap = function(keys, func, desc)
-      if desc then
-        desc = "LSP: " .. desc
-      end
-      vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
-    end
-
-    nmap("K", vim.lsp.buf.hover, "hover")
-    nmap("<C-k>", vim.lsp.buf.signature_help, "signature_help")
-    nmap("<space>la", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
-    nmap("<space>lr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")
-    nmap("<space>ll", function()
-      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, "list_workspace_folders")
-    nmap("<space>D", vim.lsp.buf.type_definition, "type_definition")
-    nmap("<space>ln", vim.lsp.buf.rename, "rename")
-    nmap("<space>lc", vim.lsp.buf.code_action, "code_action")
-    nmap("gr", vim.lsp.buf.references, "references")
-    nmap("<space>lf", function()
-      require("conform").format({ async = true, lsp_fallback = true })
-    end, "format")
-  end,
-})
+require("core.folding")
+require("core.autocmds")
