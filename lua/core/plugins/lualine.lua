@@ -2,7 +2,7 @@
 return {
   "nvim-lualine/lualine.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
-  event = "User ZichuanLoad",
+  event = "VeryLazy",
   main = "lualine",
   init = function()
     vim.g.lualine_laststatus = vim.o.laststatus
@@ -25,7 +25,7 @@ return {
     extensions = { "nvim-tree", "lazy", "mason", "fzf" },
     sections = {
       lualine_a = { "mode" },
-      lualine_b = { "branch", "diff","diagnostics" },
+      lualine_b = { "branch", "diff", "diagnostics" },
       lualine_c = {
         {
           "filename",
@@ -54,4 +54,3 @@ return {
     },
   },
 }
-

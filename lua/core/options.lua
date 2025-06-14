@@ -83,7 +83,6 @@ local options = {
   -- 提高性能
   updatetime = 250,
   -- 组合键等待时间0.5秒
-  timeout = false,
   timeoutlen = 500,
   -- 在换行时保持光标在词内而非行首。
   linebreak = true,

@@ -1,7 +1,8 @@
+local symbols = require("core.symbols")
 return {
   "akinsho/bufferline.nvim",
   dependencies = { "nvim-tree/nvim-web-devicons" },
-  event = "User ZichuanLoad",
+  event = "VeryLazy",
   opts = {
     options = {
       close_command = function(n)
@@ -15,8 +16,7 @@ return {
       diagnostics_indicator = function(_, _, diagnostics_dict, _)
         local s = " "
         for e, n in pairs(diagnostics_dict) do
-          local sym = e == "error" and Zichuan.symbols.Error
-            or (e == "warning" and Zichuan.symbols.Warn or Zichuan.symbols.Info)
+          local sym = e == "error" and symbols.Error or (e == "warning" and symbols.Warn or symbols.Info)
           s = s .. n .. sym
         end
         return s

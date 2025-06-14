@@ -1,24 +1,26 @@
-Zichuan = {}
+require("core.options")
+require("core.keymaps")
+require("core.autocmds")
+require("core.filetypes")
+require("core.lsp")
 
-require "core.init"
-require "plugins.init"
-
--- Define keymap
-local keymap = Zichuan.keymap.general
-require("core.utils").group_map(keymap)
-
-for filetype, config in pairs(Zichuan.ft) do
-    require("core.utils").ft(filetype, config)
+-- lazy and plugins
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.uv.fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    error("Error cloning lazy.nvim:\n" .. out)
+  end
 end
+vim.opt.rtp:prepend(lazypath)
+require("lazy").setup({
+  { import = "core.plugins" },
+}, {
+  ui = {
+    icons = {},
+    border = "single",
+  },
+})
 
--- Only load plugins and colorscheme when --noplugin arg is not present
-if not require("core.utils").noplugin then
-    -- Load plugins
-    local config = {}
-    for _, plugin in pairs(Zichuan.plugins) do
-        config[#config + 1] = plugin
-    end
-    require("lazy").setup(config, Zichuan.lazy)
-    -- Define colorscheme
-    vim.cmd("colorscheme tokyonight-storm")
-end
+vim.cmd([[colorscheme tokyonight]])

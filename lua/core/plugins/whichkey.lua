@@ -28,7 +28,7 @@ return {
       { "<leader>w", group = "+split windows" },
       { "<leader>b", group = "+buffer" },
       { "<leader>s", group = "+snacks" },
-      { "<leader>r", group = "+run and replace"}
+      { "<leader>r", group = "+run and replace" },
     },
     win = {
       border = "single",
@@ -45,4 +45,3 @@ return {
     debounce = 100, -- 触发延迟 100ms
   },
 }
-

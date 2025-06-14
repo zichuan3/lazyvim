@@ -1,4 +1,4 @@
-Zichuan.plugins["conform"] = {
+return {
   "stevearc/conform.nvim",
   dependencies = { "mason-org/mason.nvim" },
   lazy = true,

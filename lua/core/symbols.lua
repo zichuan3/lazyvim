@@ -1,4 +1,4 @@
-Zichuan.symbols = {
+return {
   Affirmative = "✓ ",
   Array = " ",
   Boolean = " ",

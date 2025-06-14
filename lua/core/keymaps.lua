@@ -1,17 +1,6 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
---当在正常/插入/视觉模式下被触发时，调用vim的“撤销”命令，然后转到正常模式。
-local function undo()
-  local mode = vim.api.nvim_get_mode().mode
-
-  -- Only undo in normal / insert / visual mode
-  if mode == "n" or mode == "i" or mode == "v" then
-    vim.cmd("undo")
-    -- Back to normal mode
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
-  end
-end
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
@@ -50,9 +39,8 @@ vim.api.nvim_create_autocmd("FileType", {
     end, { buffer = true, desc = "URL opener for markdown" })
   end,
 })
-Zichuan.keymap = {}
 local opts = { noremap = true, silent = true }
-Zichuan.keymap.general = {
+local keymap_binding = {
   -- 设置visual模式下p不作用
   disable_visual_past = { "v", "p", '"_dP', opts },
   disable_delete_register = { { "n", "v" }, "d", '"_d', opts },
@@ -111,6 +99,12 @@ Zichuan.keymap.general = {
   run_by_filetype = { "n", "<leader>rr", ":RunCode<cr>", { noremap = true, silent = false } },
   run_the_project = { "n", "<leader>rp", ":RunProject<CR>", { noremap = true, silent = false } },
 
-  undo = { { "n", "i", "v", "t", "c" }, "<C-z>", undo },
+  -- undo = { { "n", "i", "v", "t", "c" }, "<C-z>", undo },
   visual_line = { "n", "V", "0v$" },
 }
+for desc, keymap in pairs(keymap_binding) do
+  desc = string.gsub(desc, "_", " ")
+  local default_option = vim.tbl_extend("force", { desc = desc, nowait = true, silent = true }, {})
+  local map = vim.tbl_deep_extend("force", { nil, nil, nil, default_option }, keymap)
+  vim.keymap.set(map[1], map[2], map[3], map[4])
+end

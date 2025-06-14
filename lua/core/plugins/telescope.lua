@@ -127,4 +127,3 @@ return {
     { "<leader>;", ":Telescope registers<CR>", desc = "Show Registers" }, -- 查看寄存器
   },
 }
-

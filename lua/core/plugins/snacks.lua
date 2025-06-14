@@ -222,13 +222,6 @@ return {
       desc = "Delete Buffer",
     },
     {
-      "<leader>d",
-      function()
-        require("snacks").picker.diagnostics_buffer()
-      end,
-      desc = "Diagnostics buffer",
-    },
-    {
       "<leader>sr",
       function()
         require("snacks").picker.resume()

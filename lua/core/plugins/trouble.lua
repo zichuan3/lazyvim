@@ -1,4 +1,4 @@
-Zichuan.plugins.trouble = {
+return {
   "folke/trouble.nvim",
   cmd = "Trouble",
   opts = {
@@ -12,11 +12,11 @@ Zichuan.plugins.trouble = {
       title = "Preview",
       title_pos = "center",
       position = { 0.3, 0.3 },
-      size = { width = 0.6 ,height = 0.5 },
+      size = { width = 0.6, height = 0.5 },
       zindex = 200,
     },
   },
-  config = function (_, opts)
+  config = function(_, opts)
     require("trouble").setup(opts)
   end,
   keys = {

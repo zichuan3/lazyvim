@@ -8,20 +8,18 @@ return {
 
       api.config.mappings.default_on_attach(bufnr)
 
-      require("core.utils").group_map({
-        -- vertical_split = { "n", "<leader>wv", api.node.open.vertical },
-        -- horizontal_split = { "n", "<leader>ws", api.node.open.horizontal },
-        --toggle_hidden_file = { "n", ".", api.tree.toggle_hidden_filter },
-        reload = { "n", "<F5>", api.tree.reload },
-        create = { "n", "a", api.fs.create },
-        remove = { "n", "d", api.fs.remove },
-        rename = { "n", "r", api.fs.rename },
-        cut = { "n", "x", api.fs.cut },
-        copy = { "n", "y", api.fs.copy.node },
-        paste = { "n", "p", api.fs.paste },
-        system_run = { "n", "s", api.node.run.system },
-        show_info = { "n", "i", api.node.show_info_popup },
-      }, opt)
+      -- vertical_split = { "n", "<leader>wv", api.node.open.vertical },
+      -- horizontal_split = { "n", "<leader>ws", api.node.open.horizontal },
+      --toggle_hidden_file = { "n", ".", api.tree.toggle_hidden_filter },
+      vim.keymap.set("n", "<F5>", api.tree.reload, opt)
+      vim.keymap.set("n", "a", api.fs.create, opt)
+      vim.keymap.set("n", "d", api.fs.remove, opt)
+      vim.keymap.set("n", "r", api.fs.rename, opt)
+      vim.keymap.set("n", "x", api.fs.cut, opt)
+      vim.keymap.set("n", "y", api.fs.copy.node, opt)
+      vim.keymap.set("n", "p", api.fs.paste, opt)
+      vim.keymap.set("n", "s", api.node.run.system, opt)
+      vim.keymap.set("n", "i", api.node.show_info_popup, opt)
     end,
     git = {
       enable = false,

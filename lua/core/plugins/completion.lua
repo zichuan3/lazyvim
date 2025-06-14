@@ -1,11 +1,11 @@
-Zichuan.plugins["blink-cmp"] = {
+return {
   "saghen/blink.cmp",
   dependencies = { "rafamadriz/friendly-snippets", "folke/lazydev.nvim" },
   event = { "InsertEnter", "CmdlineEnter" },
   version = "*",
   opts = {
     appearance = {
-      kind_icons = Zichuan.symbols,
+      kind_icons = require("core.symbols"),
     },
     cmdline = {
       completion = {
@@ -64,25 +64,25 @@ Zichuan.plugins["blink-cmp"] = {
           auto_insert = false,
         },
       },
-      signature = {
-        enabled = true,
-        window = {
-          min_width = 1,
-          max_width = 100,
-          max_height = 10,
-          border = "single", -- Defaults to `vim.o.winborder` on nvim 0.11+ or 'padded' when not defined/<=0.10
-          winblend = 0,
-          winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
-          scrollbar = false, -- Note that the gutter will be disabled when border ~= 'none'
-          -- Which directions to show the window,
-          -- falling back to the next direction when there's not enough space,
-          -- or another window is in the way
-          direction_priority = { "n" },
-          -- Disable if you run into performance issues
-          treesitter_highlighting = true,
-          show_documentation = true,
-        },
-      },
+      -- signature = {
+      --   enabled = true,
+      --   window = {
+      --     min_width = 1,
+      --     max_width = 100,
+      --     max_height = 10,
+      --     border = "single", -- Defaults to `vim.o.winborder` on nvim 0.11+ or 'padded' when not defined/<=0.10
+      --     winblend = 0,
+      --     winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
+      --     scrollbar = false, -- Note that the gutter will be disabled when border ~= 'none'
+      --     -- Which directions to show the window,
+      --     -- falling back to the next direction when there's not enough space,
+      --     -- or another window is in the way
+      --     direction_priority = { "n" },
+      --     -- Disable if you run into performance issues
+      --     treesitter_highlighting = true,
+      --     show_documentation = true,
+      --   },
+      -- },
       menu = {
         border = "rounded",
         max_height = 20,
