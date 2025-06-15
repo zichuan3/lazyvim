@@ -1,8 +1,8 @@
 return {
   "saghen/blink.cmp",
   dependencies = { "rafamadriz/friendly-snippets", "folke/lazydev.nvim" },
-  event = { "InsertEnter", "CmdlineEnter" },
-  version = "*",
+  event = { "BufReadPost", "BufNewFile" },
+  version = "1.3.*",
   opts = {
     appearance = {
       kind_icons = require("core.symbols"),
@@ -47,17 +47,17 @@ return {
           },
         },
       },
-      ghost_text = {
-        enabled = true,
-        -- Show the ghost text when an item has been selected
-        show_with_selection = true,
-        -- Show the ghost text when no item has been selected, defaulting to the first item
-        show_without_selection = false,
-        -- Show the ghost text when the menu is open
-        show_with_menu = true,
-        -- Show the ghost text when the menu is closed
-        show_without_menu = true,
-      },
+      -- ghost_text = {
+      --   enabled = true,
+      --   -- Show the ghost text when an item has been selected
+      --   show_with_selection = true,
+      --   -- Show the ghost text when no item has been selected, defaulting to the first item
+      --   show_without_selection = false,
+      --   -- Show the ghost text when the menu is open
+      --   show_with_menu = true,
+      --   -- Show the ghost text when the menu is closed
+      --   show_without_menu = true,
+      -- },
       list = {
         selection = {
           preselect = true,
@@ -84,7 +84,6 @@ return {
       --   },
       -- },
       menu = {
-        border = "rounded",
         max_height = 20,
         draw = {
           columns = {
@@ -94,7 +93,7 @@ return {
           treesitter = { "lsp" },
         },
       },
-      trigger = { show_on_trigger_character = true },
+      trigger = { show_on_keyword = true },
     },
     enabled = function()
       local filetype_is_allowed = not vim.tbl_contains({ "grug-far", "TelescopePrompt" }, vim.bo.filetype)

@@ -71,11 +71,8 @@ local options = {
   shellslash = true,
   -- 不可见字符的显示，把空格显示为一个点
   list = true,
-  listchars = { tab = "» ", trail = "·", nbsp = "␣" },
-  -- 命令行窗口有更多空间
+  listchars = "tab:→ ,eol:↵,trail:·,extends:↷,precedes:↶", -- 命令行窗口有更多空间
   cmdwinheight = 1,
-  -- 启用二进制，十六进制，字母序的支持
-  nrformats = "bin,hex,alpha",
   -- 禁用默认的 ShaDa 文件
   shadafile = "NONE",
   -- 撤销持久化
@@ -86,8 +83,6 @@ local options = {
   timeoutlen = 500,
   -- 在换行时保持光标在词内而非行首。
   linebreak = true,
-  -- 设置窗口边框为单线样式
-  winborder = "single",
   -- 在折行时保留缩进对齐
   breakindent = true,
   -- 实时显示 :substitute 命令的替换结果

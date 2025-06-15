@@ -55,7 +55,12 @@ return {
     "kylechui/nvim-surround",
     version = "*",
     opts = {},
-    event = "User ZichuanLoad",
+    event = "InsertEnter",
+    keys = {
+      "c",
+      "d",
+      "y",
+    },
   },
   -- 主题
   {

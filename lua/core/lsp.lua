@@ -12,17 +12,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end
       vim.keymap.set("n", keys, func, { buffer = event.buf, desc = desc })
     end
-    nmap("<space>lf", function()
-      require("conform").format({ async = true, lsp_fallback = true })
-    end, "format")
     nmap("K", vim.lsp.buf.hover, "hover")
-    nmap("<C-k>", vim.lsp.buf.signature_help, "signature_help")
     nmap("<space>la", vim.lsp.buf.add_workspace_folder, "add_workspace_folder")
     nmap("<space>lr", vim.lsp.buf.remove_workspace_folder, "remove_workspace_folder")
     nmap("<space>ll", function()
       print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
     end, "list_workspace_folders")
-    nmap("<space>D", vim.lsp.buf.type_definition, "type_definition")
     nmap("<space>ln", vim.lsp.buf.rename, "rename")
     nmap("<space>lc", vim.lsp.buf.code_action, "code_action")
     nmap("gr", vim.lsp.buf.references, "references")

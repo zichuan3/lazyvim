@@ -16,40 +16,21 @@ return {
   end,
   opts = {
     options = {
-      icons_enabled = true,
       theme = "tokyonight",
-      component_separators = { left = "", right = "" },
-      section_separators = { left = "", right = "" },
       disabled_filetypes = { statusline = { "dashboard", "alpha", "ministarter", "snacks_dashboard" } },
     },
-    extensions = { "nvim-tree", "lazy", "mason", "fzf" },
+    extensions = { "lazy", "mason", "oil", "toggleterm", "trouble" },
     sections = {
-      lualine_a = { "mode" },
-      lualine_b = { "branch", "diff", "diagnostics" },
-      lualine_c = {
-        {
-          "filename",
-          file_status = true,
-        },
-      },
       lualine_x = {
-        "searchcount",
-        "selectioncount",
         {
           function()
             return vim.fn.reg_recording() ~= "" and "REC: " .. vim.fn.reg_recording() or ""
           end,
           color = { fg = "#ff0000" },
         },
-      },
-      lualine_y = {
         "encoding",
         "fileformat",
         "filetype",
-        "progress",
-      },
-      lualine_z = {
-        { "location", padding = { left = 0, right = 1 } },
       },
     },
   },

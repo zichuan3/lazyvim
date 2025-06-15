@@ -1,27 +1,14 @@
 return {
   "folke/which-key.nvim",
-  event = "VeryLazy",
+  event = "VimEnter",
   opts = {
     icons = {
       mappings = false,
     },
-    plugins = {
-      marks = true,
-      registers = true,
-      spelling = {
-        enabled = false,
-      },
-      presets = {
-        operators = false,
-        motions = true,
-        text_objects = true,
-        windows = true,
-        nav = true,
-        z = true,
-        g = true,
-      },
-    },
+    preset = "modern",
+    show_help = false,
     spec = {
+      { "g", group = "Go to", icon = "󰿅" },
       { "<leader>l", group = "+lsp" },
       { "<leader>n", group = "+notice" },
       { "<leader>g", group = "+git" },
@@ -29,14 +16,6 @@ return {
       { "<leader>b", group = "+buffer" },
       { "<leader>s", group = "+snacks" },
       { "<leader>r", group = "+run and replace" },
-    },
-    win = {
-      border = "single",
-      padding = { 0, 0, 0, 0 },
-      wo = {
-        winblend = 0,
-      },
-      zindex = 1000,
     },
     layout = {
       spacing = 0, -- 减少分组之间的间距

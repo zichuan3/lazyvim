@@ -1,21 +1,12 @@
-# 💤 LazyVim
+lsp：
+    目前的lsp使用neovim的0.11版本的lsp配置，会自动读取当前目录下lsp文件夹里面的lsp配置文件，
+当前的配置差不多已经够了，今后应该不会大规模的更改了
 
-A starter template for [LazyVim](https://github.com/LazyVim/LazyVim).
-Refer to the [documentation](https://lazyvim.github.io/installation) to get started.
+用mini.diff替代了gitsign，oil.nvim替代了neo-tree，
 
-如果发现lsp不起作用，建议重新安装一下
-lsp/plugin的mason不起作用是mason-lspconfig的版本问题，目前控制在1a31f824b9cd5bc6f342fc29e9a53b60d74af245
-肯定是后续的改动删除了require("mason-lspconfig").setup_handlers({})
-```cmd
-:MasonInstall pyright
-```
+toggle-term是在当前打开终端的，
+如果在<c-\>之前加上数字，则打开的是不同的终端，再次按<c-\>打开的是上次的终端
 
+使用oil偶尔有bug产生,与bufferline不太搭配？以后再看看。
 
-
-123
-
-插件键盘映射
-
-
-
->
+使用code_run来运行文件
