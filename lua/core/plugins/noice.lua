@@ -4,13 +4,17 @@ return {
   event = "VeryLazy",
   dependencies = {
     "MunifTanjim/nui.nvim",
-    -- "rcarriga/nvim-notify", -- 补充通知功能依赖
   },
   opts = {
     lsp = {
-      override = {
-        ["vim.lsp.util.convert_input_to_markdown_lines"] = false,
-        ["vim.lsp.util.stylize_markdown"] = false,
+      signature = {
+        enabled = false,
+      },
+      progress = {
+        enabled = true,
+      },
+      hover = {
+        enabled = false,
       },
     },
     notify = {

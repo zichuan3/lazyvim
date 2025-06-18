@@ -1,23 +1,12 @@
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
-
-local function augroup(name)
-  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
-end
+-- shada
 vim.api.nvim_create_autocmd({ "CmdlineEnter", "CmdwinEnter" }, {
   once = true,
   callback = function()
     local shada = vim.fn.stdpath("state") .. "/shada/main.shada"
     vim.o.shadafile = shada
     vim.cmd("rshada! " .. shada)
-  end,
-})
-
-vim.api.nvim_create_autocmd("CmdwinEnter", {
-  callback = function()
-    vim.cmd("startinsert")
-    vim.wo.number = false
-    vim.wo.relativenumber = false
   end,
 })
 local remove_shada_tmp_group = vim.api.nvim_create_augroup("RemoveShadaTmp", { clear = true })
@@ -35,6 +24,13 @@ vim.api.nvim_create_autocmd("VimLeavePre", {
       end
       shada_temp = vim.uv.fs_scandir_next(shada_dir)
     end
+  end,
+})
+vim.api.nvim_create_autocmd("CmdwinEnter", {
+  callback = function()
+    vim.cmd("startinsert")
+    vim.wo.number = false
+    vim.wo.relativenumber = false
   end,
 })
 -- Highlight when yanking (copying) text
@@ -72,6 +68,9 @@ vim.filetype.add({
   },
 })
 
+local function augroup(name)
+  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+end
 vim.api.nvim_create_autocmd({ "FileType" }, {
   group = augroup("bigfile"),
   pattern = "bigfile",

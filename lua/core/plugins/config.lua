@@ -18,6 +18,12 @@ return {
     end,
   },
   {
+    "echasnovski/mini.icons",
+    config = function()
+      require("mini.icons").setup()
+    end,
+  },
+  {
     "MunifTanjim/nui.nvim",
     lazy = true,
   },
@@ -51,6 +57,10 @@ return {
       { "<C-\\>" },
     },
   },
+  -- 给单词增加双引号：ysiw"
+  -- 删除双引号： ds"
+  -- 修改双引号为单引号： cs"'
+  -- 高阶用法：删除html的tag：dst ,其中t代表tag,修改tag为单引号：cst'
   {
     "kylechui/nvim-surround",
     version = "*",

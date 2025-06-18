@@ -15,11 +15,32 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
-  { import = "core.plugins" },
-}, {
-  ui = {
-    icons = {},
-    border = "single",
+  spec = {
+    { import = "core.plugins" },
+  },
+  defaults = {
+    lazy = false,
+    version = false,
+  },
+  performance = {
+    rtp = {
+      disabled_plugins = {
+        "editorconfig", -- 提供editorconfig文件支持
+        "man", -- 通过vim查看man手册页
+        "matchit", -- 增强 % 跳转命令
+        "matchparen", -- 高亮当前光标所在的括号对
+        "netrwPlugin", -- 支持通过vim访问网络文件或远程目录
+        "osc52", -- 实现vim与终端的复制粘贴操作
+        --"rplugin", -- 管理运行时插件，支持动态加载lua或python插件
+        "gzip", -- 允许直接编辑.gz压缩文件
+        "tohtml", -- 将当前文件的语法高亮结果导出为html文件
+        "tutor", -- 提供vim交互式教程
+        "shada", -- 保存和恢复vim会话
+        "spellfile", -- 管理拼写检查文件，支持自定义字典
+        "tarPlugin", -- 支持读取和编辑.tar归档文件
+        "zipPlugin", -- 支持读写.zip压缩文件
+      },
+    },
   },
 })
 

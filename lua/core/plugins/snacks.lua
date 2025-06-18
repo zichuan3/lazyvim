@@ -126,6 +126,41 @@ return {
       desc = "Jumps",
     },
     {
+      "<leader>f",
+      function()
+        Snacks.picker.smart()
+      end,
+      desc = "Smart Find Files",
+    },
+    {
+      "<leader>F",
+      function()
+        Snacks.picker.grep()
+      end,
+      desc = "Grep",
+    },
+    {
+      "<leader>q",
+      function()
+        Snacks.picker.recent()
+      end,
+      desc = "Recent",
+    },
+    {
+      "<leader>;",
+      function()
+        Snacks.picker.registers()
+      end,
+      desc = "Show Registers", -- 查看寄存器
+    },
+    {
+      "<leader>?",
+      function()
+        Snacks.picker.help()
+      end,
+      desc = "Help Pages",
+    },
+    {
       "<leader>sw",
       function()
         Snacks.picker.grep_word()

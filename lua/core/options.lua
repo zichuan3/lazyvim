@@ -15,7 +15,6 @@ opt.sidescrolloff = math.floor((win_height - 1) / 2)
 opt.wildignore:append({ "*/node_modules/*" })
 local options = {
   autowrite = true,
-  spelllang = { "en" },
   -- 编码
   fileencoding = "utf-8",
   -- 允许neovim访问系统粘贴板
