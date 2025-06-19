@@ -9,9 +9,9 @@ vim.g.bigfile_size = 1024 * 1024 * 1.5
 vim.cmd("syntax off")
 
 -- 滚动时保持居中
-local win_height = vim.fn.winheight(0)
-opt.scrolloff = math.floor((win_height - 1) / 2)
-opt.sidescrolloff = math.floor((win_height - 1) / 2)
+-- local win_height = vim.fn.winheight(0)
+-- opt.scrolloff = math.floor((win_height - 1) / 2)
+-- opt.sidescrolloff = math.floor((win_height - 1) / 2)
 opt.wildignore:append({ "*/node_modules/*" })
 local options = {
   autowrite = true,

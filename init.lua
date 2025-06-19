@@ -31,7 +31,7 @@ require("lazy").setup({
         "matchparen", -- 高亮当前光标所在的括号对
         "netrwPlugin", -- 支持通过vim访问网络文件或远程目录
         "osc52", -- 实现vim与终端的复制粘贴操作
-        --"rplugin", -- 管理运行时插件，支持动态加载lua或python插件
+        "rplugin", -- 管理运行时插件，支持动态加载lua或python插件
         "gzip", -- 允许直接编辑.gz压缩文件
         "tohtml", -- 将当前文件的语法高亮结果导出为html文件
         "tutor", -- 提供vim交互式教程
