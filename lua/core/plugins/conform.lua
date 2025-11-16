@@ -1,8 +1,9 @@
 return {
   "stevearc/conform.nvim",
-  dependencies = { "mason-org/mason.nvim" },
+  dependencies = { "mason.nvim" },
   lazy = true,
-  event = { "BufWritePre", "InsertEnter" },
+  cmd = "ConformInfo",
+  --event = { "BufWritePre", "InsertEnter" },
   config = function()
     require("core.config.conform")
   end,
@@ -10,8 +11,9 @@ return {
     {
       "<leader>lf",
       function()
-        require("conform").format({ async = true, lsp_fallback = true })
+        require("conform").format({ formatters = { "injected" }, timeout_ms = 3000 })
       end,
+      mode = { "n", "x" },
       desc = "Format buffer",
     },
   },

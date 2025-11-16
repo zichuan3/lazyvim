@@ -27,8 +27,8 @@ require("lazy").setup({
       disabled_plugins = {
         "editorconfig", -- 提供editorconfig文件支持
         "man", -- 通过vim查看man手册页
-        "matchit", -- 增强 % 跳转命令
-        "matchparen", -- 高亮当前光标所在的括号对
+        --"matchit", -- 增强 % 跳转命令
+        --"matchparen", -- 高亮当前光标所在的括号对
         "netrwPlugin", -- 支持通过vim访问网络文件或远程目录
         "osc52", -- 实现vim与终端的复制粘贴操作
         "rplugin", -- 管理运行时插件，支持动态加载lua或python插件

@@ -1,4 +1,10 @@
 require("conform").setup({
+  default_format_opts = {
+    timeout_ms = 3000,
+    async = false, -- not recommended to change
+    quiet = false, -- not recommended to change
+    lsp_format = "fallback", -- not recommended to change
+  },
   notify_on_error = true,
   format_on_save = function(bufnr)
     if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
@@ -24,15 +30,5 @@ require("conform").setup({
   },
   formatters = {
     injected = { options = { ignore_errors = true } },
-    ocamlformat = {
-      prepend_args = {
-        "--if-then-else",
-        "vertical",
-        "--break-cases",
-        "fit-or-vertical",
-        "--type-decl",
-        "sparse",
-      },
-    },
   },
 })

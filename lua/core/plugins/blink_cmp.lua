@@ -1,9 +1,13 @@
 return {
   "saghen/blink.cmp",
   dependencies = { "rafamadriz/friendly-snippets", "folke/lazydev.nvim" },
-  event = { "BufReadPost", "BufNewFile" },
-  version = "1.3.*",
+  event = { "InsertEnter", "CmdlineEnter" },
+  version = "*",
   opts = {
+
+    snippets = {
+      preset = "default",
+    },
     appearance = {
       kind_icons = require("core.symbols"),
     },
@@ -16,7 +20,7 @@ return {
           end,
         },
         -- 不在当前行上显示所选项目的预览
-        ghost_text = { enabled = false },
+        ghost_text = { enabled = true },
       },
       keymap = {
         preset = "none",
@@ -26,65 +30,24 @@ return {
       },
     },
     completion = {
+      accept = {
+        auto_brackets = { enabled = true },
+      },
       documentation = {
         auto_show = true,
-        auto_show_delay_ms = 2000,
-        window = {
-          min_width = 10,
-          max_width = 120,
-          max_height = 20,
-          border = "rounded",
-          winblend = 0,
-          winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,EndOfBuffer:BlinkCmpDoc",
-          -- Note that the gutter will be disabled when border ~= 'none'
-          scrollbar = true,
-          -- Which directions to show the documentation window,
-          -- for each of the possible menu window directions,
-          -- falling back to the next direction when there's not enough space
-          direction_priority = {
-            menu_north = { "e", "w", "n", "s" },
-            menu_south = { "e", "w", "s", "n" },
-          },
-        },
+        auto_show_delay_ms = 200,
       },
-      -- ghost_text = {
-      --   enabled = true,
-      --   -- Show the ghost text when an item has been selected
-      --   show_with_selection = true,
-      --   -- Show the ghost text when no item has been selected, defaulting to the first item
-      --   show_without_selection = false,
-      --   -- Show the ghost text when the menu is open
-      --   show_with_menu = true,
-      --   -- Show the ghost text when the menu is closed
-      --   show_without_menu = true,
-      -- },
+      ghost_text = {
+        enabled = true,
+        show_without_selection = true,
+      },
       list = {
         selection = {
           preselect = true,
           auto_insert = false,
         },
       },
-      -- signature = {
-      --   enabled = true,
-      --   window = {
-      --     min_width = 1,
-      --     max_width = 100,
-      --     max_height = 10,
-      --     border = "single", -- Defaults to `vim.o.winborder` on nvim 0.11+ or 'padded' when not defined/<=0.10
-      --     winblend = 0,
-      --     winhighlight = "Normal:BlinkCmpSignatureHelp,FloatBorder:BlinkCmpSignatureHelpBorder",
-      --     scrollbar = false, -- Note that the gutter will be disabled when border ~= 'none'
-      --     -- Which directions to show the window,
-      --     -- falling back to the next direction when there's not enough space,
-      --     -- or another window is in the way
-      --     direction_priority = { "n" },
-      --     -- Disable if you run into performance issues
-      --     treesitter_highlighting = true,
-      --     show_documentation = true,
-      --   },
-      -- },
       menu = {
-        max_height = 20,
         draw = {
           columns = {
             { "label", "label_description", gap = 1 },
@@ -108,18 +71,31 @@ return {
     end,
     keymap = {
       preset = "none",
-      ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
-      ["<C-k>"] = { "show_signature", "hide_signature", "fallback" },
-      ["<C-e>"] = { "hide", "fallback" },
-      ["<CR>"] = { "accept", "fallback" },
       ["<Tab>"] = {
-        "select_next",
+        function(cmp)
+          if not cmp.is_menu_visible() then
+            return
+          end
+
+          return cmp.select_and_accept({})
+        end,
         "snippet_forward",
         "fallback",
       },
-      ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
-      ["<Up>"] = { "select_prev", "fallback" },
-      ["<Down>"] = { "select_next", "fallback" },
+      ["<S-Tab>"] = { "snippet_backward", "fallback" },
+      ["<C-k>"] = { "select_prev", "fallback" },
+      ["<C-j>"] = { "select_next", "fallback" },
+      ["<A-c>"] = {
+        -- DO NOT add "fallback" here!!!
+        -- It would cause the letter "c" to be inserted as well
+        function(cmp)
+          if cmp.is_menu_visible() then
+            cmp.cancel()
+          else
+            cmp.show()
+          end
+        end,
+      },
       ["<C-d>"] = { "scroll_documentation_down", "fallback" },
       ["<C-u>"] = { "scroll_documentation_up", "fallback" },
     },

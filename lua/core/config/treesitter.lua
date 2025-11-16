@@ -34,12 +34,6 @@ require("nvim-treesitter.configs").setup({
       end
     end,
   },
-  disable = function(lang, bufnr)
-    return lang == "yaml" and vim.api.nvim_buf_line_count(bufnr) > 5000
-  end,
-  -- indent = {
-  --   enable = true,
-  --   -- conflicts with flutter-tools.nvim, causing performance issues
-  --   disable = { "dart" },
-  -- },
+  folds = { enable = true },
+  indent = { enable = true },
 })

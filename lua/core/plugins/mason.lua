@@ -1,7 +1,6 @@
 local symbols = require("core.symbols")
 return {
   "mason-org/mason.nvim",
-  event = { "BufReadPost", "BufNewFile", "VimEnter" },
   cmd = "Mason",
   opts = {
     ui = {

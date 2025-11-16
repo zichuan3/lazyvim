@@ -1,6 +1,5 @@
 local g = vim.g
 local opt = vim.opt
-vim.loader.enable()
 vim.cmd("language en_US.UTF-8")
 g.encoding = "UTF-8"
 
@@ -24,10 +23,10 @@ local options = {
   -- 显示绝对行号，相对行号，高亮当前行
   number = true,
   relativenumber = true,
-  cursorline = false,
+  cursorline = true,
   -- Tab宽度为4，缩进宽度与tabstop一致，Tab转换为空格，自动插入适当缩进
   tabstop = 2,
-  shiftwidth = 2,
+  shiftwidth = 0,
   softtabstop = 2,
   expandtab = true,
   smartindent = true,

@@ -1,6 +1,7 @@
 -- 代码高亮
 return {
   "nvim-treesitter/nvim-treesitter",
+  branch = "main",
   build = ":TSUpdate",
   dependencies = { "hiphish/rainbow-delimiters.nvim" },
   event = { "BufReadPost", "BufNewFile" },
